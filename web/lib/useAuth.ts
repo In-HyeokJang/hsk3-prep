@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { supabase } from './supabase';
-import { getUserKey } from './userKey';
 
 /* ============================================================
    아이디로 가입하고 로그인하기
@@ -45,12 +44,28 @@ export type Profile = {
 export function useAuth() {
 	const [userId, setUserId] = useState<string | null>(null);
 	const [profile, setProfile] = useState<Profile | null>(null);
+	const [profileFailed, setProfileFailed] = useState(false); // 못 받아왔나
 	const [ready, setReady] = useState(false); // 확인이 끝났나
 
 	const loadProfile = useCallback(async (id: string | null) => {
-		if (!id) return setProfile(null);
+		if (!id) {
+			setProfile(null);
+			setProfileFailed(false);
+			return;
+		}
 
-		const { data } = await supabase.rpc('my_profile');
+		const { data, error } = await supabase.rpc('my_profile');
+
+		// ★ 못 받아온 것과 "받아왔더니 없더라" 는 다릅니다.
+		//   신호가 잠깐 끊겨도 data 는 null 이 됩니다. 그걸 "프로필이 없다" 로
+		//   읽으면 아이디가 빈칸이 되고, 그 빈칸을 확인 장치로 쓰는 곳이 뚫립니다.
+		//   (탈퇴 확인창이 실제로 그렇게 뚫렸습니다)
+		if (error) {
+			setProfileFailed(true);
+			return; // 이전 값을 지우지 않습니다
+		}
+
+		setProfileFailed(false);
 		const p = (data as Profile) ?? null;
 
 		// 다른 기기에서 탈퇴했는데 이 기기는 로그인된 채로 남아 있을 수 있습니다.
@@ -93,6 +108,8 @@ export function useAuth() {
 		userId,
 		username: profile?.username ?? null,
 		profile,
+		/** 프로필을 못 받아왔나. 되돌릴 수 없는 일은 이게 true 면 막아야 합니다 */
+		profileFailed,
 		ready,
 		signOut: () => supabase.auth.signOut(),
 	};
@@ -124,18 +141,32 @@ function readable(message: string): string {
 export type SignUpInput = {
 	username: string;
 	password: string;
+	/** 한 번 더 친 비밀번호. 가입 화면에서만 씁니다 */
+	password2?: string;
 	email: string;
 	phone: string;
 };
 
 /** 가입 화면에서 쓰는 검사. 서버에도 같은 규칙이 걸려 있습니다. */
-export function checkSignUp({ username, password, email, phone }: SignUpInput): string | null {
+export function checkSignUp({
+	username,
+	password,
+	password2,
+	email,
+	phone,
+}: SignUpInput): string | null {
 	const id = username.trim();
 
 	if (!/^[A-Za-z0-9_]{4,20}$/.test(id)) {
 		return '아이디는 영문·숫자·밑줄(_)로 4~20자여야 합니다.';
 	}
 	if (password.length < 6) return '비밀번호는 6자 이상으로 해주세요.';
+
+	// 비밀번호를 다시 정해주는 메일을 보낼 수 없는 구조라,
+	// 오타 하나가 계정을 영영 못 열게 만듭니다. 그래서 두 번 받습니다.
+	if (password2 !== undefined && password !== password2) {
+		return '비밀번호 두 개가 서로 다릅니다.';
+	}
 
 	const hasEmail = email.trim() !== '';
 	const hasPhone = phone.trim() !== '';
@@ -155,9 +186,25 @@ export function checkSignUp({ username, password, email, phone }: SignUpInput): 
 
 const TAKEN_LABEL: Record<string, string> = {
 	username: '이미 쓰고 있는 아이디입니다.',
-	email: '이미 등록된 이메일입니다.',
-	phone: '이미 등록된 전화번호입니다.',
 };
+
+/**
+ * 연락처로 아이디를 찾습니다.
+ *
+ * 가려서 돌려줍니다 (hong1234 → ho*****4).
+ * 통째로 보여주면 아무 번호나 넣어보며 남의 아이디를 모을 수 있습니다.
+ * 본인은 앞뒤 글자만 봐도 기억해냅니다.
+ *
+ * 못 찾으면 빈 문자열입니다.
+ */
+export async function findUsername(email: string, phone: string): Promise<string> {
+	const { data, error } = await supabase.rpc('find_username', {
+		p_email: email.trim() || null,
+		p_phone: phone.trim() || null,
+	});
+	if (error) throw new Error('찾지 못했습니다. 잠시 뒤에 다시 시도해 주세요.');
+	return (data as string) ?? '';
+}
 
 /** 가입 전에 중복을 미리 물어봅니다. 진짜 자물쇠는 서버 쪽에 있습니다. */
 export async function findTaken(input: SignUpInput): Promise<string | null> {
@@ -206,7 +253,16 @@ export async function signIn(username: string, password: string): Promise<void> 
 	});
 	if (error) throw new Error(readable(error.message));
 
-	const { data } = await supabase.rpc('my_profile');
+	const { data, error: profileError } = await supabase.rpc('my_profile');
+
+	// 확인을 못 했으면 들여보내지 않습니다.
+	// 탈퇴한 계정인지 모르는 채로 통과시키면, 들어와서 아무것도 안 되는데
+	// 화면은 "진도 0" 으로 멀쩡해 보입니다. 그게 더 나쁩니다.
+	if (profileError) {
+		await supabase.auth.signOut();
+		throw new Error('계정을 확인하지 못했습니다. 잠시 뒤에 다시 시도해 주세요.');
+	}
+
 	const profile = data as Profile | null;
 
 	if (profile && !profile.is_active) {
@@ -232,16 +288,14 @@ export async function withdraw(): Promise<number> {
 }
 
 /**
- * 로그인 전에 브라우저에 쌓아둔 진도를 계정으로 옮깁니다.
+ * 연락처 고치기.
  *
- * 계정에 진도가 하나도 없을 때만 옮겨집니다 (서버에서 확인합니다).
- * 옮길 게 없으면 0이 돌아옵니다. 실패해도 로그인 자체는 막지 않습니다.
+ * 모양 다듬기와 "둘 중 하나는 남기기" 는 서버가 합니다 (마이그레이션 12).
  */
-export async function claimOldProgress(): Promise<number> {
-	const old = getUserKey();
-	if (!old || old === 'temporary') return 0;
-
-	const { data, error } = await supabase.rpc('claim_progress', { p_old_key: old });
-	if (error) return 0;
-	return (data as number) ?? 0;
+export async function updateContact(email: string, phone: string): Promise<void> {
+	const { error } = await supabase.rpc('update_contact', {
+		p_email: email.trim() || null,
+		p_phone: phone.trim() || null,
+	});
+	if (error) throw new Error(readable(error.message));
 }

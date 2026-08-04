@@ -11,7 +11,7 @@ import { Empty, ErrorBox, Loading } from '@/components/ui';
 const COUNT = 10;
 
 export default function StudyPage() {
-	const { userKey, words, statusOf, mark, loading, error, reload } = useStore();
+	const { userKey, words, statusOf, mark, pendingCount, loading, error, reload } = useStore();
 
 	const [quizzes, setQuizzes] = useState<Quiz[] | null>(null);
 	const [at, setAt] = useState(0);
@@ -137,6 +137,8 @@ export default function StudyPage() {
 		setSaving(true);
 		setSaveError(null);
 		try {
+			// 신호가 끊겨 있으면 mark 가 브라우저에 적어두고 null 을 돌려줍니다.
+			// 그래도 다음 문제로 넘어갑니다. 지하철에서 1번 문제에 갇히지 않게요.
 			await mark(card.id, status, judged.correct);
 			setResult((r) => ({
 				known: r.known + (judged.correct ? 1 : 0),
@@ -146,8 +148,7 @@ export default function StudyPage() {
 			setJudged(null);
 			setAt((i) => i + 1);
 		} catch (e) {
-			// 저장에 실패하면 다음 카드로 넘어가지 않습니다.
-			// 넘어가 버리면 안 저장된 걸 모른 채로 지나갑니다.
+			// 여기까지 오는 건 로그인이 풀린 것처럼 다시 시도해도 소용없는 경우입니다.
 			setSaveError(e instanceof Error ? e.message : String(e));
 		} finally {
 			setSaving(false);
@@ -288,6 +289,15 @@ export default function StudyPage() {
 						{at + 1 >= quizzes.length ? '결과 보기' : '다음'}
 					</button>
 				</div>
+			)}
+
+			{/* 신호가 끊겨서 아직 못 보낸 것이 있을 때.
+			    "사라진 게 아니라 기다리는 중" 이라고 분명히 말해줍니다. */}
+			{pendingCount > 0 && (
+				<p className="rounded-xl bg-paper-2 px-4 py-3 text-sm text-muted">
+					지금 연결이 안 돼서 <b className="text-ink-2">{pendingCount}개</b>를 아직 못
+					보냈어요. 없어지지 않습니다 — 연결되면 알아서 저장됩니다.
+				</p>
 			)}
 
 			{saveError && (

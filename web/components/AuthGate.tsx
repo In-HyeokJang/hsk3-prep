@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { checkSignUp, claimOldProgress, signIn, signUp, useAuth } from '@/lib/useAuth';
+import { useEffect, useState } from 'react';
+import { checkSignUp, signIn, signUp, useAuth } from '@/lib/useAuth';
 import { EmailField, PhoneField } from '@/components/ContactFields';
+import FindId from '@/components/FindId';
 import { Loading } from '@/components/ui';
 
 /**
@@ -15,23 +16,42 @@ import { Loading } from '@/components/ui';
 export default function AuthGate({ children }: { children: React.ReactNode }) {
 	const { userId, ready } = useAuth();
 
-	const [mode, setMode] = useState<'in' | 'up'>('in');
+	const [mode, setMode] = useState<'in' | 'up' | 'find'>('in');
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
+	const [password2, setPassword2] = useState('');
+	const [showPw, setShowPw] = useState(false);
 	const [email, setEmail] = useState('');
 	const [phone, setPhone] = useState('');
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
+	// 로그아웃하면 폼을 처음 상태로 되돌립니다.
+	//
+	// 안 하면 가입하고 로그아웃했을 때 가입 화면이 그대로 다시 뜹니다.
+	// 그러면 "아이디를 잊으셨나요" 도 안 보이고, 친 비밀번호도 남아 있습니다.
+	useEffect(() => {
+		if (userId) return;
+		setMode('in');
+		setUsername('');
+		setPassword('');
+		setPassword2('');
+		setShowPw(false);
+		setEmail('');
+		setPhone('');
+		setError(null);
+	}, [userId]);
+
 	if (!ready) return <Loading text="확인하는 중..." />;
 	if (userId) return <>{children}</>;
+	if (mode === 'find') return <FindId onBack={() => setMode('in')} />;
 
 	async function submit(e: React.FormEvent) {
 		e.preventDefault();
 		setError(null);
 
 		if (mode === 'up') {
-			const bad = checkSignUp({ username, password, email, phone });
+			const bad = checkSignUp({ username, password, password2, email, phone });
 			if (bad) return setError(bad);
 		} else if (!username.trim() || !password) {
 			return setError('아이디와 비밀번호를 넣어주세요.');
@@ -44,10 +64,6 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
 			} else {
 				await signIn(username, password);
 			}
-
-			// 로그인 전에 브라우저에 쌓아둔 진도가 있으면 계정으로 옮겨옵니다.
-			// 실패해도 로그인은 그대로 둡니다 — 진도가 안 옮겨질 뿐입니다.
-			await claimOldProgress();
 		} catch (err) {
 			setError(err instanceof Error ? err.message : String(err));
 		} finally {
@@ -88,7 +104,7 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
 				<label className="flex flex-col gap-1.5">
 					<span className="text-sm font-medium">비밀번호</span>
 					<input
-						type="password"
+						type={showPw ? 'text' : 'password'}
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
 						autoComplete={mode === 'up' ? 'new-password' : 'current-password'}
@@ -96,6 +112,43 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
 						aria-label="비밀번호"
 						className={field}
 					/>
+				</label>
+
+				{mode === 'up' && (
+					<>
+						{/* ★ 한 번 더 받습니다.
+						    이 사이트는 비밀번호를 다시 정해주는 메일을 보낼 수 없습니다.
+						    오타 하나로 계정이 영영 안 열리는 일이 실제로 생길 수 있어서,
+						    가입할 때 두 번 확인합니다. */}
+						<label className="flex flex-col gap-1.5">
+							<span className="text-sm font-medium">비밀번호 확인</span>
+							<input
+								type={showPw ? 'text' : 'password'}
+								value={password2}
+								onChange={(e) => setPassword2(e.target.value)}
+								autoComplete="new-password"
+								placeholder="한 번 더"
+								aria-label="비밀번호 확인"
+								className={field}
+							/>
+						</label>
+
+						{password2 !== '' && (
+							<p className={`text-sm ${password === password2 ? 'text-accent' : 'text-warn'}`}>
+								{password === password2 ? '두 개가 같아요' : '두 개가 다릅니다'}
+							</p>
+						)}
+					</>
+				)}
+
+				<label className="flex items-center gap-2 text-sm text-muted">
+					<input
+						type="checkbox"
+						checked={showPw}
+						onChange={(e) => setShowPw(e.target.checked)}
+						className="size-4"
+					/>
+					비밀번호 보이기
 				</label>
 
 				{mode === 'up' && (
@@ -142,15 +195,38 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
 				</button>
 			</form>
 
-			<button
-				onClick={() => {
-					setMode(mode === 'in' ? 'up' : 'in');
-					setError(null);
-				}}
-				className="text-sm text-muted underline underline-offset-4"
-			>
-				{mode === 'in' ? '아직 계정이 없어요 · 가입하기' : '이미 계정이 있어요 · 로그인'}
-			</button>
+			{/* 비밀번호를 새로 정해주는 메일을 보낼 수 없는 구조입니다.
+			    그 사실을 가입 전에 알려드립니다. 나중에 알면 늦습니다. */}
+			{mode === 'up' && (
+				<p className="rounded-xl border-l-[3px] border-warn bg-warn-soft px-4 py-3.5 text-sm text-ink-2">
+					<b className="text-warn">비밀번호를 꼭 기억해 주세요.</b> 이 사이트는 비밀번호를 새로
+					정하는 메일을 보내지 않습니다. 잊으면 만든 사람에게 문의하셔야 합니다.
+				</p>
+			)}
+
+			<div className="flex flex-col items-center gap-3">
+				<button
+					onClick={() => {
+						setMode(mode === 'in' ? 'up' : 'in');
+						setError(null);
+					}}
+					className="px-4 py-2 text-sm text-muted underline underline-offset-4"
+				>
+					{mode === 'in' ? '아직 계정이 없어요 · 가입하기' : '이미 계정이 있어요 · 로그인'}
+				</button>
+
+				{mode === 'in' && (
+					<button
+						onClick={() => {
+							setMode('find');
+							setError(null);
+						}}
+						className="px-4 py-2 text-sm text-muted underline underline-offset-4"
+					>
+						아이디를 잊으셨나요
+					</button>
+				)}
+			</div>
 		</div>
 	);
 }
