@@ -1,0 +1,29 @@
+# 비밀 — 절대 올라가면 안 되는 것
+.env
+.env.local
+.env*.local
+
+# 설치된 라이브러리 (npm install 하면 다시 생깁니다)
+node_modules/
+
+# Next.js (3회차부터, web/ 안에 만듭니다)
+web/node_modules/
+web/.next/
+web/out/
+.next/
+out/
+build/
+
+# Supabase CLI
+supabase/.temp/
+supabase/.branches/
+
+# 운영체제가 만드는 것
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 편집기
+.vscode/*
+!.vscode/extensions.json
+*.log

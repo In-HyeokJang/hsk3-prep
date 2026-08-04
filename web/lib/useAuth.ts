@@ -1,0 +1,247 @@
+'use client';
+
+import { useCallback, useEffect, useState } from 'react';
+import { supabase } from './supabase';
+import { getUserKey } from './userKey';
+
+/* ============================================================
+   아이디로 가입하고 로그인하기
+
+   Supabase 는 원래 이메일로 로그인합니다.
+   아이디를 쓰려고, 아이디에서 내부용 주소를 만들어 넘깁니다.
+
+     hong123  →  hong123@hsk3.local
+
+   이 주소는 사람이 쓰는 메일함이 아닙니다. 자물쇠의 이름표 같은 것이고
+   화면에는 절대 나오지 않습니다. 사용자는 아이디만 봅니다.
+   ============================================================ */
+
+/** 아이디를 내부용 주소로 바꿉니다. 이 규칙은 서버(마이그레이션 8)와 짝입니다. */
+export const LOGIN_DOMAIN = 'hsk3.local';
+
+export function loginEmail(username: string): string {
+	return `${username.trim().toLowerCase()}@${LOGIN_DOMAIN}`;
+}
+
+/* ── 지금 로그인 상태 ─────────────────────────────────────── */
+
+export type Profile = {
+	user_id: string;
+	username: string;
+	email: string | null;
+	phone: string | null;
+	is_active: boolean;
+	deleted_at: string | null;
+};
+
+/**
+ * 로그인 상태.
+ *
+ * 세션(로그인했다는 표)은 Supabase가 브라우저에 저장하고 알아서 갱신합니다.
+ * 우리는 "지금 로그인돼 있나 / 누구인가" 만 여기서 꺼내 씁니다.
+ *
+ * ★ userId 가 그대로 진도의 user_key 가 됩니다.
+ */
+export function useAuth() {
+	const [userId, setUserId] = useState<string | null>(null);
+	const [profile, setProfile] = useState<Profile | null>(null);
+	const [ready, setReady] = useState(false); // 확인이 끝났나
+
+	const loadProfile = useCallback(async (id: string | null) => {
+		if (!id) return setProfile(null);
+
+		const { data } = await supabase.rpc('my_profile');
+		const p = (data as Profile) ?? null;
+
+		// 다른 기기에서 탈퇴했는데 이 기기는 로그인된 채로 남아 있을 수 있습니다.
+		// 그대로 두면 아무것도 안 되는 화면만 보게 되니, 여기서 내보냅니다.
+		if (p && !p.is_active) {
+			await supabase.auth.signOut();
+			setProfile(null);
+			return;
+		}
+
+		setProfile(p);
+	}, []);
+
+	useEffect(() => {
+		let alive = true;
+
+		supabase.auth.getSession().then(async ({ data }) => {
+			if (!alive) return;
+			const id = data.session?.user.id ?? null;
+			setUserId(id);
+			await loadProfile(id);
+			if (alive) setReady(true);
+		});
+
+		// 로그인·로그아웃이 일어나면 바로 알려줍니다 (다른 탭에서 한 것도 포함)
+		const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+			const id = session?.user.id ?? null;
+			setUserId(id);
+			void loadProfile(id);
+			setReady(true);
+		});
+
+		return () => {
+			alive = false;
+			sub.subscription.unsubscribe();
+		};
+	}, [loadProfile]);
+
+	return {
+		userId,
+		username: profile?.username ?? null,
+		profile,
+		ready,
+		signOut: () => supabase.auth.signOut(),
+	};
+}
+
+/* ── 가입 · 로그인 ────────────────────────────────────────── */
+
+/** Supabase가 돌려주는 영어 에러를 알아들을 수 있는 말로 바꿉니다 */
+function readable(message: string): string {
+	const m = message.toLowerCase();
+	if (m.includes('invalid login credentials')) return '아이디나 비밀번호가 맞지 않습니다.';
+	if (m.includes('user already registered')) return '이미 쓰고 있는 아이디입니다.';
+	if (m.includes('password should be at least')) return '비밀번호는 6자 이상이어야 합니다.';
+	if (m.includes('rate limit') || m.includes('too many')) return '잠시 뒤에 다시 시도해 주세요.';
+
+	// 방아쇠(trigger)에서 중복이 걸리면 Supabase 는 이 뭉뚱그린 말만 돌려줍니다.
+	if (m.includes('database error saving new user')) {
+		return '이미 쓰고 있는 아이디·이메일·전화번호입니다.';
+	}
+
+	// 내부용 주소가 거절당한 경우 — Confirm email 설정을 안 껐을 때 주로 납니다.
+	if (m.includes('email') && (m.includes('invalid') || m.includes('confirm'))) {
+		return '가입을 처리하지 못했습니다. Supabase 설정에서 이메일 확인(Confirm email)을 꺼야 합니다.';
+	}
+
+	return message;
+}
+
+export type SignUpInput = {
+	username: string;
+	password: string;
+	email: string;
+	phone: string;
+};
+
+/** 가입 화면에서 쓰는 검사. 서버에도 같은 규칙이 걸려 있습니다. */
+export function checkSignUp({ username, password, email, phone }: SignUpInput): string | null {
+	const id = username.trim();
+
+	if (!/^[A-Za-z0-9_]{4,20}$/.test(id)) {
+		return '아이디는 영문·숫자·밑줄(_)로 4~20자여야 합니다.';
+	}
+	if (password.length < 6) return '비밀번호는 6자 이상으로 해주세요.';
+
+	const hasEmail = email.trim() !== '';
+	const hasPhone = phone.trim() !== '';
+	if (!hasEmail && !hasPhone) {
+		return '나중에 아이디·비밀번호를 찾으려면 이메일이나 전화번호 중 하나는 필요합니다.';
+	}
+	// 아래 두 규칙은 DB 에도 똑같이 걸려 있습니다 (마이그레이션 10).
+	// 화면만 고치면 다른 경로로 어긋난 값이 들어올 수 있어서 양쪽에 둡니다.
+	if (hasEmail && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.trim())) {
+		return '이메일 주소를 끝까지 채워주세요. (예: hong@naver.com)';
+	}
+	if (hasPhone && !/^0\d{1,2}-\d{3,4}-\d{4}$/.test(phone.trim())) {
+		return '전화번호를 끝까지 채워주세요. (예: 010-1234-5678)';
+	}
+	return null;
+}
+
+const TAKEN_LABEL: Record<string, string> = {
+	username: '이미 쓰고 있는 아이디입니다.',
+	email: '이미 등록된 이메일입니다.',
+	phone: '이미 등록된 전화번호입니다.',
+};
+
+/** 가입 전에 중복을 미리 물어봅니다. 진짜 자물쇠는 서버 쪽에 있습니다. */
+export async function findTaken(input: SignUpInput): Promise<string | null> {
+	const { data, error } = await supabase.rpc('signup_taken', {
+		p_username: input.username.trim(),
+		p_email: input.email.trim() || null,
+		p_phone: input.phone.trim() || null,
+	});
+
+	if (error) return null; // 미리보기일 뿐이라, 못 물어봤으면 그냥 넘어갑니다
+	return TAKEN_LABEL[data as string] ?? null;
+}
+
+/** 회원가입 */
+export async function signUp(input: SignUpInput): Promise<void> {
+	const taken = await findTaken(input);
+	if (taken) throw new Error(taken);
+
+	const { error } = await supabase.auth.signUp({
+		email: loginEmail(input.username),
+		password: input.password,
+		options: {
+			// 이 값들을 서버의 방아쇠가 받아서 profiles 에 넣습니다 (마이그레이션 8)
+			data: {
+				username: input.username.trim(),
+				email: input.email.trim() || null,
+				phone: input.phone.trim() || null,
+			},
+		},
+	});
+
+	if (error) throw new Error(readable(error.message));
+}
+
+/**
+ * 로그인.
+ *
+ * 탈퇴한 계정은 비밀번호가 맞아도 들어올 수 없습니다.
+ * 계정 줄은 남아 있어서 Supabase 쪽 확인은 통과하거든요.
+ * 그래서 들어온 직후에 한 번 더 보고, 탈퇴한 계정이면 바로 내보냅니다.
+ */
+export async function signIn(username: string, password: string): Promise<void> {
+	const { error } = await supabase.auth.signInWithPassword({
+		email: loginEmail(username),
+		password,
+	});
+	if (error) throw new Error(readable(error.message));
+
+	const { data } = await supabase.rpc('my_profile');
+	const profile = data as Profile | null;
+
+	if (profile && !profile.is_active) {
+		await supabase.auth.signOut();
+		throw new Error('탈퇴한 계정입니다. 이 아이디로는 다시 들어올 수 없습니다.');
+	}
+}
+
+/**
+ * 탈퇴.
+ *
+ * 진도와 푼 기록은 지워지고, 계정 줄은 남습니다.
+ * 남은 줄이 같은 아이디·이메일·전화번호로 다시 가입하는 것을 막습니다.
+ *
+ * 돌려주는 값: 지워진 진도 줄 수
+ */
+export async function withdraw(): Promise<number> {
+	const { data, error } = await supabase.rpc('withdraw_account');
+	if (error) throw new Error(`탈퇴하지 못했습니다: ${error.message}`);
+
+	await supabase.auth.signOut();
+	return (data as number) ?? 0;
+}
+
+/**
+ * 로그인 전에 브라우저에 쌓아둔 진도를 계정으로 옮깁니다.
+ *
+ * 계정에 진도가 하나도 없을 때만 옮겨집니다 (서버에서 확인합니다).
+ * 옮길 게 없으면 0이 돌아옵니다. 실패해도 로그인 자체는 막지 않습니다.
+ */
+export async function claimOldProgress(): Promise<number> {
+	const old = getUserKey();
+	if (!old || old === 'temporary') return 0;
+
+	const { data, error } = await supabase.rpc('claim_progress', { p_old_key: old });
+	if (error) return 0;
+	return (data as number) ?? 0;
+}

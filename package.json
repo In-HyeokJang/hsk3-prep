@@ -1,0 +1,19 @@
+{
+  "name": "hsk3-prep",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "HSK 3급 단어 사이트 · 데이터베이스 준비 도구 (사이트는 web/ 안에 있습니다)",
+  "scripts": {
+    "db:push": "node scripts/db-push.mjs",
+    "db:seed": "node scripts/db-seed.mjs",
+    "db:check": "node scripts/db-check.mjs",
+    "db:all": "npm run db:push && npm run db:seed && npm run db:check",
+    "env:sync": "node scripts/env-sync.mjs",
+    "dev": "npm --prefix web run dev",
+    "build": "npm --prefix web run build"
+  },
+  "dependencies": {
+    "pg": "^8.13.0"
+  }
+}

@@ -1,0 +1,874 @@
+hsk_id,hanzi,pinyin,pos,level,meaning_ko,topic,example_zh,example_pinyin,example_ko,meaning_en,frequency
+L3-0101,重,chóng,Adv,3,,,,,,to repeat; repetition; again; re-,608
+L3-0102,初,chū,Adv,3,,,,,,at first; (at the) beginning; first; junior,1869
+L3-0103,初（初一）,chū (chūyī),Prefix,3,,,,,,,
+L3-0104,初步,chūbù,Adj,3,,,,,,initial; preliminary; tentative,4719
+L3-0105,初级,chūjí,Adj,3,,,,,,junior; primary,10185
+L3-0106,初中,chūzhōng,N,3,,,,,,junior high school (abbr. for 初级中学),7208
+L3-0107,除了,chúle,Prep,3,,,,,,besides; apart from (... also...); in addition to; except (for),638
+L3-0108,处理,chǔlǐ,V/N,3,,,,,,to handle; to deal with; to punish; to treat sth by a special process; to process; to sell at reduced prices,525
+L3-0109,传,chuán,V,3,,,,,,to pass on; to spread; to transmit; to infect,1294
+L3-0110,传播,chuánbō,V,3,,,,,,to disseminate; to propagate; to spread,3790
+L3-0111,传来,chuánlái,,3,,,,,,(of a sound) to come through; to be heard; (of news) to arrive,5133
+L3-0112,传说,chuánshuō,V/N,3,,,,,,legend; folk tale; to repeat from mouth to mouth; they say that...,3138
+L3-0113,创新,chuàngxīn,V/N,3,,,,,,to bring forth new ideas; to blaze new trails; innovation,4749
+L3-0114,创业,chuàngyè,V,3,,,,,,to begin an undertaking; to start a major task; to initiate; to venture,10754
+L3-0115,创造,chuàngzào,V/N,3,,,,,,to create; to bring about; to produce; to set (a record),1476
+L3-0116,创作,chuàngzuò,V/N,3,,,,,,to create; to produce; to write; creative work,3475
+L3-0117,从来,cónglái,Adv,3,,,,,,always; at all times; never (if used in negative sentence),1222
+L3-0118,从前,cóngqián,N,3,,,,,,previously; formerly; once upon a time,5145
+L3-0119,从事,cóngshì,V,3,,,,,,to go for; to engage in; to undertake; to deal with,3339
+L3-0120,村,cūn,N,3,,,,,,village,2435
+L3-0121,存,cún,V,3,,,,,,to exist; to deposit; to store; to keep,2114
+L3-0122,存在,cúnzài,V,3,,,,,,to exist; to be; existence,621
+L3-0123,错误,cuòwù,Adj/N,3,,,,,,mistaken; false; wrong; error; mistake,1305
+L3-0124,达到,dádào,,3,,,,,,to reach; to achieve; to attain,1234
+L3-0125,打破,dǎpò,,3,,,,,,to break; to smash,3158
+L3-0126,打听,dǎting,V,3,,,,,,to ask about; to make some inquiries; to ask around,7507
+L3-0127,大概,dàgài,Adj/Adv,3,,,,,,roughly; probably; rough; approximate,1611
+L3-0128,大使馆,dàshǐguǎn,N,3,,,,,,embassy,11530
+L3-0129,大约,dàyuē,Adv,3,,,,,,approximately; probably,2186
+L3-0130,大夫,dàifu,N,3,,,,,,doctor; physician,6248
+L3-0131,代,dài,V/N,3,,,,,,to substitute; to act on behalf of others; to replace; generation,1458
+L3-0132,代表,dàibiǎo,N/V,3,,,,,,representative; delegate; to represent; to stand for,644
+L3-0133,代表团,dàibiǎotuán,N,3,,,,,,delegation,12795
+L3-0134,带动,dàidòng,V,3,,,,,,to spur; to provide impetus; to drive,12235
+L3-0135,带领,dàilǐng,V,3,,,,,,to guide; to lead,4056
+L3-0136,单元,dānyuán,N,3,,,,,,unit (forming an entity); element; (in a residential building) entrance or staircase,7926
+L3-0137,当初,dāngchū,N,3,,,,,,at that time; originally,2878
+L3-0138,当地,dāngdì,N,3,,,,,,local,1609
+L3-0139,当然,dāngrán,Adj/Adv,3,,,,,,only natural; as it should be; certainly; of course,423
+L3-0140,当中,dāngzhōng,N,3,,,,,,among; in the middle; in the center,2374
+L3-0141,刀,dāo,N,3,,,,,,surname Dao,1285
+L3-0142,导演,dǎoyǎn,V/N,3,,,,,,to direct; director (film etc),2109
+L3-0143,到达,dàodá,V,3,,,,,,to reach; to arrive,2131
+L3-0144,到底,dàodǐ,Adv,3,,,,,,finally; in the end; when all is said and done; after all,741
+L3-0145,得分,défēn,V/N,3,,,,,,to score,3694
+L3-0146,等待,děngdài,V,3,,,,,,to wait; to wait for,1567
+L3-0147,底下,dǐxia,N,3,,,,,,the location below sth; afterwards,5997
+L3-0148,地区,dìqū,N,3,,,,,,local; regional; district (not necessarily formal administrative unit); region,1123
+L3-0149,电视剧,diànshìjù,N,3,,,,,,TV series; TV drama,4222
+L3-0150,电视台,diànshìtái,N,3,,,,,,television station,3940
+L3-0151,电台,diàntái,N,3,,,,,,transmitter-receiver; broadcasting station; radio station,5542
+L3-0152,电子邮件,diànzǐ yóujiàn,,3,,,,,,email,9822
+L3-0153,调,diào,V,3,,,,,,to transfer; to move (troops or cadres); to investigate; to enquire into,1481
+L3-0154,调查,diàochá,V/N,3,,,,,,investigation; inquiry; to investigate; to survey,512
+L3-0155,订,dìng,V,3,,,,,,to agree; to conclude; to draw up; to subscribe to (a newspaper etc),2991
+L3-0156,定期,dìngqī,V/Adj,3,,,,,,at set dates; at regular intervals; periodic; limited to a fixed period of time,7535
+L3-0157,东部,dōngbù,N,3,,,,,,the east; eastern part,5067
+L3-0158,动力,dònglì,N,3,,,,,,motive power; force; (fig.) motivation; impetus,2740
+L3-0159,动人,dòngrén,Adj,3,,,,,,touching; moving,7579
+L3-0160,读者,dúzhě,N,3,,,,,,reader,4369
+L3-0161,短处,duǎnchù,N,3,,,,,,shortcoming; defect; fault; one's weak points,32713
+L3-0162,短裤,duǎnkù,N,3,,,,,,short pants; shorts,9325
+L3-0163,短期,duǎnqī,N,3,,,,,,short term; short-term,5844
+L3-0164,断,duàn,V,3,,,,,,to break; to snap; to cut off; to give up or abstain from sth,1707
+L3-0165,队员,duìyuán,N,3,,,,,,team member,1688
+L3-0166,对待,duìdài,V,3,,,,,,to treat; treatment,2429
+L3-0167,对方,duìfāng,N,3,,,,,,the other person; the other side; the other party,1158
+L3-0168,对手,duìshǒu,N,3,,,,,,opponent; rival; competitor; (well-matched) adversary,1603
+L3-0169,对象,duìxiàng,N,3,,,,,,target; object; partner; boyfriend; girlfriend,1912
+L3-0170,顿,dùn,M,3,,,,,,to stop; to pause; to arrange; to lay out,1617
+L3-0171,发表,fābiǎo,V,3,,,,,,to issue; to publish,1771
+L3-0172,发出,fāchū,V,3,,,,,,"to issue (an order, decree etc); to send out; to dispatch; to produce (a sound); to let out (a laugh)",1978
+L3-0173,发达,fādá,Adj,3,,,,,,well-developed; flourishing; to develop; to promote; to expand; (literary) to achieve fame and fortune; to prosper,5763
+L3-0174,发动,fādòng,V,3,,,,,,to start; to launch; to unleash; to mobilize,3090
+L3-0175,发明,fāmíng,V/N,3,,,,,,to invent; an invention,3943
+L3-0176,发生,fāshēng,V,3,,,,,,to happen; to occur; to take place; to break out,211
+L3-0177,发送,fāsòng,V,3,,,,,,to transmit; to dispatch; to issue (an official document or credential),4350
+L3-0178,发言,fāyán,V/N,3,,,,,,to make a speech; statement; utterance,4527
+L3-0179,发展,fāzhǎn,V/N,3,,,,,,development; growth; to develop; to grow,859
+L3-0180,反对,fǎnduì,V,3,,,,,,to oppose; to be against; to object to,1381
+L3-0181,反复,fǎnfù,Adv/N,3,,,,,,variant of 反复,4626
+L3-0182,反应,fǎnyìng,V/N,3,,,,,,to react; to respond; reaction; response,1118
+L3-0183,反正,fǎnzhèng,Adv,3,,,,,,anyway; in any case; to come over from the enemy's side,1968
+L3-0184,范围,fànwéi,N,3,,,,,,range; scope; limit; extent,1325
+L3-0185,方式,fāngshì,N,3,,,,,,way; manner; style; mode; pattern,513
+L3-0186,防,fáng,V,3,,,,,,to protect; to defend; to guard against; to prevent,2008
+L3-0187,防止,fángzhǐ,V,3,,,,,,to prevent; to guard against; to take precautions,3244
+L3-0188,房东,fángdōng,N,3,,,,,,landlord,9478
+L3-0189,房屋,fángwū,N,3,,,,,,house; building,3692
+L3-0190,房租,fángzū,N,3,,,,,,rent for a room or house,9307
+L3-0191,访问,fǎngwèn,V,3,,,,,,to visit; to call on; to interview,3182
+L3-0192,放到,fàngdào,,3,,,,,,Put in,3107
+L3-0193,飞行,fēixíng,V,3,,,,,,(of planes etc) to fly; flying; flight; aviation,2835
+L3-0194,费,fèi,V/N,3,,,,,,surname Fei,1997
+L3-0195,费用,fèiyong,N,3,,,,,,cost; expenditure; expense,2364
+L3-0196,分别,fēnbié,V/Adv,3,,,,,,to part; to leave each other; to distinguish; to tell apart; difference; distinction; in different ways; differently,2885
+L3-0197,分配,fēnpèi,V,3,,,,,,to distribute; to assign; to allocate; to partition (a hard drive),3851
+L3-0198,分组,fēn zǔ,,3,,,,,,to divide into groups; group (formed from a larger group); subgroup; (computer networking) packet,11653
+L3-0199,丰富,fēngfù,Adj,3,,,,,,to enrich; rich; plentiful; abundant,2739
+L3-0200,风险,fēngxiǎn,N,3,,,,,,risk; hazard,1705
+L3-0201,否定,fǒudìng,V/Adj,3,,,,,,to negate; to deny; to reject; negative (answer),6489
+L3-0202,否认,fǒurèn,V,3,,,,,,to declare to be untrue; to deny,3559
+L3-0203,服装,fúzhuāng,N,3,,,,,,dress; clothing; costume; clothes,2475
+L3-0204,福,fú,N,3,,,,,,surname Fu; abbr. for Fujian province 省,2845
+L3-0205,父母,fùmǔ,N,3,,,,,,father and mother; parents,891
+L3-0206,父亲,fùqīn,N,3,,,,,,father; also pr. [fù qin],817
+L3-0207,付,fù,V,3,,,,,,surname Fu,1840
+L3-0208,负责,fùzé,V/Adj,3,,,,,,to be in charge of; to take responsibility for; to be to blame; conscientious,876
+L3-0209,复印,fùyìn,V,3,,,,,,to photocopy; to duplicate a document,14608
+L3-0210,复杂,fùzá,Adj,3,,,,,,complicated; complex,1657
+L3-0211,富,fù,Adj,3,,,,,,surname Fu,3016
+L3-0212,改进,gǎijìn,V,3,,,,,,to improve; to make better; improvement,4265
+L3-0213,改造,gǎizào,V,3,,,,,,to transform; to reform; to remodel; to remold,3348
+L3-0214,概念,gàiniàn,N,3,,,,,,concept; idea,3465
+L3-0215,赶,gǎn,V,3,,,,,,to overtake; to catch up with; to hurry; to rush; to try to catch (the bus etc); to drive (cattle etc) forward; to drive (sb) away,2113
+L3-0216,赶到,gǎndào,,3,,,,,,to hurry (to some place),2860
+L3-0217,赶紧,gǎnjǐn,Adv,3,,,,,,hurriedly; without delay,1994
+L3-0218,赶快,gǎnkuài,Adv,3,,,,,,quickly; at once,2729
+L3-0219,敢,gǎn,V,3,,,,,,to dare; daring; (polite) may I venture,902
+L3-0220,感冒,gǎnmào,N/V,3,,,,,,to catch cold; (common) cold; (coll.) to be interested in (often used in the negative); (Tw) to detest,3621
+L3-0221,感情,gǎnqíng,N,3,,,,,,emotion; sentiment; affection; feelings between two persons,1257
+L3-0222,感受,gǎnshòu,N/V,3,,,,,,to sense; perception; to feel (through the senses); to experience,1286
+L3-0223,干吗,gànmá,Pron,3,,,,,,see 干嘛,5989
+L3-0224,高速,gāosù,Adj,3,,,,,,high speed; expressway (abbr. for 路),3638
+L3-0225,高速公路,gāosù gōnglù,,3,,,,,,expressway; highway; freeway,5363
+L3-0226,告别,gàobié,,3,,,,,,to leave; to part from; to bid farewell to; to say goodbye to,4591
+L3-0227,歌迷,gēmí,N,3,,,,,,fan of a singer,6912
+L3-0228,歌声,gēshēng,N,3,,,,,,singing voice; fig. original voice of a poet,6372
+L3-0229,歌手,gēshǒu,N,3,,,,,,singer,3028
+L3-0230,个人,gèrén,N,3,,,,,,individual; personal; oneself,636
+L3-0231,个性,gèxìng,N,3,,,,,,individuality; personality,2614
+L3-0232,各,gè,Pron/Adv,3,,,,,,each; every,1022
+L3-0233,各地,gèdì,N,3,,,,,,in all parts of (a country); various regions,3044
+L3-0234,各位,gèwèi,Pron,3,,,,,,"everybody; all (guests, colleagues etc); all of you",786
+L3-0235,各种,gèzhǒng,Pron,3,,,,,,every kind of; all kinds of; various,1510
+L3-0236,各自,gèzì,Pron,3,,,,,,each; respective; apiece,3398
+L3-0237,根本,gēnběn,Adv/Adj/N,3,,,,,,fundamental; basic; root; simply,591
+L3-0238,更加,gèngjiā,Adv,3,,,,,,more (than sth else); even more,1185
+L3-0239,工厂,gōngchǎng,N,3,,,,,,factory,2656
+L3-0240,工程师,gōngchéngshī,N,3,,,,,,engineer,5605
+L3-0241,工夫,gōngfu,N,3,,,,,,"period of time (may be months, or mere seconds); spare time; skill; labor",10723
+L3-0242,工具,gōngjù,N,3,,,,,,tool; instrument; utensil; means (to achieve a goal etc),2299
+L3-0243,工业,gōngyè,N,3,,,,,,industry,3316
+L3-0244,工资,gōngzī,N,3,,,,,,wages; pay,2532
+L3-0245,公布,gōngbù,V,3,,,,,,to announce; to make public; to publish,2655
+L3-0246,公共,gōnggòng,Adj,3,,,,,,public; common; communal,2356
+L3-0247,公开,gōngkāi,Adj/V,3,,,,,,open; overt; public; to make public; to release,1840
+L3-0248,公民,gōngmín,N,3,,,,,,citizen,2877
+L3-0249,公务员,gōngwùyuán,N,3,,,,,,functionary; office-bearer,8047
+L3-0250,功夫,gōngfu,N,3,,,,,,skill; art; kung fu; labor,3675
+L3-0251,功课,gōngkè,N,3,,,,,,homework; assignment; task; classwork,9040
+L3-0252,功能,gōngnéng,N,3,,,,,,function; capability,2138
+L3-0253,共同,gòngtóng,Adj,3,,,,,,common; joint; jointly; together,1623
+L3-0254,共有,gòngyǒu,V,3,,,,,,to have altogether; in all,5958
+L3-0255,姑娘,gūniang,N,3,,,,,,girl; young woman; young lady; daughter,1474
+L3-0256,古,gǔ,Adj,3,,,,,,surname Gu,2558
+L3-0257,古代,gǔdài,N,3,,,,,,ancient times,6123
+L3-0258,故乡,gùxiāng,N,3,,,,,,home; homeland; native place,9198
+L3-0259,挂,guà,V,3,,,,,,to hang or suspend (from a hook etc); to hang up (the phone); (of a line) to be dead; to be worried or concerned,1092
+L3-0260,关系,guānxì,N/V,3,,,,,,relation; relationship; to concern; to affect,318
+L3-0261,关注,guānzhù,V,3,,,,,,to pay attention to; to follow sth closely; to follow (on social media); concern,1125
+L3-0262,观察,guānchá,V,3,,,,,,to observe; to watch; to survey,1708
+L3-0263,观看,guānkàn,V,3,,,,,,to watch; to view,3644
+L3-0264,观念,guānniàn,N,3,,,,,,notion; thought; concept; sense,4558
+L3-0265,观众,guānzhòng,N,3,,,,,,spectators; audience; visitors (to an exhibition etc),1260
+L3-0266,管,guǎn,V,3,,,,,,variant of 管,545
+L3-0267,管理,guǎnlǐ,V,3,,,,,,to supervise; to manage; to administer; management,1202
+L3-0268,光,guāng,Adv/N/Adj,3,,,,,,light; ray; bright; shiny; only; merely; used up; finished,800
+L3-0269,光明,guāngmíng,Adj/N,3,,,,,,light; radiance; (fig.) bright (prospects etc); openhearted,5030
+L3-0270,广播,guǎngbō,V/N,3,,,,,,broadcast; broadcasting; to broadcast; (formal) to propagate,3320
+L3-0271,广大,guǎngdà,Adj,3,,,,,,(of an area) vast or extensive; large-scale; widespread; (of people) numerous,9553
+L3-0272,规定,guīdìng,V/N,3,,,,,,to stipulate; to specify; to prescribe; to fix (a price); to set (a quota); regulations; rules; provisions; stipulations,1151
+L3-0273,规范,guīfàn,Adj/N/V,3,,,,,,norm; standard; specification; regulation,6609
+L3-0274,国内,guó nèi,,3,,,,,,domestic; internal (to a country); civil,3134
+L3-0275,国庆,guóqìng,N,3,,,,,,National Day,13274
+L3-0276,果然,guǒrán,Adv,3,,,,,,really; sure enough; as expected; if indeed,3104
+L3-0277,果汁,guǒzhī,N,3,,,,,,fruit juice,7765
+L3-0278,过程,guòchéng,N,3,,,,,,course of events; process,1002
+L3-0279,过去,guòqù,N,3,,,,,,(in the) past; former; previous; to go over,353
+L3-0280,哈哈,hāhā,Phonetic,3,,,,,,(onom.) laughing out loud,1389
+L3-0281,海关,hǎiguān,N,3,,,,,,customs (i.e. border crossing inspection),7955
+L3-0282,害怕,hàipà,,3,,,,,,to be afraid; to be scared,1536
+L3-0283,行,háng,M,3,,,,,,row; line; commercial firm; line of business,272
+L3-0284,好好,hǎohǎo,Adj/Adv,3,,,,,,well; carefully; nicely; properly,752
+L3-0285,好奇,hàoqí,Adj,3,,,,,,inquisitive; curious; inquisitiveness; curiosity,3798
+L3-0286,合,hé,V,3,,,,,,to close; to join; to fit; to be equal to,1643
+L3-0287,合法,héfǎ,Adj,3,,,,,,lawful; legitimate; legal,2570
+L3-0288,合格,hégé,Adj,3,,,,,,to meet the standard required; qualified; eligible (voter etc),5048
+L3-0289,合理,hélǐ,Adj,3,,,,,,rational; reasonable; sensible; fair,1935
+L3-0290,合作,hézuò,V,3,,,,,,to cooperate; to collaborate; to work together; cooperation,668
+L3-0291,和平,hépíng,N,3,,,,,,"Heping District of Shenyang city 沈阳市, Liaoning; Heping or Hoping Township in Taichung County 台中县, Taiwan",1750
+L3-0292,红茶,hóngchá,N,3,,,,,,black tea,21109
+L3-0293,红酒,hóngjiǔ,N,3,,,,,,red wine,1000000
+L3-0294,后果,hòuguǒ,N,3,,,,,,consequences; aftermath,3157
+L3-0295,后面,hòumiàn,N,3,,,,,,the back; the rear; the last bit; behind; near the end; at the back; later; afterwards,1300
+L3-0296,后年,hòunián,N,3,,,,,,the year after next,45713
+L3-0297,互联网,hùliánwǎng,N,3,,,,,,Internet,4872
+L3-0298,互相,hùxiāng,Adv,3,,,,,,each other; mutually; mutual,2091
+L3-0299,划船,huáchuán,V,3,,,,,,to row a boat; rowing boat; rowing (sport),21694
+L3-0300,华人,huárén,N,3,,,,,,ethnic Chinese person or people,14189
+L3-0301,化（现代化）,huà (xiàndàihuà),Suffix,3,,,,,,,
+L3-0302,话剧,huàjù,N,3,,,,,,stage play; modern drama,11486
+L3-0303,话题,huàtí,N,3,,,,,,subject (of a talk or conversation); topic,2557
+L3-0304,欢乐,huānlè,Adj,3,,,,,,gaiety; gladness; glee; merriment,3660
+L3-0305,环,huán,N,3,,,,,,surname Huan,2712
+L3-0306,环保,huánbǎo,N/Adj,3,,,,,,environmental protection; environmentally friendly; abbr. for 环境保护,4327
+L3-0307,环境,huánjìng,N,3,,,,,,environment; circumstances; surroundings; ambient,1171
+L3-0308,会议,huìyì,N,3,,,,,,meeting; conference,928
+L3-0309,会员,huìyuán,N,3,,,,,,member,4022
+L3-0310,活,huó,Adj/V,3,,,,,,to live; alive; living; work,556
+L3-0311,火,huǒ,N,3,,,,,,surname Huo,1181
+L3-0312,机器,jīqì,N,3,,,,,,machine,2625
+L3-0313,积极,jījí,Adj,3,,,,,,active; energetic; vigorous; positive (outlook),2212
+L3-0314,基本,jīběn,Adj,3,,,,,,basic; fundamental; main; elementary,1095
+L3-0315,基本上,jīběnshàng,Adv,3,,,,,,basically; on the whole,3705
+L3-0316,基础,jīchǔ,N,3,,,,,,base; foundation; basis; basic; fundamental,2135
+L3-0317,及时,jíshí,Adj,3,,,,,,timely; at the right time; promptly; without delay,2280
+L3-0318,…极了,…jí le,,3,,,,,,,
+L3-0319,集体,jítǐ,N,3,,,,,,collective (decision); joint (effort); a group; a team,3804
+L3-0320,集中,jízhōng,V/Adj,3,,,,,,to concentrate; to centralize; to focus; centralized,1271
+L3-0321,计算,jìsuàn,V,3,,,,,,to count; to calculate; to compute,2980
+L3-0322,记录,jìlù,N/V,3,,,,,,to record; record (written account); note-taker; record (in sports etc),1305
+L3-0323,记者,jìzhě,N,3,,,,,,reporter; journalist,844
+L3-0324,纪录,jìlù,N,3,,,,,,"variant of 记录 (but in Taiwan, not for the verb sense ""to record"")",3694
+L3-0325,纪念,jìniàn,V/N,3,,,,,,to commemorate; to honor the memory of; memento; keepsake; souvenir,2842
+L3-0326,技术,jìshù,N,3,,,,,,technology; technique; skill,758
+L3-0327,继续,jìxù,V,3,,,,,,to continue; to proceed with; to go on with,285
+L3-0328,加工,jiāgōng,,3,,,,,,to process; processing; working (of machinery),6286
+L3-0329,加快,jiākuài,V,3,,,,,,to accelerate; to speed up,3846
+L3-0330,加强,jiāqiáng,V,3,,,,,,to reinforce; to strengthen; to enhance,3019
+L3-0331,家具,jiājù,N,3,,,,,,furniture,4188
+L3-0332,家属,jiāshǔ,N,3,,,,,,family member; (family) dependent,5115
+L3-0333,家乡,jiāxiāng,N,3,,,,,,hometown; native place,4334
+L3-0334,价格,jiàgé,N,3,,,,,,price,1783
+L3-0335,价钱,jiàqián,N,3,,,,,,price,5854
+L3-0336,价值,jiàzhí,N,3,,,,,,"value; worth; fig. values (ethical, cultural etc)",1136
+L3-0337,架,jià,M/N/V,3,,,,,,to support; frame; rack; framework,1375
+L3-0338,坚持,jiānchí,V,3,,,,,,to persevere with; to persist in; to insist on,751
+L3-0339,坚决,jiānjué,Adj,3,,,,,,firm; resolute; determined,5120
+L3-0340,坚强,jiānqiáng,Adj,3,,,,,,staunch; strong,2557
+L3-0341,简单,jiǎndān,Adj,3,,,,,,simple; not complicated,726
+L3-0342,简直,jiǎnzhí,Adv,3,,,,,,simply; really,1797
+L3-0343,建,jiàn,V,3,,,,,,to establish; to found; to set up; to build,1679
+L3-0344,建成,jiànchéng,,3,,,,,,to establish; to build,7497
+L3-0345,建立,jiànlì,V,3,,,,,,to establish; to set up; to found,1182
+L3-0346,建设,jiànshè,V/N,3,,,,,,to build; to construct; to establish; to develop; to institute,4276
+L3-0347,建议,jiànyì,V/N,3,,,,,,to propose; to suggest; to recommend; proposal; suggestion; recommendation,782
+L3-0348,将近,jiāngjìn,Adv,3,,,,,,almost; nearly; close to,7225
+L3-0349,将来,jiānglái,N,3,,,,,,in the future; future; the future,2601
+L3-0350,交费,jiāofèi,V,3,,,,,,to pay a fee,24178
+L3-0351,交警,jiāojǐng,N,3,,,,,,traffic police (abbr. for 察),12361
+L3-0352,交流,jiāoliú,V/N,3,,,,,,to exchange; exchange; communication; interaction,1828
+L3-0353,交往,jiāowǎng,V,3,,,,,,to associate (with); to have contact (with); to hang out (with); to date,3394
+L3-0354,交易,jiāoyì,N,3,,,,,,to deal; to trade; to transact; transaction; deal,880
+L3-0355,叫,jiào,Prep,3,,,,,,to shout; to call; to order; to ask,200
+L3-0356,较,jiào,Adv,3,,,,,,to compare; to dispute; compared to; (before adj.) relatively,2836
+L3-0357,教材,jiàocái,N,3,,,,,,teaching material,16199
+L3-0358,教练,jiàoliàn,N,3,,,,,,instructor; sports coach; trainer,1838
+L3-0359,结实,jiēshi,Adj,3,,,,,,rugged; sturdy; strong; durable,10419
+L3-0360,接待,jiēdài,V,3,,,,,,to receive (a visitor); to admit (allow sb to enter),5407
+L3-0361,接近,jiējìn,V,3,,,,,,to approach; to get close to,1720
+L3-0362,节约,jiéyuē,V,3,,,,,,to economize; to conserve (resources); economy; frugal,7912
+L3-0363,结合,jiéhé,V,3,,,,,,to combine; to link; to integrate; binding,2371
+L3-0364,结婚,jiéhūn,,3,,,,,,to marry; to get married,982
+L3-0365,结束,jiéshù,V,3,,,,,,termination; to finish; to end; to conclude,498
+L3-0366,解决,jiějué,V,3,,,,,,"to solve; to resolve; to settle (a problem); to eliminate; to wipe out (an enemy, bandits etc)",458
+L3-0367,解开,jiěkāi,,3,,,,,,to untie; to undo; to solve (a mystery),7102
+L3-0368,金,jīn,N,3,,,,,,surname Jin; surname Kim (Korean); Jurchen Jin dynasty (1115-1234),828
+L3-0369,金牌,jīnpái,N,3,,,,,,gold medal,5592
+L3-0370,仅,jǐn,Adv,3,,,,,,barely; only; merely,1086
+L3-0371,仅仅,jǐnjǐn,Adv,3,,,,,,barely; only; merely; only (this and nothing more),2128
+L3-0372,尽量,jǐnliàng,Adv,3,,,,,,as much as possible; to the greatest extent,2279
+L3-0373,紧,jǐn,Adj,3,,,,,,tight; strict; close at hand; near,1601
+L3-0374,紧急,jǐnjí,Adj,3,,,,,,urgent; emergency,2072
+L3-0375,紧张,jǐnzhāng,Adj,3,,,,,,nervous; keyed up; intense; tense,1073
+L3-0376,进步,jìnbù,V/Adj,3,,,,,,progress; improvement; to improve; to progress,2425
+L3-0377,进一步,jìnyībù,Adv,3,,,,,,"to go a step further; (develop, understand, improve etc) more; further",1996
+L3-0378,进展,jìnzhǎn,V,3,,,,,,to make headway; to make progress,2151
+L3-0379,近期,jìnqī,N,3,,,,,,near in time; in the near future; very soon; recent,6658
+L3-0380,京剧,jīngjù,N,3,,,,,,Beijing opera,40061
+L3-0381,经济,jīngjì,N/Adj,3,,,,,,economy; economic,1376
+L3-0382,经历,jīnglì,V/N,3,,,,,,experience; to experience; to go through,1047
+L3-0383,经验,jīngyàn,N,3,,,,,,experience; to experience,1269
+L3-0384,经营,jīngyíng,V,3,,,,,,to engage in (business etc); to run; to operate,1867
+L3-0385,精彩,jīngcǎi,Adj,3,,,,,,wonderful; marvelous; brilliant,1320
+L3-0386,精神,jīngshén,N,3,,,,,,spirit; mind; consciousness; thought,640
+L3-0387,精神,jīngshen,Adj/N,3,,,,,,vigor; vitality; drive; spiritual,640
+L3-0388,景色,jǐngsè,N,3,,,,,,scenery; scene; landscape; view,8954
+L3-0389,警察,jǐngchá,N,3,,,,,,police; police officer,1128
+L3-0390,静,jìng,Adj/V,3,,,,,,still; calm; quiet; not moving,3112
+L3-0391,久,jiǔ,Adj,3,,,,,,(long) time; (long) duration of time,1103
+L3-0392,旧,jiù,Adj,3,,,,,,old; opposite: new 新; former; worn (with age),1787
+L3-0393,救,jiù,V,3,,,,,,variant of 救,1217
+L3-0394,就是,jiùshì,Conj,3,,,,,,exactly; precisely; only; simply; just; (used correlatively with 也) even; even if,113
+L3-0395,就业,jiùyè,,3,,,,,,to get a job; employment,7863
+L3-0396,举办,jǔbàn,V,3,,,,,,to conduct; to hold,2669
+L3-0397,具体,jùtǐ,Adj,3,,,,,,concrete; definite; specific,1638
+L3-0398,具有,jùyǒu,V,3,,,,,,to have; to possess,1749
+L3-0399,剧场,jùchǎng,N,3,,,,,,theater,7765
+L3-0400,据说,jùshuō,V,3,,,,,,it is said that; reportedly,3486
+L3-0401,决定,juédìng,V/N,3,,,,,,to decide (to do something); to resolve; decision; certainly,366
+L3-0402,决赛,juésài,V/N,3,,,,,,finals (of a competition),2326
+L3-0403,决心,juéxīn,N/V,3,,,,,,determination; resolution; determined; firm and resolute,4092
+L3-0404,绝对,juéduì,Adv,3,,,,,,absolute; unconditional,744
+L3-0405,咖啡,kāfēi,N,3,,,,,,coffee (loanword),1698
+L3-0406,开发,kāifā,V,3,,,,,,to exploit (a resource); to open up (for development); to develop,2981
+L3-0407,开放,kāifàng,V,3,,,,,,to bloom; to open; to be open (to the public); to open up (to the outside),3036
+L3-0408,开始,kāishǐ,V/N,3,,,,,,to begin; beginning; to start; initial,132
+L3-0409,开业,kāiyè,,3,,,,,,to open a business; to open a practice; open (for business),7802
+L3-0410,开展,kāizhǎn,V,3,,,,,,to launch; to develop; to unfold; (of an exhibition etc) to open,6041
+L3-0411,看起来,kàn qǐlái,,3,,,,,,seemingly; apparently; looks as if; appear to be,3085
+L3-0412,看上去,kàn shàngqù,,3,,,,,,it would appear; it seems (that),2674
+L3-0413,考验,kǎoyàn,V,3,,,,,,to test; to put to the test; trial; ordeal,3850
+L3-0414,科技,kējì,N,3,,,,,,science and technology,2094
+L3-0415,可靠,kěkào,Adj,3,,,,,,reliable,4079
+L3-0416,可乐,kělè,N,3,,,,,,amusing; entertaining; (loanword) cola,6636
+L3-0417,克服,kèfú,V,3,,,,,,(try to) overcome (hardships etc); to conquer; to put up with; to endure,4119
+L3-0418,客观,kèguān,Adj,3,,,,,,objective; impartial,5447
+L3-0419,课程,kèchéng,N,3,,,,,,course; academic program,3080
+L3-0420,空,kōng,Adj/Adv,3,,,,,,empty; air; sky; in vain,1345
+L3-0421,空调,kōngtiáo,N,3,,,,,,air conditioning; air conditioner (including units that have a heating mode),4763
+L3-0422,恐怕,kǒngpà,Adv,3,,,,,,fear; to dread; I'm afraid that...; perhaps,2245
+L3-0423,空儿,kòngr,N,3,,,,,,spare time; free time,34728
+L3-0424,裤子,kùzi,N,3,,,,,,"variant of 裤子, trousers; pants",3765
+L3-0425,快速,kuàisù,Adj,3,,,,,,fast; high-speed; rapid,2309
+L3-0426,困,kùn,Adj/V,3,,,,,,to trap; to surround; hard-pressed; stranded,1868
+L3-0427,困难,kùnnan,N/Adj,3,,,,,,difficult; challenging; straitened circumstances; difficult situation,1141
+L3-0428,浪费,làngfèi,V,3,,,,,,to waste; to squander,1924
+L3-0429,老百姓,lǎobǎixìng,N,3,,,,,,"ordinary people; the ""person in the street""",7618
+L3-0430,老板,lǎobǎn,N,3,,,,,,variant of 老板,1185
+L3-0431,老太太,lǎotàitai,N,3,,,,,,elderly lady (respectful); esteemed mother,7407
+L3-0432,老头儿,lǎotóur,N,3,,,,,,see 老头子,21642
+L3-0433,乐,lè,V,3,,,,,,surname Le,1572
+L3-0434,乐观,lèguān,Adj,3,,,,,,optimistic; hopeful,4002
+L3-0435,类,lèi,N/M,3,,,,,,kind; type; class; category,1096
+L3-0436,类似,lèisì,V/Adj,3,,,,,,similar; analogous,2276
+L3-0437,离婚,líhūn,,3,,,,,,to divorce,2723
+L3-0438,里面,lǐmiàn,N,3,,,,,,inside; interior; also pr. [lǐ mian],648
+L3-0439,理发,lǐfà,,3,,,,,,to get a haircut; to have one's hair done; to cut (sb's) hair; to give (sb) a haircut,13406
+L3-0440,理解,lǐjiě,V,3,,,,,,to comprehend; to understand,884
+L3-0441,理论,lǐlùn,N,3,,,,,,theory; to argue; to take notice of,1462
+L3-0442,理由,lǐyóu,N,3,,,,,,reason; grounds; justification,1280
+L3-0443,力,lì,N,3,,,,,,surname Li,851
+L3-0444,力量,lìliàng,N,3,,,,,,power; force; strength,900
+L3-0445,立刻,lìkè,Adv,3,,,,,,forthwith; immediate; prompt; promptly,1875
+L3-0446,利用,lìyòng,V,3,,,,,,to exploit; to make use of; to use; to take advantage of,766
+L3-0447,连,lián,V/Adv,3,,,,,,surname Lian,406
+L3-0448,连忙,liánmáng,Adv,3,,,,,,promptly; at once,50741
+L3-0449,连续,liánxù,V,3,,,,,,continuous; in a row; serial; consecutive,2315
+L3-0450,连续剧,liánxùjù,N,3,,,,,,serialized drama; dramatic series; show in parts,14541
+L3-0451,联合,liánhé,V,3,,,,,,to combine; to join; unite; alliance,2190
+L3-0452,联合国,Liánhéguó,N,3,,,,,,United Nations,4037
+L3-0453,联系,liánxì,V/N,3,,,,,,variant of 联系,667
+L3-0454,凉水,liángshuǐ,N,3,,,,,,cool water; unboiled water,25250
+L3-0455,了,liǎo,V,3,,,,,,to finish; to achieve; variant of 了; to understand clearly,3
+L3-0456,领,lǐng,V,3,,,,,,neck; collar; to lead; to receive,2044
+L3-0457,领导,lǐngdǎo,V/N,3,,,,,,lead; leading; to lead; leadership,1433
+L3-0458,领先,lǐngxiān,,3,,,,,,to lead; to be in front,2791
+L3-0459,另外,lìngwài,Pron/Adv/Conj,3,,,,,,additional; in addition; besides; separate,725
+L3-0460,另一方面,lìng yīfāngmiàn,,3,,,,,,on the other hand; another aspect,4851
+L3-0461,留学,liúxué,,3,,,,,,to study abroad,15630
+L3-0462,龙,lóng,N,3,,,,,,surname Long,1547
+L3-0463,录,lù,V,3,,,,,,to carve wood,2200
+L3-0464,录音,lùyīn,V/N,3,,,,,,to record (sound); sound recording,5402
+L3-0465,路线,lùxiàn,N,3,,,,,,itinerary; route; political line (e.g. right revisionist road),2824
+L3-0466,旅馆,lǚguǎn,N,3,,,,,,hotel,5705
+L3-0467,旅行社,lǚxíngshè,N,3,,,,,,travel agency,11103
+L3-0468,绿茶,lǜchá,N,3,,,,,,green tea; (slang) (of a girl) seemingly innocent and charming but actually calculating and manipulative; a girl who has these qualities,15567
+L3-0469,乱,luàn,Adj,3,,,,,,in confusion or disorder; in a confused state of mind; disorder; upheaval,1206
+L3-0470,落后,luòhòu,,3,,,,,,to fall behind; to lag (in technology etc); backward; to retrogress,3824
+L3-0471,麻烦,máfan,V/Adj,3,,,,,,trouble; inconvenience; inconvenient; troublesome; annoying; to bother sb; to put sb to trouble,1492
+L3-0472,马,mǎ,N,3,,,,,,surname Ma; abbr. for Malaysia 马来西亚,605
+L3-0473,满足,mǎnzú,V,3,,,,,,to satisfy; to meet (the needs of); satisfied; content,1555
+L3-0474,慢慢,mànmàn,,3,,,,,,slowly,1664
+L3-0475,毛,máo,N,3,,,,,,surname Mao,1319
+L3-0476,毛病,máobìng,N,3,,,,,,fault; defect; shortcomings; ailment,4966
+L3-0477,没用,méiyòng,V,3,,,,,,useless,4841
+L3-0478,媒体,méitǐ,N,3,,,,,,"media, esp. news media",1246
+L3-0479,每,měi,Pron/Adv,3,,,,,,each; every,340
+L3-0480,美,měi,Adj,3,,,,,,(bound form) the Americas (abbr. for 洲); (bound form) USA (abbr. for 美国),343
+L3-0481,美好,měihǎo,Adj,3,,,,,,beautiful; fine,1500
+L3-0482,美丽,měilì,Adj,3,,,,,,beautiful,1262
+L3-0483,美食,měishí,N,3,,,,,,culinary delicacy; fine food; gourmet food,6046
+L3-0484,美术,měishù,N,3,,,,,,art; fine arts; painting,9170
+L3-0485,美元,měiyuán,N,3,,,,,,American dollar; US dollar,516
+L3-0486,迷,mí,V,3,,,,,,to bewilder; crazy about; fan; enthusiast,2123
+L3-0487,米,mǐ,N,3,,,,,,surname Mi,663
+L3-0488,面对,miànduì,V,3,,,,,,to face; to confront,973
+L3-0489,面积,miànjī,N,3,,,,,,"area (of a floor, piece of land etc); surface area; tract of land",6252
+L3-0490,民间,mínjiān,N,3,,,,,,among the people; popular; folk; non-governmental,7015
+L3-0491,民族,mínzú,N,3,,,,,,nationality; ethnic group,3724
+L3-0492,明确,míngquè,Adj/V,3,,,,,,clear-cut; definite; explicit; to clarify; to specify; to make definite,2369
+L3-0493,明显,míngxiǎn,Adj,3,,,,,,clear; distinct; obvious,710
+L3-0494,命运,mìngyùn,N,3,,,,,,fate; destiny,2268
+L3-0495,某,mǒu,Pron,3,,,,,,some; a certain; sb or sth indefinite; such-and-such,913
+L3-0496,母亲,mǔqīn,N,3,,,,,,mother; also pr. [mǔ qin],983
+L3-0497,木头,mùtou,N,3,,,,,,"slow-witted; blockhead; log (of wood, timber etc)",8812
+L3-0498,目标,mùbiāo,N,3,,,,,,target; goal; objective,657
+L3-0499,目前,mùqián,N,3,,,,,,at the present time; currently,603
+L3-0500,奶茶,nǎichá,N,3,,,,,,milk tea,20075
+L3-0501,男子,nánzǐ,N,3,,,,,,a man; a male,2377
+L3-0502,南部,nánbù,N,3,,,,,,southern part,4773
+L3-0503,难道,nándào,Adv,3,,,,,,don't tell me ...; could it be that...?,1147
+L3-0504,难度,nándù,N,3,,,,,,degree of difficulty,4295
+L3-0505,内,nèi,N,3,,,,,,inside; inner; internal; within,319
+L3-0506,内容,nèiróng,N,3,,,,,,content; substance; details,1246
+L3-0507,内心,nèixīn,N,3,,,,,,heart; innermost being; (math.) incenter,1974
+L3-0508,能不能,néng bu néng,,3,,,,,,Can you,3153
+L3-0509,能力,nénglì,N,3,,,,,,capability; ability,534
+L3-0510,年初,niánchū,N,3,,,,,,beginning of the year,18414
+L3-0511,年代,niándài,N,3,,,,,,a decade of a century (e.g. the Sixties); age; era; period,1430
+L3-0512,年底,niándǐ,N,3,,,,,,the end of the year; year-end,12203
+L3-0513,年纪,niánjì,N,3,,,,,,age,3247
+L3-0514,念,niàn,V,3,,,,,,"variant of 念, to read aloud",2410
+L3-0515,牛,niú,N,3,,,,,,surname Niu,1148
+L3-0516,农村,nóngcūn,N,3,,,,,,rural area; village,8305
+L3-0517,农民,nóngmín,N,3,,,,,,peasant; farmer,3710
+L3-0518,农业,nóngyè,N,3,,,,,,agriculture; farming,6155
+L3-0519,女子,nǚzǐ,N,3,,,,,,woman; female,2271
+L3-0520,暖和,nuǎnhuo,Adj,3,,,,,,warm; nice and warm,8118
+L3-0521,怕,pà,Adv,3,,,,,,surname Pa,899
+L3-0522,拍,pāi,V,3,,,,,,to pat; to clap; to slap; to swat,567
+L3-0523,排,pái,V,3,,,,,,a row; a line; to set in order; to arrange,1188
+L3-0524,排名,páimíng,,3,,,,,,"to rank (1st, 2nd etc); ranking",4870
+L3-0525,牌子,páizi,N,3,,,,,,sign; trademark; brand,5484
+L3-0526,派,pài,V/N,3,,,,,,clique; school; group; faction,751
+L3-0527,判断,pànduàn,V/N,3,,,,,,to judge; to determine; judgment,2480
+L3-0528,胖,pàng,Adj,3,,,,,,fat; plump,2396
+L3-0529,跑步,pǎobù,,3,,,,,,to run; to jog; (military) to march at the double,7199
+L3-0530,配,pèi,V,3,,,,,,to join; to fit; to mate; to mix,1557
+L3-0531,配合,pèihé,V,3,,,,,,matching; fitting in with; compatible with; to correspond,2349
+L3-0532,批评,pīpíng,V,3,,,,,,to criticize; criticism,3504
+L3-0533,批准,pīzhǔn,V,3,,,,,,to approve; to ratify,2614
+L3-0534,皮,pí,N,3,,,,,,surname Pi,1409
+L3-0535,皮包,píbāo,N,3,,,,,,handbag; briefcase,14469
+L3-0536,啤酒,píjiǔ,N,3,,,,,,beer (loanword),2622
+L3-0537,票价,piàojià,N,3,,,,,,ticket price; fare; admission fee,13687
+L3-0538,评价,píngjià,V/N,3,,,,,,to evaluate; to assess,2119
+L3-0539,苹果,píngguǒ,N,3,,,,,,apple,2562
+L3-0540,破,pò,Adj/V,3,,,,,,broken; damaged; worn out; lousy,1272
+L3-0541,破坏,pòhuài,V,3,,,,,,destruction; damage; to wreck; to break,1527
+L3-0542,普遍,pǔbiàn,Adj,3,,,,,,universal; general; widespread; common,5800
+L3-0543,普及,pǔjí,V/Adj,3,,,,,,to spread extensively; to generalize; widespread; popular,17888
+L3-0544,期,qī,M,3,,,,,,variant of 期; period; cycle,1473
+L3-0545,齐,qí,Adj/V,3,,,,,,(name of states and dynasties at several different periods); surname Qi,2763
+L3-0546,其次,qícì,Pron,3,,,,,,next; secondly,3998
+L3-0547,其实,qíshí,Adv,3,,,,,,actually; in fact; really,405
+L3-0548,奇怪,qíguài,Adj,3,,,,,,strange; odd; to marvel; to be baffled,1655
+L3-0549,气候,qìhòu,N,3,,,,,,(meteorology) climate; (fig.) climate; prevailing conditions (in human affairs),6570
+L3-0550,千万,qiānwàn,Adv,3,,,,,,ten million; countless; many; one must by all means,1708
+L3-0551,前后,qiánhòu,N,3,,,,,,around; from beginning to end; all around; front and rear,6275
+L3-0552,前进,qiánjìn,V,3,,,,,,to go forward; to forge ahead; to advance; onward,2618
+L3-0553,前面,qiánmiàn,N,3,,,,,,ahead; in front; preceding; above,1789
+L3-0554,前往,qiánwǎng,V,3,,,,,,to leave for; to proceed towards; to go to,2491
+L3-0555,强,qiáng,Adj,3,,,,,,surname Qiang,529
+L3-0556,强大,qiángdà,Adj,3,,,,,,large; formidable; powerful; strong,1814
+L3-0557,强调,qiángdiào,V,3,,,,,,to emphasize (a statement); to stress,3839
+L3-0558,强烈,qiángliè,Adj,3,,,,,,strong; intense,2212
+L3-0559,桥,qiáo,N,3,,,,,,bridge,2120
+L3-0560,巧,qiǎo,Adj,3,,,,,,opportunely; coincidentally; as it happens; skillful,4427
+L3-0561,亲,qīn,Adj,3,,,,,,parent; one's own (flesh and blood); relative; related,1044
+L3-0562,亲切,qīnqiè,Adj,3,,,,,,amiable; cordial; close and dear; familiar,6543
+L3-0563,亲人,qīnrén,N,3,,,,,,one's close relatives,4699
+L3-0564,亲自,qīnzì,Adv,3,,,,,,personally; in person; oneself,2353
+L3-0565,情感,qínggǎn,N,3,,,,,,feeling; emotion; to move (emotionally),2942
+L3-0566,情况,qíngkuàng,N,3,,,,,,circumstances; state of affairs; situation,245
+L3-0567,请教,qǐngjiào,V,3,,,,,,to ask for guidance; to consult,11806
+L3-0568,庆祝,qìngzhù,V,3,,,,,,to celebrate,2543
+L3-0569,球迷,qiúmí,N,3,,,,,,fan (ball sports),4097
+L3-0570,区,qū,N,3,,,,,,area; region; district; small,638
+L3-0571,区别,qūbié,N/V,3,,,,,,difference; to distinguish; to discriminate; to make a distinction,2566
+L3-0572,取消,qǔxiāo,V,3,,,,,,to cancel; cancellation,1880
+L3-0573,去世,qùshì,V,3,,,,,,to pass away; to die,3502
+L3-0574,全场,quánchǎng,N,3,,,,,,everyone present; the whole audience; across-the-board; unanimously,5847
+L3-0575,全面,quánmiàn,Adj,3,,,,,,all-around; comprehensive; total; overall,2552
+L3-0576,全球,quánqiú,N,3,,,,,,entire; total; global; the (whole) world,1858
+L3-0577,缺,quē,V,3,,,,,,deficiency; lack; scarce; vacant post,2448
+L3-0578,缺点,quēdiǎn,N,3,,,,,,weak point; fault; shortcoming; disadvantage,5178
+L3-0579,缺少,quēshǎo,V,3,,,,,,lack; shortage of; shortfall; to be short (of),4326
+L3-0580,确保,quèbǎo,V,3,,,,,,to ensure; to guarantee,1674
+L3-0581,确定,quèdìng,Adj/V,3,,,,,,definite; certain; fixed; to fix (on sth),651
+L3-0582,确实,quèshí,Adj/Adv,3,,,,,,indeed; really; reliable; real,850
+L3-0583,裙子,qúnzi,N,3,,,,,,skirt,5466
+L3-0584,群,qún,M,3,,,,,,variant of 群,1165
+L3-0585,热爱,rè'ài,V,3,,,,,,to love ardently; to adore,4185
+L3-0586,热烈,rèliè,Adj,3,,,,,,enthusiastic; ardent; warm,4022
+L3-0587,人才,réncái,N,3,,,,,,talent; talented person; looks; attractive looks,2673
+L3-0588,人工,réngōng,N/Adj,3,,,,,,artificial; manpower; manual work,5772
+L3-0589,人类,rénlèi,N,3,,,,,,humanity; human race; mankind,1038
+L3-0590,人民,rénmín,N,3,,,,,,the people,970
+L3-0591,人民币,rénmínbì,N,3,,,,,,Renminbi (RMB); Chinese Yuan (CNY),21641
+L3-0592,人群,rénqún,N,3,,,,,,crowd,2966
+L3-0593,人生,rénshēng,N,3,,,,,,life (one's time on earth),926
+L3-0594,人员,rényuán,N,3,,,,,,staff; crew; personnel,671
+L3-0595,认出,rènchū,,3,,,,,,recognition; to recognize,6504
+L3-0596,认得,rènde,V,3,,,,,,to recognize; to remember sth (or sb) on seeing it; to know,9203
+L3-0597,认可,rènkě,V,3,,,,,,to approve; approval; acknowledgment; OK,5077
+L3-0598,任,rèn,V,3,,,,,,to assign; to appoint; to take up a post; office,1943
+L3-0599,任,rèn,Conj,3,,,,,,to assign; to appoint; to take up a post; office,1943
+L3-0600,任何,rènhé,Pron,3,,,,,,any; whatever; whichever; whatsoever,356
+L3-0601,任务,rènwu,N,3,,,,,,mission; assignment; task; duty; role,664
+L3-0602,仍,réng,Adv,3,,,,,,still; yet; to remain; (literary) frequently; often,1050
+L3-0603,仍然,réngrán,Adv,3,,,,,,still; as before; yet,1029
+L3-0604,日常,rìcháng,Adj,3,,,,,,day-to-day; daily; everyday,5145
+L3-0605,容易,róngyì,Adj,3,,,,,,easy; straightforward; likely; liable to; apt to,664
+L3-0606,如何,rúhé,Pron,3,,,,,,how; what way; what,391
+L3-0607,散步,sànbù,,3,,,,,,to take a walk; to go for a walk,6153
+L3-0608,沙发,shāfā,N,3,,,,,,sofa (loanword); (Internet slang) the first reply or replier to a forum post,3832
+L3-0609,沙子,shāzi,N,3,,,,,,sand; grit,11546
+L3-0610,伤,shāng,V/N,3,,,,,,to injure; injury; wound,715
+L3-0611,伤心,shāngxīn,,3,,,,,,to grieve; to be broken-hearted; to feel deeply hurt,2543
+L3-0612,商品,shāngpǐn,N,3,,,,,,commodity; goods; merchandise,3735
+L3-0613,商业,shāngyè,N,3,,,,,,business; trade; commerce,2129
+L3-0614,上来,shànglái,,3,,,,,,to come up; to approach; (verb complement indicating success),3160
+L3-0615,上面,shàngmiàn,N,3,,,,,,on top of; above-mentioned; also pr. [shàng mian],1248
+L3-0616,上去,shàngqù,,3,,,,,,to go up,2127
+L3-0617,上升,shàngshēng,V,3,,,,,,to rise; to go up; to ascend,2810
+L3-0618,上衣,shàngyī,N,3,,,,,,jacket; upper outer garment,7489
+L3-0619,设备,shèbèi,N,3,,,,,,equipment; facilities; installations,1590
+L3-0620,设计,shèjì,V/N,3,,,,,,to design; to plan; design; plan,765
+L3-0621,设立,shèlì,V,3,,,,,,to set up; to establish,5179
+L3-0622,社会,shèhuì,N,3,,,,,,society,836
+L3-0623,身份证,shēnfènzhèng,N,3,,,,,,identity card; ID,4226
+L3-0624,深,shēn,Adj,3,,,,,,old variant of 深,1014
+L3-0625,深刻,shēnkè,Adj,3,,,,,,profound; deep; deep-going,2542
+L3-0626,深入,shēnrù,V/Adj,3,,,,,,to penetrate deeply; thorough,2940
+L3-0627,升,shēng,V,3,,,,,,to ascend; to rise to the rank of; to promote; to hoist,1863
+L3-0628,生,shēng,Adj,3,,,,,,to be born; to give birth; life; to grow,558
+L3-0629,生产,shēngchǎn,V,3,,,,,,to produce; to manufacture; to give birth to a child,2146
+L3-0630,生存,shēngcún,V,3,,,,,,to exist; to survive,2389
+L3-0631,生动,shēngdòng,Adj,3,,,,,,vivid; lively,7805
+L3-0632,生命,shēngmìng,N,3,,,,,,life (as the characteristic of living beings); living being; creature,705
+L3-0633,生意,shēngyi,N,3,,,,,,business,2112
+L3-0634,生长,shēngzhǎng,V,3,,,,,,to grow; to grow up; to be brought up,4189
+L3-0635,声明,shēngmíng,V/N,3,,,,,,to state; to declare; statement; declaration,2813
+L3-0636,胜,shèng,V,3,,,,,,victory; success; to beat; to defeat,1663
+L3-0637,胜利,shènglì,V/N,3,,,,,,victory,1445
+L3-0638,失去,shīqù,V,3,,,,,,to lose,949
+L3-0639,石头,shítou,N,3,,,,,,stone,3169
+L3-0640,石油,shíyóu,N,3,,,,,,oil; petroleum,2940
+L3-0641,时,shí,N,3,,,,,,old variant of 时,115
+L3-0642,时代,shídài,N,3,,,,,,"Time, US weekly news magazine",1384
+L3-0643,时刻,shíkè,N/Adv,3,,,,,,time; juncture; moment; period of time,1705
+L3-0644,实际上,shíjìshàng,Adv,3,,,,,,in fact; in reality; as a matter of fact; in practice,1232
+L3-0645,实力,shílì,N,3,,,,,,strength,2445
+L3-0646,实行,shíxíng,V,3,,,,,,to implement; to carry out; to put into practice,4383
+L3-0647,实验,shíyàn,V/N,3,,,,,,experiment; test; experimental; to experiment,1879
+L3-0648,实验室,shíyànshì,N,3,,,,,,laboratory,3028
+L3-0649,食品,shípǐn,N,3,,,,,,foodstuff; food; provisions,2176
+L3-0650,使,shǐ,V,3,,,,,,to make; to cause; to enable; to use,400
+L3-0651,始终,shǐzhōng,Adv,3,,,,,,from beginning to end; all along,2984
+L3-0652,世纪,shìjì,N,3,,,,,,century,1599
+L3-0653,世界,shìjiè,N,3,,,,,,world,238
+L3-0654,世界杯,shìjièbēi,N,3,,,,,,World Cup,8383
+L3-0655,市场,shìchǎng,N,3,,,,,,marketplace; market (also in abstract),1190
+L3-0656,事故,shìgù,N,3,,,,,,accident,1493
+L3-0657,事件,shìjiàn,N,3,,,,,,event; happening; incident,973
+L3-0658,事实,shìshí,N,3,,,,,,fact,1092
+L3-0659,事实上,shìshíshang,,3,,,,,,in fact; in reality; actually; as a matter of fact,1577
+L3-0660,事业,shìyè,N,3,,,,,,"undertaking; project; activity; (charitable, political or revolutionary) cause",1326
+L3-0661,试题,shìtí,N,3,,,,,,exam question; test topic,18577
+L3-0662,试验,shìyàn,V,3,,,,,,experiment; test; to experiment; experimental,2151
+L3-0663,适合,shìhé,V,3,,,,,,to fit; to suit,1211
+L3-0664,适应,shìyìng,V,3,,,,,,to adapt; to fit; to suit,2147
+L3-0665,适用,shìyòng,Adj,3,,,,,,to be applicable,5429
+L3-0666,室,shì,N,3,,,,,,surname Shi,1382
+L3-0667,收费,shōufèi,V,3,,,,,,to charge a fee,4234
+L3-0668,收看,shōukàn,V,3,,,,,,to watch (a TV program),7983
+L3-0669,收听,shōutīng,V,3,,,,,,to listen to (a radio broadcast),9778
+L3-0670,收音机,shōuyīnjī,N,3,,,,,,radio,9558
+L3-0671,手续,shǒuxù,N,3,,,,,,procedure; formalities,5265
+L3-0672,手指,shǒuzhǐ,N,3,,,,,,finger,3266
+L3-0673,首都,shǒudū,N,3,,,,,,capital (city),4483
+L3-0674,首先,shǒuxiān,Adv,3,,,,,,first (of all); in the first place,878
+L3-0675,受,shòu,V,3,,,,,,to receive; to accept; to suffer; subjected to,393
+L3-0676,受伤,shòushāng,,3,,,,,,to sustain injuries; wounded (in an accident etc); harmed,1454
+L3-0677,书架,shūjià,N,3,,,,,,bookshelf,16554
+L3-0678,输,shū,V,3,,,,,,to lose; to be beaten; (bound form) to transport; (literary) to donate; to contribute; (coll.) to enter (a password),1403
+L3-0679,输入,shūrù,V,3,,,,,,to import; to input,4724
+L3-0680,熟人,shúrén,N,3,,,,,,acquaintance; friend,8931
+L3-0681,属,shǔ,V,3,,,,,,category; genus (taxonomy); family members; dependents,3739
+L3-0682,属于,shǔyú,V,3,,,,,,to be classified as; to belong to; to be part of,1036
+L3-0683,束,shù,M,3,,,,,,surname Shu,6473
+L3-0684,数量,shùliàng,N,3,,,,,,amount; quantity; quantitative,2916
+L3-0685,双,shuāng,M/Adj,3,,,,,,surname Shuang,642
+L3-0686,双方,shuāngfāng,N,3,,,,,,bilateral; both sides; both parties involved,2714
+L3-0687,思想,sīxiǎng,N,3,,,,,,thought; thinking; idea; ideology,1525
+L3-0688,死,sǐ,V/Adj,3,,,,,,to die; impassable; uncrossable; inflexible,177
+L3-0689,速度,sùdù,N,3,,,,,,speed; rate; velocity; (music) tempo,1337
+L3-0690,随,suí,V,3,,,,,,surname Sui,915
+L3-0691,所,suǒ,N/M,3,,,,,,"actually; place; classifier for houses, small buildings, institutions etc; that which",159
+L3-0692,所长,suǒzhǎng,N,3,,,,,,head of an institute etc,13535
+L3-0693,台,tái,N/M,3,,,,,,Taiwan (abbr.); surname Tai,696
+L3-0694,谈,tán,V,3,,,,,,surname Tan,862
+L3-0695,谈话,tánhuà,,3,,,,,,to talk (with sb); to have a conversation; talk; conversation,3136
+L3-0696,谈判,tánpàn,V/N,3,,,,,,to negotiate; negotiation; talks; conference,2830
+L3-0697,汤,tāng,N,3,,,,,,surname Tang,2237
+L3-0698,糖,táng,N,3,,,,,,sugar; sweets; candy,2036
+L3-0699,特色,tèsè,N,3,,,,,,characteristic; distinguishing feature or quality,4212
+L3-0700,提前,tíqián,V,3,,,,,,to shift to an earlier date; to do sth ahead of time; in advance,2206
+L3-0701,提问,tíwèn,V,3,,,,,,to question; to quiz; to grill,5085
+L3-0702,题目,tímù,N,3,,,,,,subject; title; topic,7020
+L3-0703,体会,tǐhuì,V/N,3,,,,,,to know from experience; to learn through experience; to realize; understanding,3605
+L3-0704,体现,tǐxiàn,V,3,,,,,,to embody; to reflect; to incarnate,4185
+L3-0705,体验,tǐyàn,V,3,,,,,,to experience for oneself,2553
+L3-0706,天空,tiānkōng,N,3,,,,,,sky,3292
+L3-0707,甜,tián,Adj,3,,,,,,sweet,2472
+L3-0708,调,tiáo,V,3,,,,,,to harmonize; to reconcile; to blend; to suit well,1481
+L3-0709,调整,tiáozhěng,V,3,,,,,,to adjust; adjustment; revision,2032
+L3-0710,跳,tiào,V,3,,,,,,to jump; to hop; to skip over; to bounce,1099
+L3-0711,跳高,tiàogāo,V,3,,,,,,high jump (athletics),29918
+L3-0712,跳舞,tiàowǔ,,3,,,,,,to dance,3920
+L3-0713,跳远,tiàoyuǎn,V,3,,,,,,long jump (athletics),40040
+L3-0714,铁,tiě,N,3,,,,,,surname Tie,2193
+L3-0715,铁路,tiělù,N,3,,,,,,railroad; railway,4310
+L3-0716,听力,tīnglì,N,3,,,,,,hearing; listening ability,10212
+L3-0717,听众,tīngzhòng,N,3,,,,,,audience; listeners,8461
+L3-0718,停止,tíngzhǐ,V,3,,,,,,to stop; to halt; to cease,1632
+L3-0719,通常,tōngcháng,Adj,3,,,,,,regular; usual; normal; usually,1897
+L3-0720,通信,tōngxìn,,3,,,,,,to correspond (by letter etc); to communicate; communication,4315
+L3-0721,同意,tóngyì,V,3,,,,,,to agree; to consent; to approve,985
+L3-0722,痛,tòng,Adj,3,,,,,,ache; pain; sorrow; deeply,1254
+L3-0723,痛苦,tòngkǔ,Adj,3,,,,,,pain; suffering; painful,1336
+L3-0724,头,tóu,Adj,3,,,,,,head; hair style; the top; end,329
+L3-0725,头脑,tóunǎo,N,3,,,,,,brains; mind; skull; (fig.) gist (of a matter),4295
+L3-0726,突出,tūchū,Adj/V,3,,,,,,prominent; outstanding; to give prominence to; to protrude,3980
+L3-0727,突然,tūrán,Adj,3,,,,,,sudden; abrupt; unexpected,644
+L3-0728,图,tú,N,3,,,,,,diagram; picture; drawing; chart,1231
+L3-0729,图画,túhuà,N,3,,,,,,drawing; picture,14983
+L3-0730,土,tǔ,N,3,,,,,,Tu (ethnic group); surname Tu,2399
+L3-0731,团,tuán,N/M,3,,,,,,round; lump; ball; to roll into a ball,1597
+L3-0732,团结,tuánjié,V,3,,,,,,to unite; unity; solidarity; united,3060
+L3-0733,团体,tuántǐ,N,3,,,,,,group; organization; team,3675
+L3-0734,推动,tuīdòng,,3,,,,,,to push (e.g. for acceptance of a plan); to promote; to give impetus to,5417
+L3-0735,推广,tuīguǎng,V,3,,,,,,to extend; to spread; to popularize; generalization,6093
+L3-0736,推进,tuījìn,V,3,,,,,,to impel; to carry forward; to push on; to advance,3651
+L3-0737,推开,tuīkāi,,3,,,,,,to push open (a gate etc); to push away; to reject; to decline,9319
+L3-0738,退,tuì,V,3,,,,,,to retreat; to withdraw; to reject; to return (sth); to decline,1809
+L3-0739,退出,tuìchū,V,3,,,,,,to withdraw; to abort; to quit; to log out (computing),2723
+L3-0740,退休,tuìxiū,,3,,,,,,to retire (from the workforce); to go into retirement,3442
+L3-0741,外交,wàijiāo,N,3,,,,,,diplomacy; diplomatic; foreign affairs,5317
+L3-0742,外面,wàimiàn,N,3,,,,,,outside (also pr. [wài mian] for this sense); surface; exterior; external appearance,1352
+L3-0743,外文,wàiwén,N,3,,,,,,foreign language (written),32623
+L3-0744,完美,wánměi,Adj,3,,,,,,perfect,1292
+L3-0745,完善,wánshàn,Adj/V,3,,,,,,"(of systems, facilities etc) comprehensive; well-developed; excellent; to refine",5660
+L3-0746,完整,wánzhěng,Adj,3,,,,,,complete; intact,2824
+L3-0747,玩具,wánjù,N,3,,,,,,plaything; toy,3240
+L3-0748,往往,wǎngwǎng,Adv,3,,,,,,usually; in many cases; more often than not,4050
+L3-0749,危害,wēihài,V/N,3,,,,,,to jeopardize; to harm; to endanger; harmful effect,5260
+L3-0750,危险,wēixiǎn,Adj/N,3,,,,,,danger; dangerous,1201
+L3-0751,为,wéi,V,3,,,,,,as (in the capacity of); to take sth as; to act as; to serve as,58
+L3-0752,为,wéi,Prep,3,,,,,,as (in the capacity of); to take sth as; to act as; to serve as,58
+L3-0753,围,wéi,V,3,,,,,,surname Wei,2818
+L3-0754,伟大,wěidà,Adj,3,,,,,,huge; great; grand; worthy of the greatest admiration; important (contribution etc),1387
+L3-0755,卫生,wèishēng,Adj/N,3,,,,,,health; hygiene; sanitation,3002
+L3-0756,卫生间,wèishēngjiān,N,3,,,,,,bathroom; toilet; WC,7314
+L3-0757,为了,wèile,Prep,3,,,,,,for; for the purpose of; in order to,229
+L3-0758,温暖,wēnnuǎn,Adj/V,3,,,,,,warm,2753
+L3-0759,文化,wénhuà,N,3,,,,,,culture; civilization; cultural,1632
+L3-0760,文件,wénjiàn,N,3,,,,,,document; file,1342
+L3-0761,文明,wénmíng,N/Adj,3,,,,,,civilized; civilization; culture,3200
+L3-0762,文学,wénxué,N,3,,,,,,literature,4277
+L3-0763,文章,wénzhāng,N,3,,,,,,article; essay; literary works; writings,1958
+L3-0764,文字,wénzì,N,3,,,,,,character; script; writing; written language,4168
+L3-0765,握手,wòshǒu,,3,,,,,,to shake hands,6920
+L3-0766,屋子,wūzi,N,3,,,,,,house; room,4296
+L3-0767,武器,wǔqì,N,3,,,,,,weapon; arms,1505
+L3-0768,武术,wǔshù,N,3,,,,,,military skill or technique (in former times); all kinds of martial art sports (some claiming spiritual development); self-defense; tradition of choreographed fights from opera and film (recent usage),9314
+L3-0769,舞台,wǔtái,N,3,,,,,,(lit. and fig.) stage; arena,2023
+L3-0770,西部,xībù,N,3,,,,,,western part,3207
+L3-0771,希望,xīwàng,V/N,3,,,,,,to hope; a hope; a wish,182
+L3-0772,系,xì,N,3,,,,,,to connect; to relate to; to tie up; to bind,1415
+L3-0773,下来,xiàlái,,3,,,,,,"to come down; (completed action marker); (after verb of motion, indicates motion down and towards us, also fig.); (indicates continuation from the past towards us)",628
+L3-0774,下面,xiàmiàn,N,3,,,,,,below; under; next; the following,1459
+L3-0775,下去,xiàqù,,3,,,,,,to go down; to descend; to go on; to continue,838
+L3-0776,先进,xiānjìn,Adj/N,3,,,,,,advanced (technology); to advance,3190
+L3-0777,显得,xiǎnde,V,3,,,,,,to seem; to look; to appear,2352
+L3-0778,显然,xiǎnrán,Adj,3,,,,,,clearly; evidently; obviously,1345
+L3-0779,显示,xiǎnshì,V,3,,,,,,to show; to illustrate; to display; to demonstrate,1030
+L3-0780,现场,xiànchǎng,N,3,,,,,,"the scene (of a crime, accident etc); (on) the spot; (at) the site",627
+L3-0781,现代,xiàndài,N,3,,,,,,"Hyundai, South Korean company",2512
+L3-0782,现金,xiànjīn,N,3,,,,,,cash,2030
+L3-0783,现实,xiànshí,N,3,,,,,,reality; actuality; real; actual,1237
+L3-0784,现象,xiànxiàng,N,3,,,,,,phenomenon; appearance,2440
+L3-0785,线,xiàn,N,3,,,,,,variant of 线,679
+L3-0786,相比,xiāngbǐ,V,3,,,,,,to compare,2934
+L3-0787,相当,xiāngdāng,Adv/V,3,,,,,,equivalent to; appropriate; considerably; to a certain extent,1139
+L3-0788,相关,xiāngguān,V,3,,,,,,related; relevant; pertinent; to be interrelated,1782
+L3-0789,相互,xiānghù,Adv,3,,,,,,each other; mutual,2492
+L3-0790,相似,xiāngsì,Adj,3,,,,,,similar; alike,4024
+L3-0791,香,xiāng,Adj,3,,,,,,fragrant; sweet smelling; aromatic; savory or appetizing,1953
+L3-0792,香蕉,xiāngjiāo,N,3,,,,,,banana,5473
+L3-0793,消费,xiāofèi,V,3,,,,,,to consume; to spend,4382
+L3-0794,消失,xiāoshī,V,3,,,,,,to disappear; to fade away,1528
+L3-0795,消息,xiāoxi,N,3,,,,,,news; information,448
+L3-0796,效果,xiàoguǒ,N,3,,,,,,result; effect; efficacy; (theater) sound or visual effects,1352
+L3-0797,写作,xiězuò,V,3,,,,,,to write; to compose; writing; written works,5219
+L3-0798,血,xiě,N,3,,,,,,blood; colloquial pr. [xiě],726
+L3-0799,心,xīn,N,3,,,,,,heart; mind; intention; center,291
+L3-0800,信,xìn,V,3,,,,,,letter; mail; to trust; to believe,419
+L3-0801,信封,xìnfēng,N,3,,,,,,envelope,10268
+L3-0802,信任,xìnrèn,V,3,,,,,,to trust; to have confidence in,1963
+L3-0803,行李,xíngli,N,3,,,,,,luggage,4886
+L3-0804,形成,xíngchéng,V,3,,,,,,to form; to take shape,2335
+L3-0805,形式,xíngshì,N,3,,,,,,outer appearance; form; shape; formality,2476
+L3-0806,形象,xíngxiàng,N/Adj,3,,,,,,image; form; figure; visualization,2124
+L3-0807,形状,xíngzhuàng,N,3,,,,,,form; shape,5839
+L3-0808,幸福,xìngfú,Adj/N,3,,,,,,happiness; happy; blessed,928
+L3-0809,幸运,xìngyùn,Adj,3,,,,,,fortunate; lucky; fortune; luck,1830
+L3-0810,性（积极性）,xìng(jījíxìng),Suffix,3,,,,,,,
+L3-0811,性别,xìngbié,N,3,,,,,,gender; sex,6513
+L3-0812,性格,xìnggé,N,3,,,,,,nature; disposition; temperament; character,3053
+L3-0813,修,xiū,V,3,,,,,,surname Xiu,1778
+L3-0814,修改,xiūgǎi,V,3,,,,,,to amend; to alter; to modify,3871
+L3-0815,需求,xūqiú,N,3,,,,,,requirement; to require; (economics) demand,3122
+L3-0816,需要,xūyào,V/N,3,,,,,,to need; to want; to demand; to require; needs,131
+L3-0817,宣布,xuānbù,V,3,,,,,,to declare; to announce; to proclaim,1467
+L3-0818,宣传,xuānchuán,V/N,3,,,,,,to disseminate; to give publicity to; propaganda,2072
+L3-0819,选手,xuǎnshǒu,N,3,,,,,,athlete; contestant,1025
+L3-0820,学费,xuéfèi,N,3,,,,,,tuition fee; tuition,6307
+L3-0821,训练,xùnliàn,V/N,3,,,,,,to train; to drill; training,985
+L3-0822,压,yā,V,3,,,,,,to press; to push down; to keep under (control); pressure,1672
+L3-0823,压力,yālì,N,3,,,,,,pressure,981
+L3-0824,烟,yān,N,3,,,,,,cigarette or pipe tobacco; smoke; mist; vapour,2110
+L3-0825,眼前,yǎnqián,N,3,,,,,,before one's eyes; now; at present,2549
+L3-0826,演,yǎn,V,3,,,,,,to develop; to evolve; to practice; to perform,1613
+L3-0827,演唱,yǎnchàng,V,3,,,,,,sung performance; to sing for an audience,3897
+L3-0828,演唱会,yǎnchànghuì,N,3,,,,,,vocal recital or concert,3862
+L3-0829,演出,yǎnchū,V/N,3,,,,,,to act (in a play); to perform; to put on (a performance); performance,1568
+L3-0830,演员,yǎnyuán,N,3,,,,,,actor or actress; performer,1643
+L3-0831,羊,yáng,N,3,,,,,,surname Yang,2574
+L3-0832,阳光,yángguāng,N,3,,,,,,sunshine; (of personality) upbeat; energetic; transparent (open to public scrutiny),2043
+L3-0833,要是,yàoshi,Conj,3,,,,,,(coll.) if,1413
+L3-0834,衣架,yījià,N,3,,,,,,clothes hanger; clothes rack,32226
+L3-0835,一切,yīqiè,Pron,3,,,,,,everything; every; all,350
+L3-0836,已,yǐ,Adv,3,,,,,,already; to stop; then; afterwards,303
+L3-0837,以来,yǐlái,N,3,,,,,,since (a previous event),1117
+L3-0838,一方面,yīfāngmiàn,N,3,,,,,,on the one hand,7572
+L3-0839,艺术,yìshù,N,3,,,,,,art,1488
+L3-0840,意外,yìwài,Adj/N,3,,,,,,unexpected; accident; mishap,1703
+L3-0841,意义,yìyì,N,3,,,,,,sense; meaning; significance; importance,807
+L3-0842,因此,yīncǐ,Conj,3,,,,,,thus; consequently; as a result,668
+L3-0843,银,yín,N,3,,,,,,silver; silver-colored; relating to money or currency,2564
+L3-0844,银牌,yínpái,N,3,,,,,,silver medal,21103
+L3-0845,印象,yìnxiàng,N,3,,,,,,impression (sth that stays in one's mind); a memory,2109
+L3-0846,应当,yīngdāng,V,3,,,,,,should; ought to,3391
+L3-0847,迎接,yíngjiē,V,3,,,,,,to welcome; to greet,4264
+L3-0848,营养,yíngyǎng,N,3,,,,,,nutrition; nourishment,4865
+L3-0849,赢,yíng,V,3,,,,,,to beat; to win; to profit,952
+L3-0850,影视,yǐngshì,N,3,,,,,,movies and television,12925
+L3-0851,应用,yìngyòng,V,3,,,,,,"to put to use; to apply; practical; applied (science, linguistics etc)",5484
+L3-0852,优点,yōudiǎn,N,3,,,,,,merit; benefit; strong point; advantage,5641
+L3-0853,优势,yōushì,N,3,,,,,,superiority; dominance; advantage,2080
+L3-0854,由,yóu,Prep,3,,,,,,to follow; from; because of; due to; by; via; through,353
+L3-0855,由于,yóuyú,Prep/Conj,3,,,,,,due to; as a result of; thanks to; owing to,982
+L3-0856,邮件,yóujiàn,N,3,,,,,,mail; post; email,3970
+L3-0857,邮票,yóupiào,N,3,,,,,,(postage) stamp,9219
+L3-0858,邮箱,yóuxiāng,N,3,,,,,,mailbox; post office box; email; email inbox,8497
+L3-0859,游,yóu,V,3,,,,,,surname You,2164
+L3-0860,游戏,yóuxì,N,3,,,,,,game; to play,603
+L3-0861,游泳,yóuyǒng,N/V,3,,,,,,swimming; to swim,3695
+L3-0862,有的是,yǒudeshì,,3,,,,,,have plenty of; there's no lack of,14445
+L3-0863,有利,yǒulì,Adj,3,,,,,,advantageous; favorable,4172
+L3-0864,有效,yǒuxiào,V,3,,,,,,effective; in effect; valid,1379
+L3-0865,预报,yùbào,V/N,3,,,,,,forecast,8603
+L3-0866,预防,yùfáng,V,3,,,,,,to prevent; to take precautions against; to protect; to guard against,5185
+L3-0867,预计,yùjì,V,3,,,,,,to forecast; to predict; to estimate,3808
+L3-0868,预习,yùxí,V,3,,,,,,to prepare a lesson,36044
+L3-0869,员（服务员）,yuán (fúwùyuán),Suffix,3,,,,,,,
+L3-0870,员工,yuángōng,N,3,,,,,,staff; personnel; employee,1852
+L3-0871,愿望,yuànwàng,N,3,,,,,,desire; wish,2889
+L3-0872,约,yuē,V,3,,,,,,to make an appointment; to invite; approximately; pact,797
+L3-0873,乐队,yuèduì,N,3,,,,,,band; pop group,3860
+L3-0874,运输,yùnshū,V,3,,,,,,to transport; to carry; transportation,3770
+L3-0875,杂志,zázhì,N,3,,,,,,magazine,1627
+L3-0876,早已,zǎoyǐ,Adv,3,,,,,,for a long time; long since; (dialect) in the past,4715
+L3-0877,造,zào,V,3,,,,,,to make; to build; to manufacture; to invent,2608
+L3-0878,造成,zàochéng,V,3,,,,,,to bring about; to create; to cause,910
+L3-0879,责任,zérèn,N,3,,,,,,responsibility; blame; duty,935
+L3-0880,增加,zēngjiā,V,3,,,,,,to raise; to increase,1419
+L3-0881,增长,zēngzhǎng,V,3,,,,,,to grow; to increase,3521
+L3-0882,展开,zhǎnkāi,,3,,,,,,to unfold; to spread out; to open up; to launch; to carry out,3065
+L3-0883,张,zhāng,M/V,3,,,,,,surname Zhang,316
+L3-0884,照,zhào,V/Prep,3,,,,,,variant of 照; to shine; to illuminate,1165
+L3-0885,者（志愿者）,zhě (zhìyuànzhě),Suffix,3,,,,,,,
+L3-0886,真实,zhēnshí,Adj,3,,,,,,true; real,1299
+L3-0887,争,zhēng,V,3,,,,,,to strive for; to vie for; to argue or debate; deficient or lacking (dialect),2989
+L3-0888,争取,zhēngqǔ,V,3,,,,,,to fight for; to strive for; to win over,2213
+L3-0889,整,zhěng,Adj/V,3,,,,,,exactly; in good order; whole; complete,1315
+L3-0890,整个,zhěnggè,Adj,3,,,,,,whole; entire; total,572
+L3-0891,整理,zhěnglǐ,V,3,,,,,,to arrange; to tidy up; to sort out; to straighten out,2737
+L3-0892,整齐,zhěngqí,Adj,3,,,,,,orderly; neat; even; tidy,8739
+L3-0893,整体,zhěngtǐ,N,3,,,,,,"whole entity; entire body; synthesis; as a whole (situation, construction, team etc)",4225
+L3-0894,整天,zhěngtiān,N,3,,,,,,all day long; whole day,3492
+L3-0895,整整,zhěngzhěng,Adv,3,,,,,,whole; full,4509
+L3-0896,正,zhèng,Adj,3,,,,,,straight; upright; proper; main,294
+L3-0897,正式,zhèngshì,Adj,3,,,,,,formal; official,1215
+L3-0898,证,zhèng,N,3,,,,,,to admonish; variant of 证,1605
+L3-0899,证件,zhèngjiàn,N,3,,,,,,certificate; papers; credentials; document; ID,5876
+L3-0900,证据,zhèngjù,N,3,,,,,,evidence; proof; testimony,1826
+L3-0901,证明,zhèngmíng,V/N,3,,,,,,proof; certificate; identification; testimonial,838
+L3-0902,支,zhī,M,3,,,,,,surname Zhi,915
+L3-0903,支持,zhīchí,V,3,,,,,,to be in favor of; to support; to back; support,546
+L3-0904,支付,zhīfù,V,3,,,,,,to pay (money),2724
+L3-0905,只,zhī,M,3,,,,,,grain that has begun to ripen,98
+L3-0906,直,zhí,Adj/V/Adv,3,,,,,,"surname Zhi; Zhi (c. 2000 BC), fifth of the legendary Flame Emperors 帝 descended from Shennong 神农 Farmer God",1420
+L3-0907,直播,zhíbō,V,3,,,,,,"(TV, radio) to broadcast live; live broadcast; (Internet) to livestream; (agriculture) direct seeding",3374
+L3-0908,直到,zhídào,V,3,,,,,,until,1292
+L3-0909,值,zhí,V,3,,,,,,value; (to be) worth; to happen to; to be on duty,1322
+L3-0910,值得,zhídé,,3,,,,,,to be worth; to deserve,1037
+L3-0911,职工,zhígōng,N,3,,,,,,workers; staff,8810
+L3-0912,职业,zhíyè,N,3,,,,,,occupation; profession; vocation; professional,1317
+L3-0913,只好,zhǐhǎo,Adv,3,,,,,,to have no other option but to ...; to have to; to be forced to,3132
+L3-0914,只是,zhǐshì,Adv/Conj,3,,,,,,merely; only; just; nothing but; simply; but; however,236
+L3-0915,只有,zhǐyǒu,Conj,3,,,,,,"only have ...; there is only ...; (used in combination with 才) it is only if one ... (that one can ...) (Example: 只有通过治疗才能痊愈 ""the only way to cure it is with therapy""); it is only ... (who ...) (Example: 要 ""only men would have such a requirement"")",374
+L3-0916,指,zhǐ,V,3,,,,,,finger; to point at or to; to indicate or refer to; to depend on,639
+L3-0917,指出,zhǐchū,,3,,,,,,to indicate; to point out,2661
+L3-0918,指导,zhǐdǎo,V,3,,,,,,to guide; to give directions; to direct; to coach,2171
+L3-0919,至今,zhìjīn,Adv,3,,,,,,so far; to this day; until now,3155
+L3-0920,至少,zhìshǎo,Adv,3,,,,,,at least; (to say the) least,868
+L3-0921,志愿,zhìyuàn,N,3,,,,,,aspiration; ambition; to volunteer,8766
+L3-0922,志愿者,zhìyuànzhě,N,3,,,,,,volunteer,5709
+L3-0923,制定,zhìdìng,V,3,,,,,,to draw up; to formulate,3364
+L3-0924,制度,zhìdù,N,3,,,,,,"system (e.g. political, adminstrative etc); institution",3310
+L3-0925,制造,zhìzào,V,3,,,,,,to manufacture; to make,1600
+L3-0926,制作,zhìzuò,V,3,,,,,,to make; to manufacture,1835
+L3-0927,中部,zhōngbù,N,3,,,,,,middle part; central section,6364
+L3-0928,中华民族,Zhōnghuá Mínzú,,3,,,,,,the Chinese nation; the Chinese people (collective reference to all the ethnic groups in China),6125
+L3-0929,终于,zhōngyú,Adv,3,,,,,,at last; in the end; finally; eventually,625
+L3-0930,钟,zhōng,N,3,,,,,,surname Zhong,1714
+L3-0931,种,zhǒng,M,3,,,,,,seed; species; kind; type,179
+L3-0932,种子,zhǒngzi,N,3,,,,,,seed,5365
+L3-0933,重大,zhòngdà,Adj,3,,,,,,great; important; major; significant,1734
+L3-0934,周围,zhōuwéi,N,3,,,,,,environs; surroundings; periphery,1649
+L3-0935,猪,zhū,N,3,,,,,,hog; pig; swine,1583
+L3-0936,主持,zhǔchí,V,3,,,,,,to take charge of; to manage or direct; to preside over; to uphold,3176
+L3-0937,主动,zhǔdòng,Adj,3,,,,,,to take the initiative; to do sth of one's own accord; spontaneous; active,2470
+L3-0938,主任,zhǔrèn,N,3,,,,,,director; head,2133
+L3-0939,主意,zhǔyi,N,3,,,,,,plan; idea; decision; Beijing pr. [zhú yi],3584
+L3-0940,主张,zhǔzhāng,V/N,3,,,,,,to advocate; to stand for; view; position,6498
+L3-0941,注意,zhùyì,,3,,,,,,to take note of; to pay attention to,547
+L3-0942,祝,zhù,V,3,,,,,,surname Zhu,1197
+L3-0943,抓,zhuā,V,3,,,,,,to grab; to catch; to arrest; to snatch,797
+L3-0944,抓住,zhuāzhù,,3,,,,,,to grab hold of; to capture,1500
+L3-0945,专家,zhuānjiā,N,3,,,,,,expert; specialist,1096
+L3-0946,专门,zhuānmén,Adv,3,,,,,,specialist; specialized; customized,2288
+L3-0947,专题,zhuāntí,N,3,,,,,,"specific topic (addressed by a book, lecture, TV program etc); article, report or program etc on a specific topic",10707
+L3-0948,专业,zhuānyè,N,3,,,,,,specialty; specialized field; main field of study (at university); major,1146
+L3-0949,转,zhuǎn,V,3,,,,,,to turn; to change direction; to transfer; to forward (mail),508
+L3-0950,转变,zhuǎnbiàn,V,3,,,,,,to change; to transform; shift; transformation,3151
+L3-0951,状况,zhuàngkuàng,N,3,,,,,,condition; state; situation,1372
+L3-0952,状态,zhuàngtài,N,3,,,,,,condition; state; state of affairs,1158
+L3-0953,追,zhuī,V,3,,,,,,to chase; to pursue; to look into; to investigate,1265
+L3-0954,准,zhǔn,Adj/Adv,3,,,,,,to allow; to grant; in accordance with; in the light of,1396
+L3-0955,资格,zīgé,N,3,,,,,,qualifications; seniority,2290
+L3-0956,资金,zījīn,N,3,,,,,,funds; capital,1851
+L3-0957,子女,zǐnǚ,N,3,,,,,,children; sons and daughters,7337
+L3-0958,自从,zìcóng,Prep,3,,,,,,since (a time); ever since,2256
+L3-0959,自动,zìdòng,Adj/Adv,3,,,,,,automatic; voluntarily,2365
+L3-0960,自觉,zìjué,Adj,3,,,,,,conscious; aware; on one's own initiative; conscientious,7977
+L3-0961,自然,zìrán,N/Adj/Adv,3,,,,,,nature; natural; naturally,929
+L3-0962,自身,zìshēn,N,3,,,,,,itself; oneself; one's own,3490
+L3-0963,自主,zìzhǔ,V,3,,,,,,independent; to act for oneself; autonomous,6858
+L3-0964,总,zǒng,Adv,3,,,,,,general; overall; to sum up; in every case; always; invariably; anyway; after all; eventually; sooner or later,335
+L3-0965,总结,zǒngjié,V/N,3,,,,,,to sum up; to conclude; summary; résumé,4753
+L3-0966,总是,zǒngshì,Adv,3,,,,,,always,638
+L3-0967,足够,zúgòu,V,3,,,,,,enough; sufficient,1692
+L3-0968,足球,zúqiú,N,3,,,,,,soccer ball; a football; soccer; football,2550
+L3-0969,组合,zǔhé,V,3,,,,,,to assemble; to combine; to compose; combination,2208
+L3-0970,左右,zuǒyòu,N/V,3,,,,,,left and right; nearby; approximately; attendant,1351
+L3-0971,作品,zuòpǐn,N,3,,,,,,work (of art); opus,1381
+L3-0972,作者,zuòzhě,N,3,,,,,,author; writer,2796
+L3-0973,做客,zuòkè,,3,,,,,,to be a guest or visitor,13383

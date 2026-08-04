@@ -1,0 +1,101 @@
+hsk_id,hanzi,pinyin,pos,level,meaning_ko,topic,example_zh,example_pinyin,example_ko,meaning_en,frequency
+L3-0001,爱心,àixīn,명사,3,사랑하는 마음 · 온정,감정,他是一个很有爱心的人。,Tā shì yí ge hěn yǒu àixīn de rén.,그는 마음이 아주 따뜻한 사람이다.,compassion; kindness; care for others; love,5809
+L3-0002,安排,ānpái,동사·명사,3,안배하다 · 계획하다,일,我来安排明天的会议。,Wǒ lái ānpái míngtiān de huìyì.,내가 내일 회의를 준비하겠다.,to arrange; to plan; to set up; arrangements,900
+L3-0003,安装,ānzhuāng,동사,3,설치하다,사물,请帮我安装这个软件。,Qǐng bāng wǒ ānzhuāng zhège ruǎnjiàn.,이 소프트웨어를 설치해 주세요.,to install; to erect; to fix; to mount,3653
+L3-0004,按,àn,동사·개사,3,누르다 · ~에 따라,동작,请按这个按钮。,Qǐng àn zhège ànniǔ.,이 버튼을 눌러 주세요.,to press; to push; to leave aside or shelve; to control,678
+L3-0005,按照,ànzhào,개사,3,~에 따라 · ~대로,어법,按照计划进行。,Ànzhào jìhuà jìnxíng.,계획에 따라 진행한다.,according to; in accordance with; in the light of; on the basis of,1378
+L3-0006,把,bǎ,개사,3,~을 (목적어를 동사 앞으로 보내는 말),어법,请把门关上。,Qǐng bǎ mén guānshàng.,문을 닫아 주세요.,"to hold; to grasp; to hold a baby in position to help it urinate or defecate; handlebar; classifier: handful, bundle, bunch",50
+L3-0007,把,bǎ,양사,3,자루 (손잡이 있는 물건을 세는 말),어법,我买了一把伞。,Wǒ mǎi le yì bǎ sǎn.,나는 우산 한 자루를 샀다.,"to hold; to grasp; to hold a baby in position to help it urinate or defecate; handlebar; classifier: handful, bundle, bunch",50
+L3-0008,把握,bǎwò,동사·명사,3,파악하다 · 자신,감정,我没有把握。,Wǒ méiyǒu bǎwò.,나는 자신이 없다.,to grasp (also fig.); to seize; to hold; assurance,3068
+L3-0009,白,bái,부사,3,헛되이 · 공연히,평가,我白等了一个小时。,Wǒ bái děng le yí ge xiǎoshí.,나는 한 시간을 헛되이 기다렸다.,surname Bai,930
+L3-0010,白菜,báicài,명사,3,배추,음식,我买了两棵白菜。,Wǒ mǎi le liǎng kē báicài.,나는 배추 두 포기를 샀다.,Chinese cabbage; pak choi,16930
+L3-0011,班级,bānjí,명사,3,반 · 학급,학교,我们班级有三十个学生。,Wǒmen bānjí yǒu sānshí ge xuéshēng.,우리 반에는 학생이 서른 명 있다.,class (group of students); grade (in school),10486
+L3-0012,搬,bān,동사,3,옮기다 · 나르다,동작,请帮我搬一下桌子。,Qǐng bāng wǒ bān yíxià zhuōzi.,책상 좀 옮겨 주세요.,to move (i.e. relocate oneself); to move (sth relatively heavy or bulky); to shift; to copy indiscriminately,2254
+L3-0013,搬家,bānjiā,동사,3,이사하다,생활,我下个月要搬家。,Wǒ xià ge yuè yào bānjiā.,나는 다음 달에 이사한다.,to move house; to relocate; to remove (sth),7790
+L3-0014,板,bǎn,명사,3,판 · 널빤지,사물,这块板很重。,Zhè kuài bǎn hěn zhòng.,이 판자는 아주 무겁다.,board; plank; plate; shutter,1759
+L3-0015,办理,bànlǐ,동사,3,처리하다 · 수속하다,일,请在这里办理手续。,Qǐng zài zhèlǐ bànlǐ shǒuxù.,여기에서 수속을 처리해 주세요.,to handle; to transact; to conduct,6575
+L3-0016,保,bǎo,동사,3,지키다 · 보증하다,동작,我们要保住这份工作。,Wǒmen yào bǎozhù zhè fèn gōngzuò.,우리는 이 일자리를 지켜야 한다.,Bulgaria; Bulgarian; abbr. for 保加利亚,1597
+L3-0017,保安,bǎo'ān,명사,3,경비원,일,门口有一个保安。,Ménkǒu yǒu yí ge bǎo'ān.,입구에 경비원이 한 명 있다.,to ensure public security; to ensure safety (for workers engaged in production); public security; security guard,3028
+L3-0018,保持,bǎochí,동사,3,유지하다,동작,请保持安静。,Qǐng bǎochí ānjìng.,조용히 해 주세요.,to keep; to maintain; to hold; to preserve,644
+L3-0019,保存,bǎocún,동사,3,보존하다 · 저장하다,동작,请保存这个文件。,Qǐng bǎocún zhège wénjiàn.,이 파일을 저장해 주세요.,to conserve; to preserve; to keep; to save (a file etc) (computing),3916
+L3-0020,保护,bǎohù,동사,3,보호하다,사회,我们要保护环境。,Wǒmen yào bǎohù huánjìng.,우리는 환경을 보호해야 한다.,to protect; to defend; to safeguard; protection,536
+L3-0021,保留,bǎoliú,동사,3,보류하다 · 남겨두다,일,这个问题先保留。,Zhège wèntí xiān bǎoliú.,이 문제는 일단 보류하자.,to keep; to retain; to have reservations (about sth); to hold back (from saying sth),2921
+L3-0022,保险,bǎoxiǎn,명사·형용사,3,보험 · 안전하다,사회,我买了健康保险。,Wǒ mǎi le jiànkāng bǎoxiǎn.,나는 건강보험에 가입했다.,insurance; to insure; safe; secure,1430
+L3-0023,保证,bǎozhèng,동사·명사,3,보증하다 · 보장,일,我保证按时完成。,Wǒ bǎozhèng ànshí wánchéng.,나는 제때 끝내겠다고 약속한다.,guarantee; to guarantee; to ensure; to safeguard,586
+L3-0024,报,bào,명사,3,신문,사물,我每天早上看报。,Wǒ měi tiān zǎoshang kàn bào.,나는 매일 아침 신문을 본다.,to announce; to inform; report; newspaper,967
+L3-0025,报到,bàodào,동사,3,도착을 알리다 · 등록하다,학교,新学生明天报到。,Xīn xuéshēng míngtiān bàodào.,신입생은 내일 등록한다.,to report for duty; to check in; to register,8953
+L3-0026,报道,bàodào,동사·명사,3,보도하다 · 보도,사회,电视台报道了这件事。,Diànshìtái bàodào le zhè jiàn shì.,방송국이 이 일을 보도했다.,to report (news); report,886
+L3-0027,报告,bàogào,동사·명사,3,보고하다 · 보고서,일,我写完了这份报告。,Wǒ xiěwán le zhè fèn bàogào.,나는 이 보고서를 다 썼다.,to inform; to report; to make known; report,681
+L3-0028,背,bēi,동사,3,업다 · 짊어지다,동작,他背着一个大包。,Tā bēi zhe yí ge dà bāo.,그는 큰 가방을 메고 있다.,variant of 背,1623
+L3-0029,北部,běibù,명사,3,북부,장소,中国北部很冷。,Zhōngguó běibù hěn lěng.,중국 북부는 아주 춥다.,northern part,5420
+L3-0030,背,bèi,명사,3,등,몸,我的背有点儿疼。,Wǒ de bèi yǒudiǎnr téng.,내 등이 조금 아프다.,the back of a body or object; to turn one's back; to hide something from; to learn by heart,1623
+L3-0031,背后,bèihòu,명사,3,뒤 · 배후,장소,门背后有一把伞。,Mén bèihòu yǒu yì bǎ sǎn.,문 뒤에 우산이 하나 있다.,behind; at the back; in the rear; behind sb's back,2349
+L3-0032,被,bèi,개사,3,~에 의해 (당하는 것을 나타내는 말),어법,我的手机被人拿走了。,Wǒ de shǒujī bèi rén názǒu le.,내 휴대폰을 누가 가져가 버렸다.,"quilt; to cover (with); (literary) to suffer (a misfortune); used to indicate passive voice (placed before the doer of the action like ""by"" in English passive-voice sentences, or, if the doer is not mentioned, before the verb)",54
+L3-0033,被子,bèizi,명사,3,이불,생활,这条被子很暖和。,Zhè tiáo bèizi hěn nuǎnhuo.,이 이불은 아주 따뜻하다.,quilt,8179
+L3-0034,本来,běnlái,부사·형용사,3,원래 · 본래의,시간,我本来想去 可是太忙了。,Wǒ běnlái xiǎng qù kěshì tài máng le.,나는 원래 가려고 했지만 너무 바빴다.,original; originally; at first; it goes without saying,1093
+L3-0035,本领,běnlǐng,명사,3,능력 · 재주,평가,他有很大的本领。,Tā yǒu hěn dà de běnlǐng.,그는 대단한 능력을 가지고 있다.,skill; ability; capability,10811
+L3-0036,本事,běnshi,명사,3,재주 · 실력,평가,他很有本事。,Tā hěn yǒu běnshi.,그는 재주가 아주 좋다.,ability; skill,5333
+L3-0037,比较,bǐjiào,부사·동사,3,비교적 · 비교하다,평가,今天比较冷。,Jīntiān bǐjiào lěng.,오늘은 비교적 춥다.,to compare; to contrast; comparatively; relatively,607
+L3-0038,比例,bǐlì,명사,3,비율,사회,女生的比例比较高。,Nǚshēng de bǐlì bǐjiào gāo.,여학생 비율이 비교적 높다.,proportion; scale,4723
+L3-0039,比赛,bǐsài,동사·명사,3,시합하다 · 시합,활동,明天有一场足球比赛。,Míngtiān yǒu yì chǎng zúqiú bǐsài.,내일 축구 시합이 하나 있다.,competition (sports etc); match; to compete,275
+L3-0040,必然,bìrán,형용사,3,필연적이다,평가,这是必然的结果。,Zhè shì bìrán de jiéguǒ.,이것은 필연적인 결과다.,inevitable; certain; necessity,5199
+L3-0041,必要,bìyào,형용사·명사,3,필요하다 · 필요,평가,没有必要再等了。,Méiyǒu bìyào zài děng le.,더 기다릴 필요가 없다.,necessary; essential; indispensable; required,1191
+L3-0042,变化,biànhuà,동사·명사,3,변화하다 · 변화,사회,这里的变化很大。,Zhèlǐ de biànhuà hěn dà.,이곳의 변화가 아주 크다.,(intransitive) to change; to vary; change; variation,1262
+L3-0043,变为,biànwéi,동사,3,~로 바뀌다,자연,水变为冰了。,Shuǐ biànwéi bīng le.,물이 얼음으로 바뀌었다.,to change into,8495
+L3-0044,标题,biāotí,명사,3,제목,사물,这篇文章的标题很长。,Zhè piān wénzhāng de biāotí hěn cháng.,이 글의 제목은 아주 길다.,title; heading; headline; caption,8578
+L3-0045,标准,biāozhǔn,명사·형용사,3,기준 · 표준적이다,평가,他的发音很标准。,Tā de fāyīn hěn biāozhǔn.,그의 발음은 아주 정확하다.,standard; norm; criterion; (adjective) standard; good; correct; conforming to a standard,1317
+L3-0046,表达,biǎodá,동사,3,표현하다,생각,我不知道怎么表达。,Wǒ bù zhīdào zěnme biǎodá.,나는 어떻게 표현해야 할지 모르겠다.,to express; to convey,1660
+L3-0047,表格,biǎogé,명사,3,표 · 양식,사물,请填写这张表格。,Qǐng tiánxiě zhè zhāng biǎogé.,이 양식을 작성해 주세요.,form; table,8961
+L3-0048,表面,biǎomiàn,명사,3,표면 · 겉,사물,桌子表面很干净。,Zhuōzi biǎomiàn hěn gānjìng.,책상 표면이 아주 깨끗하다.,surface; face; outside; appearance,2771
+L3-0049,表明,biǎomíng,동사,3,분명히 나타내다,생각,结果表明这个方法有用。,Jiéguǒ biǎomíng zhège fāngfǎ yǒuyòng.,결과는 이 방법이 쓸모 있음을 보여준다.,to make clear; to make known; to state clearly; to indicate,1735
+L3-0050,表现,biǎoxiàn,동사·명사,3,나타내다 · 태도,평가,他今天表现得很好。,Tā jīntiān biǎoxiàn de hěn hǎo.,그는 오늘 아주 잘했다.,to show; to show off; to display; to manifest,452
+L3-0051,表演,biǎoyǎn,동사·명사,3,공연하다 · 공연,활동,孩子们表演了一个节目。,Háizimen biǎoyǎn le yí ge jiémù.,아이들이 프로그램 하나를 공연했다.,play; show; performance; exhibition,1127
+L3-0052,并,bìng,부사·접속사,3,결코 · 그리고,어법,我并不知道这件事。,Wǒ bìng bù zhīdào zhè jiàn shì.,나는 이 일을 결코 알지 못했다.,and; furthermore; also; together with,148
+L3-0053,并且,bìngqiě,접속사,3,게다가 · 또한,어법,他会说汉语 并且说得很好。,Tā huì shuō Hànyǔ bìngqiě shuō de hěn hǎo.,그는 중국어를 할 줄 알고 게다가 아주 잘한다.,and; besides; moreover; furthermore,827
+L3-0054,播出,bōchū,동사,3,방영되다,사물,这个节目晚上八点播出。,Zhège jiémù wǎnshang bā diǎn bōchū.,이 프로그램은 저녁 8시에 방영된다.,to broadcast; to air (a TV program etc),4365
+L3-0055,播放,bōfàng,동사,3,방송하다 · 재생하다,사물,请播放下一首歌。,Qǐng bōfàng xià yì shǒu gē.,다음 곡을 재생해 주세요.,to broadcast; to transmit (by radio or TV),3952
+L3-0056,不必,bùbì,부사,3,~할 필요 없다,어법,你不必这么客气。,Nǐ bùbì zhème kèqi.,그렇게 예의를 차리지 않으셔도 됩니다.,need not; does not have to; not necessarily,2029
+L3-0057,不断,bùduàn,부사·동사,3,끊임없이,시간,他不断地努力。,Tā bùduàn de nǔlì.,그는 끊임없이 노력한다.,unceasing; uninterrupted; continuous; constant,1245
+L3-0058,不论,bùlùn,접속사,3,~을 막론하고,어법,不论多难 我都要试试。,Bùlùn duō nán wǒ dōu yào shìshi.,아무리 어려워도 나는 해보겠다.,"whatever; no matter what (who, how etc); regardless of; not to discuss",3411
+L3-0059,补,bǔ,동사,3,보충하다 · 깁다,동작,我要补一节课。,Wǒ yào bǔ yì jié kè.,나는 수업 한 시간을 보충해야 한다.,to repair; to patch; to mend; to make up for,2850
+L3-0060,补充,bǔchōng,동사·명사,3,보충하다 · 보충,생각,我想补充一点。,Wǒ xiǎng bǔchōng yìdiǎn.,나는 한 가지 보충하고 싶다.,to replenish; to supplement; to complement; additional,4107
+L3-0061,不安,bù'ān,형용사,3,불안하다,감정,他心里很不安。,Tā xīnlǐ hěn bù'ān.,그는 마음이 아주 불안하다.,unpeaceful; unstable; uneasy; disturbed,4472
+L3-0062,不得不,bùdébù,부사,3,어쩔 수 없이 ~하다,어법,下雨了 我们不得不回家。,Xià yǔ le wǒmen bùdébù huí jiā.,비가 와서 우리는 어쩔 수 없이 집에 돌아갔다.,have no choice or option but to; cannot but; have to; can't help it,1606
+L3-0063,不光,bùguāng,부사·접속사,3,~뿐만 아니라,어법,不光我 他也去。,Bùguāng wǒ tā yě qù.,나뿐만 아니라 그도 간다.,not the only one; not only,7316
+L3-0064,不仅,bùjǐn,접속사,3,~뿐만 아니라,어법,他不仅会开车 还会修车。,Tā bùjǐn huì kāichē hái huì xiū chē.,그는 운전할 줄 알 뿐 아니라 차도 고칠 줄 안다.,"not just; not limited to; (as a correlative conjunction) not only (..., but also ...)",1467
+L3-0065,布,bù,명사,3,천 · 옷감,사물,这块布很软。,Zhè kuài bù hěn ruǎn.,이 천은 아주 부드럽다.,variant of 布; to announce; to spread,1694
+L3-0066,步,bù,명사·양사,3,걸음,동작,他往前走了一步。,Tā wǎng qián zǒu le yí bù.,그는 앞으로 한 걸음 나아갔다.,surname Bu,972
+L3-0067,部,bù,명사·양사,3,부분 · 편 (영화를 세는 말),어법,我看了一部电影。,Wǒ kàn le yí bù diànyǐng.,나는 영화 한 편을 봤다.,ministry; department; section; part,426
+L3-0068,部门,bùmén,명사,3,부서,일,他在哪个部门工作？,Tā zài nǎge bùmén gōngzuò?,그는 어느 부서에서 일하나요?,department; branch; section; division,992
+L3-0069,部长,bùzhǎng,명사,3,부장 · 장관,일,部长今天不在。,Bùzhǎng jīntiān bú zài.,부장님은 오늘 안 계신다.,head of a (government etc) department; section chief; section head; secretary,3538
+L3-0070,才能,cáinéng,명사,3,재능,평가,他很有音乐才能。,Tā hěn yǒu yīnyuè cáinéng.,그는 음악적 재능이 뛰어나다.,talent; ability; capacity,3200
+L3-0071,采取,cǎiqǔ,동사,3,(조치를) 취하다,일,我们要采取新的办法。,Wǒmen yào cǎiqǔ xīn de bànfǎ.,우리는 새로운 방법을 취해야 한다.,"to adopt or carry out (measures, policies, course of action); to take",1701
+L3-0072,采用,cǎiyòng,동사,3,채택하다,일,公司采用了他的意见。,Gōngsī cǎiyòng le tā de yìjiàn.,회사는 그의 의견을 채택했다.,to adopt; to employ; to use,3254
+L3-0073,彩色,cǎisè,명사,3,컬러 · 색채,사물,这是一张彩色照片。,Zhè shì yì zhāng cǎisè zhàopiàn.,이것은 컬러 사진 한 장이다.,color; multicolored,7894
+L3-0074,曾经,céngjīng,부사,3,일찍이 · ~한 적이 있다,시간,我曾经去过北京。,Wǒ céngjīng qù guo Běijīng.,나는 예전에 베이징에 가본 적이 있다.,once; already; former; previously,723
+L3-0075,产生,chǎnshēng,동사,3,생기다 · 발생하다,사회,这个问题是怎么产生的？,Zhège wèntí shì zěnme chǎnshēng de?,이 문제는 어떻게 생긴 것인가요?,to arise; to come into being; to come about; to give rise to; to bring into being; to bring about; to produce; to engender; to generate,1155
+L3-0076,长城,Chángchéng,명사,3,만리장성,장소,我很想去看长城。,Wǒ hěn xiǎng qù kàn Chángchéng.,나는 만리장성을 아주 보고 싶다.,the Great Wall,9599
+L3-0077,长处,chángchù,명사,3,장점,평가,每个人都有自己的长处。,Měi ge rén dōu yǒu zìjǐ de chángchù.,사람마다 자기만의 장점이 있다.,good aspects; strong points,15374
+L3-0078,长期,chángqī,명사,3,장기간,시간,这是一个长期的计划。,Zhè shì yí ge chángqī de jìhuà.,이것은 장기 계획이다.,long term; long time; long range (of a forecast),2911
+L3-0079,厂,chǎng,명사,3,공장,장소,他在一家汽车厂工作。,Tā zài yì jiā qìchē chǎng gōngzuò.,그는 자동차 공장에서 일한다.,factory; yard; depot; workhouse,2329
+L3-0080,场合,chǎnghé,명사,3,자리 · 상황,사회,这种场合不能开玩笑。,Zhè zhǒng chǎnghé bù néng kāi wánxiào.,이런 자리에서는 농담을 하면 안 된다.,situation; occasion; context; setting,4974
+L3-0081,场所,chǎngsuǒ,명사,3,장소,장소,这里是公共场所。,Zhèlǐ shì gōnggòng chǎngsuǒ.,이곳은 공공장소다.,location; place,4680
+L3-0082,超级,chāojí,형용사,3,최고의 · 대단한,평가,他是一个超级球迷。,Tā shì yí ge chāojí qiúmí.,그는 열혈 축구팬이다.,super-; ultra-; hyper-,1582
+L3-0083,朝,cháo,개사·동사,3,~을 향해,어법,请朝这边走。,Qǐng cháo zhèbiān zǒu.,이쪽으로 가 주세요.,abbr. for 朝鲜 Korea,1321
+L3-0084,吵,chǎo,형용사·동사,3,시끄럽다 · 말다툼하다,감정,外面太吵了。,Wàimiàn tài chǎo le.,밖이 너무 시끄럽다.,to quarrel; to make a noise; noisy; to disturb by making a noise,2738
+L3-0085,吵架,chǎojià,동사,3,말다툼하다,감정,他们昨天吵架了。,Tāmen zuótiān chǎojià le.,그들은 어제 말다툼했다.,to quarrel; to have a row; quarrel,4413
+L3-0086,衬衫,chènshān,명사,3,셔츠,사물,我买了一件白衬衫。,Wǒ mǎi le yí jiàn bái chènshān.,나는 흰 셔츠 한 벌을 샀다.,shirt; blouse,4988
+L3-0087,衬衣,chènyī,명사,3,셔츠 · 속옷,사물,这件衬衣有点儿小。,Zhè jiàn chènyī yǒudiǎnr xiǎo.,이 셔츠는 조금 작다.,shirt,10289
+L3-0088,称为,chēngwéi,동사,3,~라고 부르다,생각,大家把他称为老师。,Dàjiā bǎ tā chēngwéi lǎoshī.,모두가 그를 선생님이라고 부른다.,"to be called; to be known as; to call it ""...""",2946
+L3-0089,成功,chénggōng,동사·형용사,3,성공하다 · 성공적이다,평가,这次实验成功了。,Zhè cì shíyàn chénggōng le.,이번 실험은 성공했다.,"Chenggong or Chengkung town in Taitung County 台东县, southeast Taiwan",476
+L3-0090,成果,chéngguǒ,명사,3,성과,일,这是我们的研究成果。,Zhè shì wǒmen de yánjiū chéngguǒ.,이것은 우리의 연구 성과다.,result; achievement; gain; profit,3448
+L3-0091,成就,chéngjiù,명사·동사,3,업적 · 이루다,일,他取得了很大的成就。,Tā qǔdé le hěn dà de chéngjiù.,그는 큰 업적을 이루었다.,accomplishment; success; achievement; to achieve (a result),3075
+L3-0092,成立,chénglì,동사,3,설립되다,사회,这家公司去年成立。,Zhè jiā gōngsī qùnián chénglì.,이 회사는 작년에 설립되었다.,to establish; to set up; to be tenable; to hold water,2498
+L3-0093,成熟,chéngshú,형용사,3,성숙하다 · 익다,평가,苹果还没成熟。,Píngguǒ hái méi chéngshú.,사과가 아직 익지 않았다.,mature; ripe; to mature; to ripen; Taiwan pr. [chéng shóu],1955
+L3-0094,成员,chéngyuán,명사,3,구성원,사회,他是我们队的成员。,Tā shì wǒmen duì de chéngyuán.,그는 우리 팀의 구성원이다.,member,1425
+L3-0095,成长,chéngzhǎng,동사,3,성장하다,생활,孩子成长得很快。,Háizi chéngzhǎng de hěn kuài.,아이가 아주 빨리 자란다.,to mature; to grow; growth,2157
+L3-0096,城,chéng,명사,3,성 · 도시,장소,我们进城去买东西。,Wǒmen jìn chéng qù mǎi dōngxi.,우리는 시내에 들어가 물건을 산다.,city walls; city; town,892
+L3-0097,城市,chéngshì,명사,3,도시,장소,北京是一个大城市。,Běijīng shì yí ge dà chéngshì.,베이징은 큰 도시다.,city; town,593
+L3-0098,程度,chéngdù,명사,3,정도 · 수준,평가,他的汉语程度很高。,Tā de Hànyǔ chéngdù hěn gāo.,그의 중국어 수준은 아주 높다.,degree; level; extent,1455
+L3-0099,持续,chíxù,동사,3,지속되다,시간,雨持续了三天。,Yǔ chíxù le sān tiān.,비가 사흘 동안 계속되었다.,to continue; to persist; to last; sustainable,1749
+L3-0100,充满,chōngmǎn,동사,3,가득 차다,감정,他对未来充满信心。,Tā duì wèilái chōngmǎn xìnxīn.,그는 미래에 대해 자신감이 가득하다.,full of; brimming with; very full; permeated,1405

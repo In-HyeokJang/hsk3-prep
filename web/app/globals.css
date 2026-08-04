@@ -1,0 +1,125 @@
+@import 'tailwindcss';
+
+/* ============================================================
+   색과 글꼴
+
+   바탕은 한자 연습장(田字格)에서 가져왔습니다.
+   짙은 초록 먹색 + 아주 옅은 초록빛 종이색.
+   ============================================================ */
+
+@theme {
+	--color-paper: #f5f7f3;
+	--color-paper-2: #edf1ea;
+	--color-ink: #17211c;
+	--color-ink-2: #3a4842;
+	--color-muted: #6b7a70;
+	--color-rule: #c9d6c6;
+	--color-rule-soft: #dce5d9;
+	--color-accent: #1f6b4f;
+	--color-accent-soft: #e2efe7;
+	--color-warn: #a8382b;
+	--color-warn-soft: #f6e6e2;
+
+	--font-sans:
+		-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', 'Apple SD Gothic Neo',
+		'Malgun Gothic', '맑은 고딕', 'Noto Sans KR', sans-serif;
+
+	/* 한자 전용 글꼴.
+	   한국어 글꼴이 한자를 그리면 자형이 중국어와 달라집니다.
+	   그래서 중국어 글꼴을 앞에 세워둡니다. */
+	--font-han:
+		'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Source Han Sans SC', 'Microsoft YaHei',
+		'Heiti SC', 'WenQuanYi Micro Hei', sans-serif;
+
+	--font-mono: ui-monospace, 'Cascadia Mono', 'SFMono-Regular', Consolas, monospace;
+}
+
+/* 어두운 화면
+   ─────────────────────────────────────────────────────────────
+   ⚠ 여기에 @theme 을 쓰면 안 됩니다.
+
+   Tailwind v4 의 @theme 은 미디어 쿼리 안에 있어도 통째로 끌어올려집니다.
+   그래서 @media 안에 @theme 을 넣으면 어두운 값이 밝은 값을 덮어써서
+   낮에도 밤에도 어두운 화면만 나옵니다. (실제로 그렇게 만들었다가 잡았습니다)
+
+   대신 위 @theme 이 만들어둔 변수를 평범한 CSS 로 다시 정의합니다.
+   유틸리티 클래스는 var(--color-*) 를 참조하므로 이렇게 하면 잘 바뀝니다. */
+@media (prefers-color-scheme: dark) {
+	:root {
+		--color-paper: #101714;
+		--color-paper-2: #18211d;
+		--color-ink: #e4eae5;
+		--color-ink-2: #b6c2bb;
+		--color-muted: #849a8e;
+		--color-rule: #2c3b34;
+		--color-rule-soft: #222e28;
+		--color-accent: #6fcb9f;
+		--color-accent-soft: #1b2b23;
+		--color-warn: #e08878;
+		--color-warn-soft: #2c1e1b;
+	}
+}
+
+@layer base {
+	html {
+		background: var(--color-paper);
+		color-scheme: light dark;
+		-webkit-text-size-adjust: 100%;
+	}
+
+	body {
+		background: var(--color-paper);
+		color: var(--color-ink);
+		font-family: var(--font-sans);
+		/* 한글은 단어 중간에서 줄이 바뀌면 읽기 나쁩니다 */
+		word-break: keep-all;
+		overflow-wrap: anywhere;
+		-webkit-font-smoothing: antialiased;
+		/* 아이폰 홈 화면에서 열었을 때 노치·홈바를 피합니다 */
+		padding-bottom: env(safe-area-inset-bottom);
+	}
+
+	/* 폰에서 버튼을 눌렀을 때 파란 상자가 뜨지 않게 */
+	button,
+	a {
+		-webkit-tap-highlight-color: transparent;
+	}
+
+	:focus-visible {
+		outline: 2px solid var(--color-accent);
+		outline-offset: 2px;
+		border-radius: 4px;
+	}
+}
+
+@layer utilities {
+	/* 한자를 그리는 곳에는 반드시 이걸 씁니다 */
+	.han {
+		font-family: var(--font-han);
+		/* 한자에는 자간이 붙으면 답답해 보입니다 */
+		letter-spacing: 0.02em;
+	}
+
+	/* 병음. 성조 기호가 잘리지 않도록 줄 높이를 넉넉히 */
+	.pinyin {
+		font-family: var(--font-mono);
+		line-height: 1.6;
+	}
+
+	.hide-scrollbar::-webkit-scrollbar {
+		display: none;
+	}
+	.hide-scrollbar {
+		scrollbar-width: none;
+	}
+}
+
+/* 움직임을 줄이는 설정을 켠 사람에게는 애니메이션을 끕니다 */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		transition-duration: 0.01ms !important;
+	}
+}
