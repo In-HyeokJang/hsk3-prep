@@ -33,7 +33,10 @@ export default function WordDetail({ id }: { id: string }) {
 		setSaveError(null);
 		try {
 			// 서버가 저장했다고 확인해줄 때까지 기다립니다.
-			await mark(word!.id, next, next === 'known');
+			//
+			// 맞았는지(correct) 를 넘기지 않습니다. 문제를 푼 게 아니라 손으로 표시한 것이라서요.
+			// 정답으로 넘기면 연타할 때마다 연속 기록이 올라가 복습이 35일 뒤로 밀립니다.
+			await mark(word!.id, next);
 		} catch (e) {
 			setSaveError(e instanceof Error ? e.message : String(e));
 		} finally {
