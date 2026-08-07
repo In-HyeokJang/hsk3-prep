@@ -6,6 +6,7 @@ import { getDaily } from '@/lib/api';
 import { useStore } from '@/lib/useStore';
 import type { Word } from '@/lib/types';
 import Withdraw from '@/components/Withdraw';
+import { setShowPinyin, useShowPinyin } from '@/lib/settings';
 import { Empty, ErrorBox, Loading, ProgressBar, WordRow } from '@/components/ui';
 
 const TODAY_COUNT = 10;
@@ -131,11 +132,57 @@ export default function HomePage() {
 				)}
 			</section>
 
+			{/* ── 설정 ── */}
+			<section className="rounded-2xl border border-rule-soft bg-paper-2/40 px-4 py-4 md:px-6 md:py-5">
+				<h2 className="mb-3 text-sm font-bold tracking-tight">설정</h2>
+				<PinyinToggle />
+			</section>
+
 			{/* ── 탈퇴 ──
 			    맨 아래, 눈에 잘 안 띄는 자리에 둡니다. 실수로 누를 일이 아니어서요. */}
 			<div className="mt-4 flex flex-col border-t border-rule-soft pt-6">
 				<Withdraw username={username} />
 			</div>
 		</div>
+	);
+}
+
+/* ── 병음 켜고 끄기 ────────────────────────────────────────
+   손가락으로 누를 스위치입니다. 글자까지 통째로 눌리게 <label> 로 감쌌습니다.
+   진짜 체크상자는 눈에 안 보이게 두고 모양만 직접 그립니다 —
+   그래야 키보드로도 옮겨 다닐 수 있고, 화면 읽어주는 기계도 알아봅니다. */
+function PinyinToggle() {
+	const on = useShowPinyin();
+
+	return (
+		<label className="flex cursor-pointer items-center justify-between gap-4">
+			<span className="min-w-0">
+				<span className="block text-base font-semibold">문제에 병음 보이기</span>
+				<span className="block text-sm text-muted">
+					한자 밑에 <span className="pinyin text-ink-2">xuéxí</span> 처럼 작게 나옵니다.
+					한자를 고르는 문제에는 나오지 않아요 (답이 보여서요)
+				</span>
+			</span>
+
+			<input
+				type="checkbox"
+				checked={on}
+				onChange={(e) => setShowPinyin(e.target.checked)}
+				className="peer sr-only"
+			/>
+			{/* 켜짐/꺼짐 모양은 peer 로 하지 않고 위에서 읽은 on 으로 그립니다.
+			    손잡이가 스위치 '안'에 있어서, peer 규칙(형제끼리만)이 닿지 않습니다. */}
+			<span
+				className={`relative h-7 w-12 shrink-0 rounded-full transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-accent peer-focus-visible:ring-offset-2 ${
+					on ? 'bg-accent' : 'bg-rule'
+				}`}
+			>
+				<span
+					className={`absolute left-1 top-1 h-5 w-5 rounded-full bg-paper shadow-sm transition-transform ${
+						on ? 'translate-x-5' : ''
+					}`}
+				/>
+			</span>
+		</label>
 	);
 }
