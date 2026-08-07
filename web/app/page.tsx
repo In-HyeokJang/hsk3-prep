@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { getDaily } from '@/lib/api';
 import { useStore } from '@/lib/useStore';
 import type { Word } from '@/lib/types';
+import ChangePassword from '@/components/ChangePassword';
 import Withdraw from '@/components/Withdraw';
 import { setShowPinyin, useShowPinyin } from '@/lib/settings';
 import { Empty, ErrorBox, Loading, ProgressBar, WordRow } from '@/components/ui';
@@ -133,9 +134,12 @@ export default function HomePage() {
 			</section>
 
 			{/* ── 설정 ── */}
-			<section className="rounded-2xl border border-rule-soft bg-paper-2/40 px-4 py-4 md:px-6 md:py-5">
-				<h2 className="mb-3 text-sm font-bold tracking-tight">설정</h2>
+			<section className="flex flex-col gap-4 rounded-2xl border border-rule-soft bg-paper-2/40 px-4 py-4 md:px-6 md:py-5">
+				<h2 className="text-sm font-bold tracking-tight">설정</h2>
 				<PinyinToggle />
+				<div className="border-t border-rule-soft pt-4">
+					<ChangePassword />
+				</div>
 			</section>
 
 			{/* ── 탈퇴 ──

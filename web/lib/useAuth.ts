@@ -124,6 +124,7 @@ function readable(message: string): string {
 	if (m.includes('user already registered')) return '이미 쓰고 있는 아이디입니다.';
 	if (m.includes('password should be at least')) return '비밀번호는 6자 이상이어야 합니다.';
 	if (m.includes('rate limit') || m.includes('too many')) return '잠시 뒤에 다시 시도해 주세요.';
+	if (m.includes('should be different')) return '지금 쓰는 비밀번호와 같습니다.';
 
 	// 방아쇠(trigger)에서 중복이 걸리면 Supabase 는 이 뭉뚱그린 말만 돌려줍니다.
 	if (m.includes('database error saving new user')) {
@@ -285,6 +286,50 @@ export async function withdraw(): Promise<number> {
 
 	await supabase.auth.signOut();
 	return (data as number) ?? 0;
+}
+
+/* ── 비밀번호 바꾸기 ──────────────────────────────────────── */
+
+/** 새 비밀번호가 쓸 만한지. 서버에 보내기 전에 화면에서 먼저 봅니다 */
+export function checkNewPassword(
+	current: string,
+	next: string,
+	next2: string,
+): string | null {
+	if (!current) return '지금 쓰는 비밀번호를 적어주세요.';
+	if (next.length < 6) return '새 비밀번호는 6자 이상으로 해주세요.';
+	// 가입할 때와 같은 이유입니다. 되찾을 길이 없어서 오타 하나가 계정을 닫습니다.
+	if (next !== next2) return '새 비밀번호 두 개가 서로 다릅니다.';
+	if (next === current) return '지금 쓰는 비밀번호와 같습니다.';
+	return null;
+}
+
+/**
+ * 비밀번호 바꾸기.
+ *
+ * ★ 지금 비밀번호를 먼저 확인합니다.
+ *   Supabase 는 로그인만 돼 있으면 그냥 바꿔줍니다. 그러면 폰을 잠깐
+ *   놓아둔 사이에 남이 비밀번호를 바꿔서 계정을 가져갈 수 있습니다.
+ *   확인은 그 비밀번호로 다시 한번 로그인해보는 것으로 합니다.
+ *   틀리면 로그인이 실패할 뿐, 지금 세션은 그대로 남습니다.
+ *
+ * ★ 아이디는 화면에서 받지 않고 지금 세션에서 꺼냅니다.
+ *   내부용 주소(hong123@hsk3.local)를 사용자에게 물어볼 수는 없으니까요.
+ */
+export async function changePassword(current: string, next: string): Promise<void> {
+	const { data, error: who } = await supabase.auth.getUser();
+	if (who || !data.user?.email) {
+		throw new Error('로그인 상태를 확인하지 못했습니다. 다시 로그인해 주세요.');
+	}
+
+	const { error: wrong } = await supabase.auth.signInWithPassword({
+		email: data.user.email,
+		password: current,
+	});
+	if (wrong) throw new Error('지금 쓰는 비밀번호가 맞지 않습니다.');
+
+	const { error } = await supabase.auth.updateUser({ password: next });
+	if (error) throw new Error(readable(error.message));
 }
 
 /**
