@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useStore } from '@/lib/useStore';
 import { Empty, ErrorBox, Loading, StatusPill } from '@/components/ui';
+import ReadAloud from '@/components/ReadAloud';
 import ReportButton from '@/components/ReportButton';
 import Speak, { SpeakNote } from '@/components/Speak';
 import WriteBox from '@/components/WriteBox';
@@ -149,6 +150,14 @@ export default function WordDetail({ id }: { id: string }) {
 					</p>
 				)}
 			</section>
+
+			{/* ── 소리내어 읽기 ──
+			    예문이 있으면 예문을, 없으면 단어를 읽습니다.
+			    음성 인식이 안 되는 브라우저에서는 이 칸이 통째로 안 나옵니다. */}
+			<ReadAloud
+				text={word.example_zh || word.hanzi}
+				label={word.example_zh ? '예문을 소리내어 읽기' : '소리내어 읽기'}
+			/>
 
 			{/* ── 외웠는지 ── */}
 			<section className="flex flex-col gap-3">
