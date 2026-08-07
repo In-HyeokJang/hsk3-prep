@@ -6,9 +6,10 @@ import { getDaily } from '@/lib/api';
 import { useStore } from '@/lib/useStore';
 import type { Word } from '@/lib/types';
 import ChangePassword from '@/components/ChangePassword';
+import StatsPanel from '@/components/StatsPanel';
 import Withdraw from '@/components/Withdraw';
 import { setShowPinyin, useShowPinyin } from '@/lib/settings';
-import { Empty, ErrorBox, Loading, ProgressBar, WordRow } from '@/components/ui';
+import { Empty, ErrorBox, Loading, WordRow } from '@/components/ui';
 
 const TODAY_COUNT = 10;
 
@@ -16,6 +17,7 @@ export default function HomePage() {
 	const {
 		userKey,
 		words,
+		progress,
 		statusOf,
 		knownCount,
 		totalAll,
@@ -75,23 +77,18 @@ export default function HomePage() {
 				</button>
 			</div>
 
-			{/* ── 진도 ── */}
-			<section className="rounded-2xl border border-rule-soft bg-paper-2/60 px-4 py-4 md:px-6 md:py-5">
-				<ProgressBar done={knownCount} total={totalAll} label="외운 단어 (HSK 3급 전체)" />
-				<p className="mt-3 text-sm text-muted">
-					{knownCount === 0
-						? '아직 시작 전이에요. 오늘 10개만 해봅시다.'
-						: knownCount >= ready
-							? '지금 준비된 단어를 다 외우셨어요. 대단합니다.'
-							: `${ready - knownCount}개 남았어요. 하루 10개면 ${Math.ceil((ready - knownCount) / 10)}일이에요.`}
-				</p>
-				{ready < totalAll && (
-					<p className="mt-1 text-xs text-muted">
-						지금 <b className="text-ink-2">{ready}개</b>까지 뜻과 예문이 준비됐어요. 나머지는
-						채워지는 대로 늘어납니다.
-					</p>
-				)}
-			</section>
+			{/* ── 진도 ──
+			    막대 하나였던 자리입니다. 오늘 · 연속 일수 · 복습할 것 · 상태별 ·
+			    약한 단어까지 보여줍니다 (components/StatsPanel.tsx). */}
+			<StatsPanel words={words} progress={progress} totalAll={totalAll} />
+
+			<p className="-mt-4 text-sm text-muted">
+				{knownCount === 0
+					? '아직 시작 전이에요. 오늘 10개만 해봅시다.'
+					: knownCount >= ready
+						? '지금 준비된 단어를 다 외우셨어요. 대단합니다.'
+						: `${ready - knownCount}개 남았어요. 하루 10개면 ${Math.ceil((ready - knownCount) / 10)}일이에요.`}
+			</p>
 
 			{/* ── 시작 버튼 ──
 			    목록 아래에 띄워두면 카드를 가립니다. 진도 바로 아래가 자연스러워요.

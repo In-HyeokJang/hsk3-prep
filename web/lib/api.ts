@@ -137,6 +137,37 @@ export async function logAttempt(
 	}
 }
 
+/* ── 내 진도 숫자 ───────────────────────────────────────────
+   오늘 얼마나 했는지 · 며칠 이어왔는지 · 오늘 복습할 게 몇 개인지.
+   전부 저장은 하고 있었는데 화면에 안 나오던 것들입니다. */
+
+export type Stats = {
+	today_total: number;
+	today_correct: number;
+	streak_days: number;
+	due_now: number;
+	new_count: number;
+	learning_count: number;
+	known_count: number;
+};
+
+/**
+ * 진도 숫자를 받아옵니다.
+ *
+ * 서버가 셉니다. '오늘' 과 '며칠 연속' 은 한국 시각으로 따져야 하는데
+ * 브라우저마다 시계가 다를 수 있고, 푼 기록은 계속 쌓여서
+ * 통째로 받아와 세면 쓸수록 느려집니다 (마이그레이션 20).
+ */
+export async function getStats(): Promise<Stats> {
+	const { data, error } = await supabase.rpc('my_stats');
+	if (error) throw new Error(`진도를 못 받았습니다: ${error.message}`);
+
+	// 여러 줄을 돌려주는 모양이라 배열로 옵니다. 줄은 늘 하나입니다.
+	const row = Array.isArray(data) ? data[0] : data;
+	if (!row) throw new Error('진도를 못 받았습니다');
+	return row as Stats;
+}
+
 /* ── 이상한 곳 알려주기 ─────────────────────────────────────
    한국어 뜻과 예문 973개는 새로 만든 것이고 사람이 아직 안 봤습니다.
    혼자 다 보는 건 사실상 불가능해서, 쓰는 사람이 눌러준 것부터 봅니다. */
