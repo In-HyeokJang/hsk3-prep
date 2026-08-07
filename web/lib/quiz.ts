@@ -10,6 +10,7 @@ export type QuizKind =
 	| 'type' //   한자를 보여주고 뜻을 직접 입력
 	| 'pick-ko' // 한자를 보여주고 뜻 4개 중 고르기
 	| 'pick-zh' // 뜻을 보여주고 한자 4개 중 고르기
+	| 'pick-py' // 한자를 보여주고 병음 4개 중 고르기
 	| 'blank'; //  예문에서 그 단어만 가리고 한자 4개 중 고르기
 
 export type Quiz = {
@@ -222,6 +223,63 @@ function clashes(a: Word, b: Word): boolean {
 	return partsA.some((x) => partsB.some((y) => samePart(x, y)));
 }
 
+/* ── 병음 고르기 ──────────────────────────────────────────
+   "뜻은 아는데 못 읽는" 상태를 잡는 문제입니다.
+
+   ★ 여기서는 뜻이 겹치는지를 보면 안 됩니다. 병음이 겹치는지를 봐야 합니다.
+     화면에 답으로 나오는 것이 병음이라서, 뜻이 아무리 달라도
+     읽는 소리가 같으면 보기 두 개가 똑같은 글자로 보입니다.
+     중국어에는 그런 짝이 아주 많습니다 (是/事 shì · 在/再 zài · 他/她 tā).
+     3회차에 67군데 터졌던 사고와 같은 종류입니다. */
+
+/** 병음 두 개가 화면에서 같은 글자로 보이는지 */
+function samePinyin(a: string, b: string): boolean {
+	const tidy = (s: string) => s.trim().toLowerCase().replace(/\s+/g, '');
+	return tidy(a) === tidy(b);
+}
+
+/**
+ * 병음 문제로 낼 수 있는 단어인지.
+ * 병음이 적혀 있기만 하면 됩니다.
+ */
+export function canPinyin(word: Word): boolean {
+	return !!word.hanzi && !!word.pinyin.trim();
+}
+
+/**
+ * 병음 문제의 오답 3개를 고릅니다.
+ *
+ * 글자 수가 같은 단어를 먼저 씁니다. 한 글자짜리 문제에 세 글자 병음이 섞이면
+ * 읽을 줄 몰라도 길이만 보고 맞힐 수 있어서 연습이 안 됩니다.
+ *
+ * 정답과 견주는 것만으로는 모자랍니다. 이미 고른 오답과도 견줍니다.
+ */
+function pickWrongPinyin(word: Word, pool: Word[], howMany: number): Word[] {
+	const usable = pool.filter(
+		(w) => w.id !== word.id && canPinyin(w) && !samePinyin(w.pinyin, word.pinyin),
+	);
+
+	const picked: Word[] = [];
+	const takeFrom = (list: Word[]) => {
+		for (const candidate of shuffle(list)) {
+			if (picked.length >= howMany) return;
+			if (picked.some((already) => samePinyin(already.pinyin, candidate.pinyin))) continue;
+			picked.push(candidate);
+		}
+	};
+
+	// 1순위: 글자 수가 같은 단어
+	const size = [...word.hanzi].length;
+	takeFrom(usable.filter((w) => [...w.hanzi].length === size));
+
+	// 못 채웠으면 길이를 가리지 않고 채웁니다
+	if (picked.length < howMany) {
+		const taken = new Set(picked.map((w) => w.id));
+		takeFrom(usable.filter((w) => !taken.has(w.id)));
+	}
+	return picked;
+}
+
 /** 배열을 섞습니다 */
 function shuffle<T>(list: T[]): T[] {
 	const out = [...list];
@@ -267,15 +325,26 @@ function pickWrong(word: Word, pool: Word[], howMany: number): Word[] {
 /**
  * 카드 하나를 문제로 바꿉니다.
  *
+ * · 네 문제에 한 번은 병음 고르기
  * · 세 문제에 한 번은 빈칸 채우기 (예문에 그 한자가 들어 있을 때만)
  * · 뜻이 짧고 하나면 → 입력
  * · 그 밖에는 4지선다. 방향(한자→뜻 / 뜻→한자)은 번갈아 갑니다.
+ *
+ * 10문제 한 묶음이면 병음 3개(2·6·10번째) · 빈칸 2개(3·9번째) · 뜻 5개가 됩니다.
+ * 두 규칙이 겹치는 자리(6번째)는 위에 적힌 병음이 이깁니다.
  *
  * 성조는 여기 없습니다. /tone 에서 따로 풉니다.
  * 오답을 3개 못 채우면 4지선다를 낼 수 없으니 원래 방식으로 돌립니다.
  */
 export function makeQuiz(word: Word, pool: Word[], index: number): Quiz {
-	// 빈칸 문제를 먼저 봅니다. 조건이 안 맞으면 아래 원래 규칙으로 내려갑니다.
+	if (index % 4 === 1 && canPinyin(word)) {
+		const wrong = pickWrongPinyin(word, pool, 3);
+		if (wrong.length === 3) {
+			return { kind: 'pick-py', word, choices: shuffle([word, ...wrong]) };
+		}
+	}
+
+	// 빈칸 문제를 봅니다. 조건이 안 맞으면 아래 원래 규칙으로 내려갑니다.
 	if (index % 3 === 2 && canBlank(word)) {
 		// 이미 예문에 보이는 한자는 오답에서 뺍니다.
 		// 문장 안에 그대로 있는 글자가 보기에 나오면 답이 아닌 게 뻔히 보입니다.

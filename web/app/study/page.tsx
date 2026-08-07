@@ -20,6 +20,7 @@ const COUNT = 10;
  */
 function quizTypeOf(kind: Quiz['kind']): QuizType {
 	if (kind === 'blank') return 'blank';
+	if (kind === 'pick-py') return 'pinyin';
 	return kind === 'pick-zh' ? 'hanzi' : 'meaning';
 }
 
@@ -28,6 +29,7 @@ const KIND_LABEL: Record<Quiz['kind'], string> = {
 	type: '뜻 쓰기',
 	'pick-ko': '뜻 고르기',
 	'pick-zh': '한자 고르기',
+	'pick-py': '병음 고르기',
 	blank: '빈칸 채우기',
 };
 
@@ -243,8 +245,9 @@ export default function StudyPage() {
 							<p className="han text-center text-7xl leading-none md:text-8xl">{card.hanzi}</p>
 							{/* 병음은 설정에서 켠 사람에게만.
 							    한자를 고르는 문제(pick-zh)에는 아예 오지 않습니다 —
-							    거기서는 병음이 곧 정답을 알려주는 셈이라서요. */}
-							{showPinyin && card.pinyin && (
+							    거기서는 병음이 곧 정답을 알려주는 셈이라서요.
+							    병음 고르기(pick-py)에서는 설정을 켰더라도 감춥니다. 그게 답입니다. */}
+							{showPinyin && card.pinyin && quiz.kind !== 'pick-py' && (
 								<p className="pinyin text-lg text-muted">{card.pinyin}</p>
 							)}
 						</div>
@@ -302,6 +305,8 @@ export default function StudyPage() {
 						>
 							{quiz.kind === 'pick-ko' ? (
 								<span className="text-base font-semibold">{c.meaning_ko}</span>
+							) : quiz.kind === 'pick-py' ? (
+								<span className="pinyin text-xl">{c.pinyin}</span>
 							) : (
 								<span className="han text-2xl">{c.hanzi}</span>
 							)}
