@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { getDaily } from '@/lib/api';
 import { useStore } from '@/lib/useStore';
 import { checkTyped, makeQuiz, type Quiz } from '@/lib/quiz';
+import { useShowPinyin } from '@/lib/settings';
 import type { Status, Word } from '@/lib/types';
 import { Empty, ErrorBox, Loading } from '@/components/ui';
 
@@ -12,6 +13,9 @@ const COUNT = 10;
 
 export default function StudyPage() {
 	const { userKey, words, statusOf, mark, pendingCount, loading, error, reload } = useStore();
+
+	// 홈의 설정에서 켜고 끕니다. 아래에 그만두는 길(return)이 여럿이라 맨 위에서 읽습니다.
+	const showPinyin = useShowPinyin();
 
 	const [quizzes, setQuizzes] = useState<Quiz[] | null>(null);
 	const [at, setAt] = useState(0);
@@ -186,7 +190,15 @@ export default function StudyPage() {
 					{quiz.kind === 'pick-zh' ? (
 						<p className="text-center text-3xl font-bold leading-snug">{card.meaning_ko}</p>
 					) : (
-						<p className="han text-center text-7xl leading-none md:text-8xl">{card.hanzi}</p>
+						<div className="flex flex-col items-center gap-2">
+							<p className="han text-center text-7xl leading-none md:text-8xl">{card.hanzi}</p>
+							{/* 병음은 설정에서 켠 사람에게만.
+							    한자를 고르는 문제(pick-zh)에는 아예 오지 않습니다 —
+							    거기서는 병음이 곧 정답을 알려주는 셈이라서요. */}
+							{showPinyin && card.pinyin && (
+								<p className="pinyin text-lg text-muted">{card.pinyin}</p>
+							)}
+						</div>
 					)}
 					{card.pos && <p className="text-sm text-muted">{card.pos}</p>}
 				</div>
