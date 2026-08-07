@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useStore } from '@/lib/useStore';
 import { Empty, ErrorBox, Loading, StatusPill } from '@/components/ui';
 import ReportButton from '@/components/ReportButton';
+import Speak, { SpeakNote } from '@/components/Speak';
 import WriteBox from '@/components/WriteBox';
 import type { Status } from '@/lib/types';
 
@@ -81,7 +82,12 @@ export default function WordDetail({ id }: { id: string }) {
 				</div>
 
 				<div className="flex flex-col items-center gap-1.5">
-					<p className="pinyin text-xl text-accent md:text-2xl">{word.pinyin}</p>
+					{/* 병음 옆에 스피커. 병음을 눈으로만 보면 실제 소리와 다르게 굳습니다.
+					    중국어 목소리가 없는 기기에서는 이 버튼이 아예 안 나옵니다. */}
+					<div className="flex items-center gap-3">
+						<p className="pinyin text-xl text-accent md:text-2xl">{word.pinyin}</p>
+						<Speak text={word.hanzi} label={`${word.hanzi} 듣기`} big />
+					</div>
 					<div className="flex items-center gap-2">
 						{word.pos && <span className="text-sm text-muted">{word.pos}</span>}
 						<StatusPill status={status} />
@@ -94,7 +100,10 @@ export default function WordDetail({ id }: { id: string }) {
 			{/* ── 예문 ── */}
 			{word.example_zh && (
 				<section className="rounded-2xl border border-rule-soft bg-paper-2/60 px-4 py-4 md:px-6 md:py-5">
-					<p className="mb-3 text-xs font-semibold tracking-wide text-muted">예문</p>
+					<div className="mb-3 flex items-center justify-between gap-3">
+						<p className="text-xs font-semibold tracking-wide text-muted">예문</p>
+						<Speak text={word.example_zh} label="예문 듣기" />
+					</div>
 					<p className="han mb-2 text-xl leading-relaxed md:text-2xl">
 						{highlight(word.example_zh, word.hanzi)}
 					</p>
@@ -170,6 +179,10 @@ export default function WordDetail({ id }: { id: string }) {
 					</p>
 				)}
 			</section>
+
+			{/* 중국어 목소리가 없는 기기에서만 나옵니다.
+			    있으면 아무것도 안 그립니다 — 있는 사람에게 없다는 안내를 보일 이유가 없습니다. */}
+			<SpeakNote />
 
 			{/* ── 이상한 곳 알려주기 ──
 			    눈에 띄지 않는 자리에 작게 둡니다. 자주 누를 것이 아니라서요.

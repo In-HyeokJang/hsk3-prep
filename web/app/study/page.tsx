@@ -9,6 +9,7 @@ import { blankSentence, checkTyped, makeQuiz, type Quiz } from '@/lib/quiz';
 import { useShowPinyin } from '@/lib/settings';
 import { weakWords } from '@/lib/weak';
 import type { Status, Word } from '@/lib/types';
+import Speak from '@/components/Speak';
 import { Empty, ErrorBox, Loading } from '@/components/ui';
 
 const COUNT = 10;
@@ -380,12 +381,20 @@ function Study() {
 					{/* 정답과 함께 이 단어를 통째로 보여줍니다 */}
 					<div className="flex flex-col items-center gap-3 rounded-2xl border border-rule-soft bg-paper-2/60 px-5 py-6 text-center">
 						<p className="han text-5xl leading-none">{card.hanzi}</p>
-						<p className="pinyin text-lg text-accent">{card.pinyin}</p>
+						{/* 답을 본 자리에 소리를 붙입니다. 병음을 눈으로만 보면 실제 소리와 다르게 굳습니다.
+						    중국어 목소리가 없는 기기에서는 이 버튼이 아예 안 나옵니다. */}
+						<div className="flex items-center gap-3">
+							<p className="pinyin text-lg text-accent">{card.pinyin}</p>
+							<Speak text={card.hanzi} label={`${card.hanzi} 듣기`} />
+						</div>
 						<p className="text-xl font-semibold">{card.meaning_ko}</p>
 
 						{card.example_zh && (
 							<div className="mt-2 w-full border-t border-rule-soft pt-4">
-								<p className="han text-lg leading-relaxed">{card.example_zh}</p>
+								<div className="flex items-center justify-center gap-3">
+									<p className="han text-lg leading-relaxed">{card.example_zh}</p>
+									<Speak text={card.example_zh} label="예문 듣기" />
+								</div>
 								{card.example_pinyin && (
 									<p className="pinyin mt-1 text-xs text-accent">{card.example_pinyin}</p>
 								)}
