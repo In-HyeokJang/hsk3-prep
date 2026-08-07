@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useStore } from '@/lib/useStore';
 import { Empty, ErrorBox, Loading, StatusPill } from '@/components/ui';
+import ReportButton from '@/components/ReportButton';
 import WriteBox from '@/components/WriteBox';
 import type { Status } from '@/lib/types';
 
@@ -169,6 +170,13 @@ export default function WordDetail({ id }: { id: string }) {
 					</p>
 				)}
 			</section>
+
+			{/* ── 이상한 곳 알려주기 ──
+			    눈에 띄지 않는 자리에 작게 둡니다. 자주 누를 것이 아니라서요.
+			    한국어 뜻과 예문은 사람이 아직 안 본 것이라 이 버튼이 검수의 출발점입니다. */}
+			<div className="flex flex-col border-t border-rule-soft pt-5">
+				<ReportButton wordId={word.id} />
+			</div>
 
 			<p className="pinyin text-center text-xs text-muted">
 				{word.id}

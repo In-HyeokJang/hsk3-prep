@@ -137,6 +137,42 @@ export async function logAttempt(
 	}
 }
 
+/* ── 이상한 곳 알려주기 ─────────────────────────────────────
+   한국어 뜻과 예문 973개는 새로 만든 것이고 사람이 아직 안 봤습니다.
+   혼자 다 보는 건 사실상 불가능해서, 쓰는 사람이 눌러준 것부터 봅니다. */
+
+/** 무엇이 이상한지. 서버(reports 표)가 이 넷만 받습니다 (마이그레이션 19) */
+export type ReportKind = 'meaning' | 'example' | 'pinyin' | 'other';
+
+export const REPORT_LABEL: Record<ReportKind, string> = {
+	meaning: '한국어 뜻이 이상해요',
+	example: '예문이 이상해요',
+	pinyin: '병음이나 성조가 이상해요',
+	other: '그 밖에 이상한 것',
+};
+
+/**
+ * 이상한 곳을 알려줍니다.
+ *
+ * ★ logAttempt 와 달리 실패하면 던집니다.
+ *   푼 기록은 통계용이라 한 줄 빠져도 되지만, 이건 사람이 일부러 누른 것입니다.
+ *   안 갔는데 "접수됐습니다" 라고 하면 다시는 안 눌러줍니다.
+ *
+ * 같은 단어를 하루에 두 번 누르면 서버가 막고, 그 말이 그대로 화면에 뜹니다.
+ */
+export async function reportWord(
+	wordId: string,
+	kind: ReportKind,
+	note?: string,
+): Promise<void> {
+	const { error } = await supabase.rpc('report_word', {
+		p_word_id: wordId,
+		p_kind: kind,
+		p_note: note?.trim() || null,
+	});
+	if (error) throw new Error(error.message);
+}
+
 /** 자료가 얼마나 준비됐는지 */
 export async function getSummary(): Promise<Summary> {
 	const { data, error } = await supabase.from('v_progress_summary').select('*').single();
