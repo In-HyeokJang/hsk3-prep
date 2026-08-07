@@ -98,6 +98,45 @@ export async function markWord(
 	return data as Progress;
 }
 
+/* ── 푼 기록 ────────────────────────────────────────────────
+   진도(progress)와 다릅니다. 진도는 덮어쓰고, 이건 쌓입니다.
+   "언제 · 어떤 문제로 · 뭘 틀렸나" 는 쌓인 기록이 있어야 나옵니다. */
+
+/** 서버가 아는 문제 유형. attempts 표가 이 다섯 가지만 받습니다 */
+export type QuizType = 'meaning' | 'pinyin' | 'hanzi' | 'blank' | 'listen' | 'speak';
+
+/**
+ * 문제 하나를 푼 기록을 남깁니다.
+ *
+ * ★ 실패해도 던지지 않습니다. markWord 와 정반대입니다.
+ *   진도는 못 저장하면 사용자가 알아야 하지만, 이건 통계용이라
+ *   한 줄 빠졌다고 문제 풀이를 멈추면 안 됩니다.
+ *   지하철에서 신호가 끊겼다고 다음 문제로 못 넘어가면 그게 더 나쁩니다.
+ *
+ * 그래서 이 함수는 기다리지 않고 불러도 됩니다.
+ */
+export async function logAttempt(
+	wordId: string,
+	quizType: QuizType,
+	correct: boolean,
+	answeredMs?: number | null,
+	meta?: Record<string, unknown>,
+): Promise<void> {
+	try {
+		const { error } = await supabase.rpc('log_attempt', {
+			p_word_id: wordId,
+			p_quiz_type: quizType,
+			p_correct: correct,
+			p_answered_ms: answeredMs ?? null,
+			p_meta: meta ?? {},
+		});
+		// 조용히 넘어가되, 개발 중에는 콘솔에서 보이게 합니다.
+		if (error) console.warn('푼 기록을 못 남겼습니다:', error.message);
+	} catch (e) {
+		console.warn('푼 기록을 못 남겼습니다:', e);
+	}
+}
+
 /** 자료가 얼마나 준비됐는지 */
 export async function getSummary(): Promise<Summary> {
 	const { data, error } = await supabase.from('v_progress_summary').select('*').single();

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
-import { getDaily } from '@/lib/api';
+import { getDaily, logAttempt, type QuizType } from '@/lib/api';
 import { useStore } from '@/lib/useStore';
 import { checkTyped, makeQuiz, type Quiz } from '@/lib/quiz';
 import { useShowPinyin } from '@/lib/settings';
@@ -10,6 +10,17 @@ import type { Status, Word } from '@/lib/types';
 import { Empty, ErrorBox, Loading } from '@/components/ui';
 
 const COUNT = 10;
+
+/**
+ * 우리 화면의 문제 형식을 서버가 아는 이름으로 바꿉니다.
+ *
+ * 서버(attempts 표)는 'meaning' · 'pinyin' · 'hanzi' · 'blank' · 'listen' · 'speak' 만 받습니다.
+ * 우리 화면은 뜻을 묻는 방식이 두 가지(쓰기 · 고르기)라 둘 다 'meaning' 이 됩니다.
+ * 그 둘의 구분은 meta 의 kind 에 따로 남깁니다.
+ */
+function quizTypeOf(kind: Quiz['kind']): QuizType {
+	return kind === 'pick-zh' ? 'hanzi' : 'meaning';
+}
 
 export default function StudyPage() {
 	const { userKey, words, statusOf, mark, pendingCount, loading, error, reload } = useStore();
@@ -38,6 +49,14 @@ export default function StudyPage() {
 	//   그래서 신호로는 쓰지 않고, 값만 여기에 담아두고 꺼내 씁니다.
 	const statusOfRef = useRef(statusOf);
 	statusOfRef.current = statusOf;
+
+	// 이 문제를 화면에 띄운 시각. 몇 초 만에 답했는지 재려고 담아둡니다.
+	// 화면을 다시 그려도 값이 유지돼야 해서 ref 에 넣습니다 (state 로 하면 매번 다시 그립니다).
+	const shownAtRef = useRef(0);
+
+	useEffect(() => {
+		shownAtRef.current = Date.now();
+	}, [at, quizzes]);
 
 	/** 카드 묶음을 문제로 바꿔서 담아둡니다.
 	    한 번만 만들어 둡니다. 그릴 때마다 만들면 보기 순서가 계속 바뀝니다. */
@@ -127,10 +146,26 @@ export default function StudyPage() {
 	const quiz = quizzes[at];
 	const card = quiz.word;
 
-	/** 답을 냈습니다. 아직 저장하지는 않습니다 — '다음' 을 누를 때 저장합니다. */
+	/** 답을 냈습니다. 진도는 아직 저장하지 않습니다 — '다음' 을 누를 때 저장합니다. */
 	function judge(correct: boolean, chosenId: string | null) {
 		if (judged) return;
 		setJudged({ correct, chosenId });
+
+		// 푼 기록은 여기서 남깁니다. '다음' 을 안 누르고 나가버려도 남아야 하니까요.
+		// 기다리지 않습니다 — 기록이 늦어도 채점 화면은 바로 떠야 합니다.
+		void logAttempt(
+			card.id,
+			quizTypeOf(quiz.kind),
+			correct,
+			Date.now() - shownAtRef.current,
+			{
+				// 서버가 아는 유형은 세 가지뿐이라, 우리 화면의 구분은 여기에 따로 적어둡니다.
+				kind: quiz.kind,
+				// 무엇과 헷갈렸는지. 나중에 "뭘 뭐랑 헷갈리나" 를 볼 때 이 값이 핵심입니다.
+				chosen: chosenId,
+				typed: quiz.kind === 'type' ? typed.trim() || null : null,
+			},
+		);
 	}
 
 	/** 다음 카드로. 여기서 진도를 저장합니다. */
