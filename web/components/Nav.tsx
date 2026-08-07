@@ -10,6 +10,7 @@ import { usePathname } from 'next/navigation';
 const ITEMS = [
 	{ href: '/', label: '오늘', icon: Today },
 	{ href: '/study', label: '학습', icon: Cards },
+	{ href: '/tone', label: '성조', icon: Wave },
 	{ href: '/words', label: '단어장', icon: List },
 ] as const;
 
@@ -100,6 +101,16 @@ function Cards({ active }: IconProps) {
 		<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" {...stroke}>
 			<rect x="6" y="7" width="14" height="13" rx="2.5" fill={active ? 'currentColor' : 'none'} fillOpacity="0.12" />
 			<path d="M4 16.5V6a2 2 0 0 1 2-2h9" />
+		</svg>
+	);
+}
+
+/** 성조. 소리가 오르내리는 모양입니다 */
+function Wave({ active }: IconProps) {
+	return (
+		<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" {...stroke}>
+			<rect x="3.5" y="4.5" width="17" height="15" rx="2.5" fill={active ? 'currentColor' : 'none'} fillOpacity="0.12" />
+			<path d="M6.5 14.5c2.5 0 2.5-5 5-5s2.5 5 5 5" />
 		</svg>
 	);
 }

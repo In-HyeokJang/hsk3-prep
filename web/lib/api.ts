@@ -102,8 +102,8 @@ export async function markWord(
    진도(progress)와 다릅니다. 진도는 덮어쓰고, 이건 쌓입니다.
    "언제 · 어떤 문제로 · 뭘 틀렸나" 는 쌓인 기록이 있어야 나옵니다. */
 
-/** 서버가 아는 문제 유형. attempts 표가 이 다섯 가지만 받습니다 */
-export type QuizType = 'meaning' | 'pinyin' | 'hanzi' | 'blank' | 'listen' | 'speak';
+/** 서버가 아는 문제 유형. attempts 표가 이것들만 받습니다 (마이그레이션 18) */
+export type QuizType = 'meaning' | 'pinyin' | 'hanzi' | 'blank' | 'tone' | 'listen' | 'speak';
 
 /**
  * 문제 하나를 푼 기록을 남깁니다.

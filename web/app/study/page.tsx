@@ -23,6 +23,14 @@ function quizTypeOf(kind: Quiz['kind']): QuizType {
 	return kind === 'pick-zh' ? 'hanzi' : 'meaning';
 }
 
+/** 진행 줄에 지금 무슨 문제인지 적어줍니다 */
+const KIND_LABEL: Record<Quiz['kind'], string> = {
+	type: '뜻 쓰기',
+	'pick-ko': '뜻 고르기',
+	'pick-zh': '한자 고르기',
+	blank: '빈칸 채우기',
+};
+
 export default function StudyPage() {
 	const { userKey, words, statusOf, mark, pendingCount, loading, error, reload } = useStore();
 
@@ -195,14 +203,7 @@ export default function StudyPage() {
 		}
 	}
 
-	const kindLabel =
-		quiz.kind === 'type'
-			? '뜻 쓰기'
-			: quiz.kind === 'pick-ko'
-				? '뜻 고르기'
-				: quiz.kind === 'blank'
-					? '빈칸 채우기'
-					: '한자 고르기';
+	const kindLabel = KIND_LABEL[quiz.kind];
 
 	return (
 		<div className="flex flex-col gap-5">

@@ -19,6 +19,101 @@ export type Quiz = {
 	choices: Word[];
 };
 
+/* ── 성조 ──────────────────────────────────────────────────
+   성조는 학습(/study) 에 섞지 않고 따로 갑니다.
+   뜻을 떠올리다가 갑자기 높낮이를 물으면 머리를 다른 데로 돌려야 하고,
+   성조는 버튼 다섯 개로 빠르게 몰아 푸는 편이 연습이 됩니다. */
+
+/** 0 은 경성(가볍게 흘리는 소리)입니다 */
+export type Tone = 0 | 1 | 2 | 3 | 4;
+
+/**
+ * 성조 기호가 붙은 모음. 늘어놓은 순서가 곧 성조입니다.
+ * 네 개씩 1·2·3·4성이 반복되므로 위치를 4로 나눈 나머지로 알아냅니다.
+ */
+const TONE_VOWELS = 'āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ';
+
+/** 한자만으로 이루어졌는지 (괄호나 말줄임표가 섞인 접사를 걸러냅니다) */
+const ONLY_HANZI = /^[一-鿿]+$/;
+
+/**
+ * 글자마다 성조를 매깁니다. 낼 수 없는 단어면 null 입니다.
+ *
+ * 병음은 'ānpái' 처럼 붙여 쓰기 때문에 음절 경계가 적혀 있지 않습니다.
+ * 대신 성조 기호는 음절마다 정확히 하나씩 붙으므로,
+ * 기호의 개수가 한자 개수와 같으면 순서대로 짝지을 수 있습니다.
+ *
+ * ★ 애매하면 문제를 내지 않습니다.
+ *   973단어를 직접 세어보니 929개가 딱 맞아떨어지고,
+ *   기호가 하나 모자란 38개 중에는 마지막이 경성인 것(种子 zhǒngzi)만이 아니라
+ *   儿화(空儿 kòngr)나 가운데가 경성인 것(能不能 néng bu néng)도 섞여 있었습니다.
+ *   그래서 '두 글자이고 뒤가 儿이 아닐 때' 만 경성으로 봅니다. 나머지는 뺍니다.
+ */
+export function tonesOf(word: Word): Tone[] | null {
+	const chars = [...word.hanzi];
+	if (!ONLY_HANZI.test(word.hanzi)) return null;
+	if (!word.pinyin) return null;
+
+	const marks: Tone[] = [];
+	for (const ch of word.pinyin) {
+		const i = TONE_VOWELS.indexOf(ch);
+		if (i !== -1) marks.push(((i % 4) + 1) as Tone);
+	}
+
+	if (marks.length === chars.length) return marks;
+	if (marks.length === chars.length - 1 && chars.length === 2 && chars[1] !== '儿') {
+		return [...marks, 0];
+	}
+	return null;
+}
+
+/** 성조 문제로 낼 수 있는 단어인지 */
+export function canTone(word: Word): boolean {
+	return tonesOf(word) !== null;
+}
+
+/** 성조 문제 하나. 어느 단어의 몇 번째 글자를 묻는지와 그 답입니다 */
+export type ToneQuiz = { word: Word; at: number; tone: Tone };
+
+/**
+ * 성조 문제를 만듭니다. 낼 수 없는 단어면 null 입니다.
+ *
+ * 여러 글자면 그중 하나를 짚습니다. 화면에는 단어 전체가 보이므로
+ * 背(bēi/bèi)처럼 읽는 법이 갈리는 글자도 답이 하나로 정해집니다.
+ */
+export function makeToneQuiz(word: Word): ToneQuiz | null {
+	const tones = tonesOf(word);
+	if (!tones) return null;
+
+	const at = Math.floor(Math.random() * tones.length);
+	return { word, at, tone: tones[at] };
+}
+
+/**
+ * 성조 문제를 낼 묶음을 고릅니다.
+ *
+ * 다시 볼 때가 된 것부터 고르지 않습니다. 그건 뜻을 외우는 일정이고,
+ * 성조는 뜻을 이미 외운 단어에서도 계속 틀리기 때문입니다.
+ *
+ * 대신 한 번이라도 본 단어를 앞세웁니다.
+ * 처음 보는 단어의 높낮이를 묻는 건 연습이 아니라 찍기입니다.
+ * 그것만으로 모자라면 자주 쓰는 말부터 채웁니다 (pool 이 이미 빈도순입니다).
+ */
+export function pickToneDeck(
+	pool: Word[],
+	howMany: number,
+	seen: (id: string) => boolean,
+): ToneQuiz[] {
+	const able = pool.filter(canTone);
+	const met = shuffle(able.filter((w) => seen(w.id)));
+	const fresh = shuffle(able.filter((w) => !seen(w.id)).slice(0, 200));
+
+	return [...met, ...fresh]
+		.slice(0, howMany)
+		.map(makeToneQuiz)
+		.filter((q): q is ToneQuiz => q !== null);
+}
+
 /**
  * 뜻을 조각으로 나눕니다.
  * 자료의 뜻은 '안배하다 · 계획하다' 처럼 가운뎃점으로 여러 개를 붙여 씁니다.
@@ -176,6 +271,7 @@ function pickWrong(word: Word, pool: Word[], howMany: number): Word[] {
  * · 뜻이 짧고 하나면 → 입력
  * · 그 밖에는 4지선다. 방향(한자→뜻 / 뜻→한자)은 번갈아 갑니다.
  *
+ * 성조는 여기 없습니다. /tone 에서 따로 풉니다.
  * 오답을 3개 못 채우면 4지선다를 낼 수 없으니 원래 방식으로 돌립니다.
  */
 export function makeQuiz(word: Word, pool: Word[], index: number): Quiz {
