@@ -209,6 +209,25 @@ export function checkTyped(input: string, meaning: string): boolean {
 }
 
 /**
+ * 뜻에서 괄호 안 설명을 떼어낸 알맹이.
+ *
+ * 자료의 뜻은 '자루 (손잡이 있는 물건을 세는 말)' 처럼
+ * 짧은 우리말 뒤에 괄호로 설명을 답니다.
+ * 괄호까지 통째로 견주면 설명이 다르다는 이유로 서로 다른 뜻이 되는데,
+ * 화면에서 고를 때는 그 짧은 앞부분이 곧 답으로 보입니다.
+ *
+ * 실제로 把(자루 · 손잡이 있는 물건) 문제에 支(자루 · 가늘고 긴 것)가
+ * 보기로 나와서 정답이 둘이 된 적이 있습니다. 1번(기록)을 켠 첫날 잡혔습니다.
+ *
+ * 괄호가 앞에 오는 것('(나쁜) 결과')도 있어서 앞부분을 자르지 않고
+ * 괄호 묶음만 지웁니다. 다 지워서 아무것도 안 남으면 원래 것을 씁니다.
+ */
+function core(part: string): string {
+	const stripped = part.replace(/[(（][^)）]*[)）]/g, '');
+	return normalize(stripped) || normalize(part);
+}
+
+/**
  * 두 단어를 같은 문제에 넣으면 안 되는지.
  *
  * 공식 목록에는 한자가 같은 단어가 두 번 나오고(把 · 背 · 调),
@@ -218,8 +237,8 @@ export function checkTyped(input: string, meaning: string): boolean {
 function clashes(a: Word, b: Word): boolean {
 	if (a.hanzi === b.hanzi) return true;
 
-	const partsA = meaningParts(a.meaning_ko).map(normalize).filter(Boolean);
-	const partsB = meaningParts(b.meaning_ko).map(normalize).filter(Boolean);
+	const partsA = meaningParts(a.meaning_ko).map(core).filter(Boolean);
+	const partsB = meaningParts(b.meaning_ko).map(core).filter(Boolean);
 	return partsA.some((x) => partsB.some((y) => samePart(x, y)));
 }
 
