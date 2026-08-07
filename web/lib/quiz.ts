@@ -116,6 +116,30 @@ export function pickToneDeck(
 }
 
 /**
+ * 소리 내어 연습할 묶음을 고릅니다 (성조 화면의 '말해보기').
+ *
+ * ★ 한 글자 단어만 씁니다.
+ *   두 글자 단어를 주고 "두 번째 글자의 성조를 내보세요" 라고 하면,
+ *   앞 글자를 같이 읽을지 말지부터 헷갈립니다. 재는 쪽도 마찬가지고요 —
+ *   두 음절이 들어온 곡선에서 뒷음절만 떼어내는 건 다른 차원의 일입니다.
+ *   한 글자면 들은 것 전부가 답입니다.
+ *
+ * 경성도 뺍니다. 높낮이가 아니라 앞 글자에 딸려 정해져서, 혼자 내보라고 할 수가 없습니다.
+ */
+export function pickSpeakDeck(pool: Word[], howMany: number): ToneQuiz[] {
+	const able: ToneQuiz[] = [];
+
+	for (const word of pool) {
+		if ([...word.hanzi].length !== 1) continue;
+		const tones = tonesOf(word);
+		if (!tones || tones[0] === 0) continue;
+		able.push({ word, at: 0, tone: tones[0] });
+	}
+
+	return shuffle(able).slice(0, howMany);
+}
+
+/**
  * 뜻을 조각으로 나눕니다.
  * 자료의 뜻은 '안배하다 · 계획하다' 처럼 가운뎃점으로 여러 개를 붙여 씁니다.
  */

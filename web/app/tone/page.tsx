@@ -4,7 +4,9 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { logAttempt } from '@/lib/api';
 import { useStore } from '@/lib/useStore';
-import { pickToneDeck, type Tone, type ToneQuiz } from '@/lib/quiz';
+import { pickSpeakDeck, pickToneDeck, type Tone, type ToneQuiz } from '@/lib/quiz';
+import type { SpokenTone } from '@/lib/pitch';
+import ToneSpeak from '@/components/ToneSpeak';
 import { Empty, ErrorBox, Loading } from '@/components/ui';
 
 /**
@@ -23,6 +25,9 @@ import { Empty, ErrorBox, Loading } from '@/components/ui';
 
 const COUNT = 20;
 
+/** 말해보기는 한 글자에 시간이 훨씬 오래 걸립니다. 스무 개를 주면 지칩니다 */
+const SPEAK_COUNT = 8;
+
 /**
  * 성조 버튼에 붙일 이름과 기호.
  *
@@ -39,13 +44,51 @@ const TONE_BUTTONS: { tone: Tone; mark: string; label: string }[] = [
 
 const LABEL_OF = (t: Tone) => TONE_BUTTONS.find((b) => b.tone === t)?.label ?? '';
 
+/**
+ * 눈으로 고르기 / 말해보기.
+ *
+ * 눈으로 고르기는 "아는가" 를 확인하고, 말해보기는 "낼 수 있는가" 를 고칩니다.
+ * 성조는 눈으로 외워지지 않아서 결국 소리를 내봐야 하는데,
+ * 소리 내기는 조용한 곳이 필요해서 늘 할 수 있는 게 아닙니다. 그래서 둘 다 둡니다.
+ */
+function Switch({ how, onChange }: { how: 'pick' | 'speak'; onChange: (v: 'pick' | 'speak') => void }) {
+	const item = (v: 'pick' | 'speak', label: string) => (
+		<button
+			key={v}
+			onClick={() => onChange(v)}
+			aria-pressed={how === v}
+			className={`flex-1 rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
+				how === v ? 'bg-paper text-accent shadow-sm' : 'text-muted'
+			}`}
+		>
+			{label}
+		</button>
+	);
+
+	return (
+		<div className="flex gap-1 rounded-xl bg-paper-2 p-1">
+			{item('pick', '눈으로 고르기')}
+			{item('speak', '🎤 말해보기')}
+		</div>
+	);
+}
+
 export default function TonePage() {
 	const { words, statusOf, loading, error, reload } = useStore();
+
+	// 눈으로 고르기 / 말해보기.
+	// 같은 성조를 다루지만 하는 일이 아주 다릅니다 —
+	// 하나는 아는지 확인하는 것이고, 하나는 소리를 내서 고치는 것입니다.
+	const [how, setHow] = useState<'pick' | 'speak'>('pick');
 
 	const [deck, setDeck] = useState<ToneQuiz[] | null>(null);
 	const [at, setAt] = useState(0);
 	const [judged, setJudged] = useState<{ correct: boolean; chosen: Tone } | null>(null);
 	const [wrong, setWrong] = useState<ToneQuiz[]>([]);
+
+	// 말해보기는 묶음을 따로 씁니다. 한 글자 단어만 쓰기 때문입니다 (quiz.ts 의 pickSpeakDeck)
+	const [speakDeck, setSpeakDeck] = useState<ToneQuiz[] | null>(null);
+	const [speakAt, setSpeakAt] = useState(0);
 
 	// ★ statusOf 를 아래 useEffect 의 신호로 쓰면 안 됩니다.
 	//   진도가 바뀔 때마다 새것이 되어 묶음을 다시 만들고 1번 문제로 되돌아갑니다.
@@ -67,6 +110,8 @@ export default function TonePage() {
 	useEffect(() => {
 		if (!words) return;
 		start(words);
+		setSpeakDeck(pickSpeakDeck(words, SPEAK_COUNT));
+		setSpeakAt(0);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [words]);
 
@@ -90,9 +135,84 @@ export default function TonePage() {
 	if (error) return <ErrorBox message={error} onRetry={reload} />;
 	if (!deck) return <Loading text="문제를 고르는 중..." />;
 
+	const switcher = <Switch how={how} onChange={setHow} />;
+
+	/* ── 말해보기 ──
+	   눈으로 고르는 것과 화면을 나눕니다. 하는 일이 아주 다릅니다 —
+	   하나는 아는지 확인하는 것이고, 하나는 소리를 내서 고치는 것입니다. */
+	if (how === 'speak') {
+		const q = speakDeck?.[speakAt];
+
+		return (
+			<div className="flex flex-col gap-5">
+				{switcher}
+
+				{!q ? (
+					<div className="flex flex-col gap-4">
+						<Empty
+							text={
+								speakDeck && speakDeck.length > 0
+									? `${speakDeck.length}개 다 해보셨어요. 잘하셨습니다.`
+									: '말해볼 단어를 못 골랐어요.'
+							}
+						/>
+						<button
+							onClick={() => {
+								if (!words) return;
+								setSpeakDeck(pickSpeakDeck(words, SPEAK_COUNT));
+								setSpeakAt(0);
+							}}
+							className="rounded-xl bg-accent px-5 py-3.5 text-base font-bold text-paper"
+						>
+							다른 글자로 다시
+						</button>
+					</div>
+				) : (
+					<>
+						<div className="flex items-baseline justify-between">
+							<span className="text-sm font-medium">
+								성조 <span className="text-muted">· 말해보기</span>
+							</span>
+							<span className="pinyin text-sm tabular-nums text-muted">
+								{speakAt + 1} / {speakDeck!.length}
+							</span>
+						</div>
+
+						<ToneSpeak
+							key={q.word.id}
+							hanzi={q.word.hanzi}
+							pinyin={q.word.pinyin}
+							tone={q.tone as SpokenTone}
+							onDone={(correct) => {
+								// 진도(progress)는 여기서도 건드리지 않습니다.
+								// 성조를 잘못 냈다고 뜻 복습 날짜가 당겨지면 안 됩니다.
+								//
+								// 유형은 'tone' 입니다. 무엇을 봤나(성조)로 묶어야
+								// "성조가 유독 약하다" 를 눈으로 고른 것과 함께 볼 수 있습니다.
+								// 어떻게 봤는지(목소리로)는 meta 에 따로 적습니다.
+								void logAttempt(q.word.id, 'tone', correct, null, {
+									by: 'voice',
+									answer: q.tone,
+								});
+							}}
+						/>
+
+						<button
+							onClick={() => setSpeakAt((i) => i + 1)}
+							className="rounded-xl border border-rule px-5 py-3.5 text-base font-semibold text-ink-2"
+						>
+							{speakAt + 1 >= speakDeck!.length ? '끝내기' : '다음 글자'}
+						</button>
+					</>
+				)}
+			</div>
+		);
+	}
+
 	if (deck.length === 0) {
 		return (
 			<div className="flex flex-col gap-4">
+				{switcher}
 				<Empty text="성조 문제를 만들 단어가 없어요." />
 				<Link href="/words" className="text-sm font-medium text-accent">
 					단어장 둘러보기 →
@@ -106,6 +226,7 @@ export default function TonePage() {
 		const right = deck.length - wrong.length;
 		return (
 			<div className="flex flex-col gap-6 py-4">
+				{switcher}
 				<div className="flex flex-col items-center gap-4 text-center">
 					<p className="han text-6xl">声</p>
 					<div>
@@ -188,6 +309,8 @@ export default function TonePage() {
 
 	return (
 		<div className="flex flex-col gap-5">
+			{switcher}
+
 			{/* ── 진행 ── */}
 			<div>
 				<div className="mb-1.5 flex items-baseline justify-between">
