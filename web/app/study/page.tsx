@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { getDaily, logAttempt, type QuizType } from '@/lib/api';
 import { useStore } from '@/lib/useStore';
-import { checkTyped, makeQuiz, type Quiz } from '@/lib/quiz';
+import { blankSentence, checkTyped, makeQuiz, type Quiz } from '@/lib/quiz';
 import { useShowPinyin } from '@/lib/settings';
 import type { Status, Word } from '@/lib/types';
 import { Empty, ErrorBox, Loading } from '@/components/ui';
@@ -19,6 +19,7 @@ const COUNT = 10;
  * 그 둘의 구분은 meta 의 kind 에 따로 남깁니다.
  */
 function quizTypeOf(kind: Quiz['kind']): QuizType {
+	if (kind === 'blank') return 'blank';
 	return kind === 'pick-zh' ? 'hanzi' : 'meaning';
 }
 
@@ -195,7 +196,13 @@ export default function StudyPage() {
 	}
 
 	const kindLabel =
-		quiz.kind === 'type' ? '뜻 쓰기' : quiz.kind === 'pick-ko' ? '뜻 고르기' : '한자 고르기';
+		quiz.kind === 'type'
+			? '뜻 쓰기'
+			: quiz.kind === 'pick-ko'
+				? '뜻 고르기'
+				: quiz.kind === 'blank'
+					? '빈칸 채우기'
+					: '한자 고르기';
 
 	return (
 		<div className="flex flex-col gap-5">
@@ -222,7 +229,13 @@ export default function StudyPage() {
 			    남겨두면 한자나 뜻이 화면에 두 번 나옵니다. */}
 			{!judged && (
 				<div className="flex min-h-[13rem] flex-col items-center justify-center gap-4 rounded-2xl border border-rule-soft bg-paper-2/60 px-5 py-8">
-					{quiz.kind === 'pick-zh' ? (
+					{quiz.kind === 'blank' ? (
+						/* 예문에서 그 단어만 가립니다.
+						   병음도 뜻도 붙이지 않습니다 — 둘 다 답을 그대로 알려줍니다. */
+						<p className="han text-center text-3xl leading-relaxed md:text-4xl">
+							{blankSentence(card)}
+						</p>
+					) : quiz.kind === 'pick-zh' ? (
 						<p className="text-center text-3xl font-bold leading-snug">{card.meaning_ko}</p>
 					) : (
 						<div className="flex flex-col items-center gap-2">
@@ -235,7 +248,8 @@ export default function StudyPage() {
 							)}
 						</div>
 					)}
-					{card.pos && <p className="text-sm text-muted">{card.pos}</p>}
+					{/* 빈칸 문제에서는 품사도 감춥니다. 보기를 좁혀주는 힌트가 됩니다. */}
+					{card.pos && quiz.kind !== 'blank' && <p className="text-sm text-muted">{card.pos}</p>}
 				</div>
 			)}
 
