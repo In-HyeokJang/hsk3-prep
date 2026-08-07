@@ -1,15 +1,29 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { getDaily, logAttempt, type QuizType } from '@/lib/api';
 import { useStore } from '@/lib/useStore';
 import { blankSentence, checkTyped, makeQuiz, type Quiz } from '@/lib/quiz';
 import { useShowPinyin } from '@/lib/settings';
+import { weakWords } from '@/lib/weak';
 import type { Status, Word } from '@/lib/types';
 import { Empty, ErrorBox, Loading } from '@/components/ui';
 
 const COUNT = 10;
+
+/**
+ * 주소의 ?only=wrong 을 읽으려면 Suspense 로 감싸야 합니다 (Next 규칙).
+ * 감싸는 것 말고는 하는 일이 없습니다.
+ */
+export default function StudyPage() {
+	return (
+		<Suspense fallback={<Loading />}>
+			<Study />
+		</Suspense>
+	);
+}
 
 /**
  * 우리 화면의 문제 형식을 서버가 아는 이름으로 바꿉니다.
@@ -33,8 +47,12 @@ const KIND_LABEL: Record<Quiz['kind'], string> = {
 	blank: '빈칸 채우기',
 };
 
-export default function StudyPage() {
-	const { userKey, words, statusOf, mark, pendingCount, loading, error, reload } = useStore();
+function Study() {
+	const { userKey, words, progress, statusOf, mark, pendingCount, loading, error, reload } =
+		useStore();
+
+	// 오답 노트(/review)에서 "약한 것만 풀기" 로 들어오면 이 값이 'wrong' 입니다.
+	const onlyWrong = useSearchParams().get('only') === 'wrong';
 
 	// 홈의 설정에서 켜고 끕니다. 아래에 그만두는 길(return)이 여럿이라 맨 위에서 읽습니다.
 	const showPinyin = useShowPinyin();
@@ -61,6 +79,11 @@ export default function StudyPage() {
 	const statusOfRef = useRef(statusOf);
 	statusOfRef.current = statusOf;
 
+	// 진도도 같은 이유로 신호가 아니라 값으로만 씁니다.
+	// 약한 단어를 고를 때 필요한데, 답할 때마다 바뀌기 때문입니다.
+	const progressRef = useRef(progress);
+	progressRef.current = progress;
+
 	// 이 문제를 화면에 띄운 시각. 몇 초 만에 답했는지 재려고 담아둡니다.
 	// 화면을 다시 그려도 값이 유지돼야 해서 ref 에 넣습니다 (state 로 하면 매번 다시 그립니다).
 	const shownAtRef = useRef(0);
@@ -78,8 +101,19 @@ export default function StudyPage() {
 		setJudged(null);
 	}
 
+	/** 약한 단어 묶음. 서버를 부르지 않습니다 — 진도는 이미 받아뒀습니다 */
+	function weakDeck(pool: Word[]): Word[] {
+		return weakWords(pool, progressRef.current, COUNT).map((w) => w.word);
+	}
+
 	useEffect(() => {
 		if (!userKey || !words) return;
+
+		if (onlyWrong) {
+			startDeck(weakDeck(words), words);
+			return;
+		}
+
 		let cancelled = false;
 
 		getDaily(userKey, COUNT)
@@ -92,7 +126,8 @@ export default function StudyPage() {
 		return () => {
 			cancelled = true;
 		};
-	}, [userKey, words]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [userKey, words, onlyWrong]);
 
 	if (loading) return <Loading />;
 	if (error) return <ErrorBox message={error} onRetry={reload} />;
@@ -101,9 +136,15 @@ export default function StudyPage() {
 	if (quizzes.length === 0) {
 		return (
 			<div className="flex flex-col gap-4">
-				<Empty text="오늘 볼 카드가 없어요. 준비된 단어를 다 외우셨습니다." />
-				<Link href="/words" className="text-sm font-medium text-accent">
-					단어장 둘러보기 →
+				<Empty
+					text={
+						onlyWrong
+							? '틀린 단어가 없어요. 오답 노트가 비어 있습니다.'
+							: '오늘 볼 카드가 없어요. 준비된 단어를 다 외우셨습니다.'
+					}
+				/>
+				<Link href={onlyWrong ? '/study' : '/words'} className="text-sm font-medium text-accent">
+					{onlyWrong ? '평소 학습으로 →' : '단어장 둘러보기 →'}
 				</Link>
 			</div>
 		);
@@ -133,6 +174,10 @@ export default function StudyPage() {
 						onClick={() => {
 							setResult({ known: 0, unknown: 0 });
 							setQuizzes(null);
+							if (onlyWrong) {
+								startDeck(weakDeck(words!), words!);
+								return;
+							}
 							getDaily(userKey, COUNT)
 								.then((rows) => startDeck(rows, words!))
 								.catch(() =>
@@ -144,10 +189,10 @@ export default function StudyPage() {
 						10개 더 하기
 					</button>
 					<Link
-						href="/"
+						href={onlyWrong ? '/review' : '/'}
 						className="rounded-xl border border-rule px-5 py-3.5 text-base font-semibold text-ink-2"
 					>
-						오늘 화면으로
+						{onlyWrong ? '오답 노트로' : '오늘 화면으로'}
 					</Link>
 				</div>
 			</div>
@@ -213,7 +258,8 @@ export default function StudyPage() {
 			<div>
 				<div className="mb-1.5 flex items-baseline justify-between">
 					<span className="text-sm font-medium">
-						학습 <span className="text-muted">· {kindLabel}</span>
+						{onlyWrong ? '오답 다시 풀기' : '학습'}{' '}
+						<span className="text-muted">· {kindLabel}</span>
 					</span>
 					<span className="pinyin text-sm tabular-nums text-muted">
 						{at + 1} / {quizzes.length}
