@@ -219,12 +219,32 @@ export async function findTaken(input: SignUpInput): Promise<string | null> {
 	return TAKEN_LABEL[data as string] ?? null;
 }
 
-/** 회원가입 */
-export async function signUp(input: SignUpInput): Promise<void> {
+/**
+ * 가입이 어떻게 끝났나.
+ *   'signed-in'   가입하고 바로 들어왔습니다. 화면이 알아서 안쪽으로 바뀝니다
+ *   'need-login'  계정은 만들어졌는데 로그인까지는 안 됐습니다. 한 번 더 눌러야 합니다
+ */
+export type SignUpResult = 'signed-in' | 'need-login';
+
+/**
+ * 회원가입.
+ *
+ * ★ 에러가 없는 것과 가입된 것은 다릅니다.
+ *   Supabase 는 두 경우에 에러를 내지 않고 조용히 끝냅니다.
+ *
+ *   1. 이미 있는 아이디 — 남의 아이디를 넣어보며 캐내는 걸 막으려고
+ *      가짜 사용자를 돌려줍니다. 이때 identities 가 빈 배열입니다.
+ *   2. 확인 메일을 기다리는 설정 — 계정은 생기지만 session 이 없습니다.
+ *
+ *   둘 다 그냥 넘기면 버튼만 눌렸다 말고 화면에 아무 말이 없습니다.
+ *   가입이 됐는지 안 됐는지 모른 채로 기다리게 되는데, 첫인상에서 그러면
+ *   그냥 나가버립니다.
+ */
+export async function signUp(input: SignUpInput): Promise<SignUpResult> {
 	const taken = await findTaken(input);
 	if (taken) throw new Error(taken);
 
-	const { error } = await supabase.auth.signUp({
+	const { data, error } = await supabase.auth.signUp({
 		email: loginEmail(input.username),
 		password: input.password,
 		options: {
@@ -238,6 +258,19 @@ export async function signUp(input: SignUpInput): Promise<void> {
 	});
 
 	if (error) throw new Error(readable(error.message));
+
+	// 1. 가짜 사용자를 받았나 (= 이미 있는 아이디)
+	if (data.user && (data.user.identities?.length ?? 0) === 0) {
+		throw new Error('이미 쓰고 있는 아이디입니다.');
+	}
+
+	// 아무것도 안 돌아왔으면 만들어졌다고 말할 수 없습니다
+	if (!data.user) {
+		throw new Error('가입을 처리하지 못했습니다. 잠시 뒤에 다시 시도해 주세요.');
+	}
+
+	// 2. 계정은 생겼는데 로그인은 안 된 경우
+	return data.session ? 'signed-in' : 'need-login';
 }
 
 /**
