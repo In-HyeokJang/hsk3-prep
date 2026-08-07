@@ -69,15 +69,16 @@ export function WordRow({ word, status }: { word: Word; status: Status }) {
 			</span>
 
 			<span className="min-w-0 flex-1">
-				<span className="pinyin block truncate text-[13px] text-accent">{word.pinyin}</span>
+				{/* 같은 한자가 두 번 나오는 단어가 있습니다 (把 개사/양사, 背 bēi/bèi).
+				    품사를 같이 보여주지 않으면 똑같은 줄이 두 개인 것처럼 보입니다.
+				    그래서 병음 옆에 둡니다 — 오른쪽 끝에 두면 폰에서 자리가 없어 사라집니다. */}
+				<span className="flex items-baseline gap-1.5">
+					{/* min-w-0 이 없으면 긴 병음이 줄어들지 못해 품사를 화면 밖으로 밀어냅니다 */}
+					<span className="pinyin min-w-0 truncate text-[13px] text-accent">{word.pinyin}</span>
+					{word.pos && <span className="shrink-0 text-[11px] text-muted">{word.pos}</span>}
+				</span>
 				<span className="block truncate text-sm text-ink-2">{word.meaning_ko}</span>
 			</span>
-
-			{/* 같은 한자가 두 번 나오는 단어가 있습니다 (把 개사/양사, 背 bēi/bèi).
-			    품사를 같이 보여주지 않으면 똑같은 줄이 두 개인 것처럼 보입니다. */}
-			{word.pos && (
-				<span className="hidden shrink-0 text-[11px] text-muted sm:inline">{word.pos}</span>
-			)}
 
 			<StatusPill status={status} />
 		</Link>

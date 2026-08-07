@@ -4,12 +4,18 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useStore } from '@/lib/useStore';
 import { Empty, ErrorBox, Loading, StatusPill } from '@/components/ui';
+import WriteBox from '@/components/WriteBox';
 import type { Status } from '@/lib/types';
 
 export default function WordDetail({ id }: { id: string }) {
 	const { words, statusOf, mark, loading, error, reload } = useStore();
 	const [saving, setSaving] = useState<Status | null>(null);
 	const [saveError, setSaveError] = useState<string | null>(null);
+
+	// 써보기 칸은 눌렀을 때만 엽니다.
+	// 늘 열어두면 이 단어를 눈으로만 훑고 싶은 사람에게도 획 자료를 받아옵니다.
+	const [writing, setWriting] = useState(false);
+	const [wrote, setWrote] = useState<boolean | null>(null);
 
 	if (loading) return <Loading />;
 	if (error) return <ErrorBox message={error} onRetry={reload} />;
@@ -33,7 +39,10 @@ export default function WordDetail({ id }: { id: string }) {
 		setSaveError(null);
 		try {
 			// 서버가 저장했다고 확인해줄 때까지 기다립니다.
-			await mark(word!.id, next, next === 'known');
+			//
+			// 맞았는지(correct) 를 넘기지 않습니다. 문제를 푼 게 아니라 손으로 표시한 것이라서요.
+			// 정답으로 넘기면 연타할 때마다 연속 기록이 올라가 복습이 35일 뒤로 밀립니다.
+			await mark(word!.id, next);
 		} catch (e) {
 			setSaveError(e instanceof Error ? e.message : String(e));
 		} finally {
@@ -94,6 +103,42 @@ export default function WordDetail({ id }: { id: string }) {
 					{word.example_ko && <p className="text-sm text-ink-2">{word.example_ko}</p>}
 				</section>
 			)}
+
+			{/* ── 손으로 써보기 ──
+			    눈으로 외운 것과 쓸 수 있는 것은 다릅니다.
+			    획 개수와 모양만 봅니다 — 획순까지 따지면 손가락으로는 아무것도 통과하지 못합니다. */}
+			<section className="rounded-2xl border border-rule-soft bg-paper-2/40 px-4 py-4 md:px-6 md:py-5">
+				{writing ? (
+					<WriteBox
+						hanzi={word.hanzi}
+						onFinish={(ok) => {
+							setWrote(ok);
+							setWriting(false);
+							// 다 맞게 썼으면 외운 것으로 칩니다
+							if (ok) save('known');
+						}}
+					/>
+				) : (
+					<button
+						onClick={() => {
+							setWrote(null);
+							setWriting(true);
+						}}
+						className="flex w-full items-center justify-center gap-2 text-base font-semibold text-ink-2"
+					>
+						✍️ 손으로 써보기
+						<span className="text-xs font-normal text-muted">손가락 · 마우스 · 카메라</span>
+					</button>
+				)}
+
+				{!writing && wrote !== null && (
+					<p className={`mt-3 text-center text-sm ${wrote ? 'text-accent' : 'text-muted'}`}>
+						{wrote
+							? '다 맞게 쓰셨어요. 외운 것으로 표시했습니다.'
+							: '아직 손에 안 익었어요. 다시 눌러서 한 번 더 써보세요.'}
+					</p>
+				)}
+			</section>
 
 			{/* ── 외웠는지 ── */}
 			<section className="flex flex-col gap-3">

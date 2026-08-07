@@ -55,6 +55,20 @@ function normalize(s: string): string {
 }
 
 /**
+ * 정리한 뜻 조각 두 개가 같은 말인지.
+ *
+ * '수영하다' 와 '수영' 을 같은 말로 봅니다.
+ * 채점과 보기 고르기가 같은 기준을 써야, 채점이 맞다고 할 답이
+ * 오답 보기에 섞이는 일이 없습니다.
+ */
+function samePart(a: string, b: string): boolean {
+	if (a === b) return true;
+	if (a.endsWith('하다') && b === a.slice(0, -2)) return true;
+	if (b.endsWith('하다') && a === b.slice(0, -2)) return true;
+	return false;
+}
+
+/**
  * 입력한 답이 맞는지.
  *
  * 너그럽게 봅니다. 뜻 조각 중 하나만 맞아도 정답이고,
@@ -68,11 +82,24 @@ export function checkTyped(input: string, meaning: string): boolean {
 	for (const part of meaningParts(meaning)) {
 		const want = normalize(part);
 		if (!want) continue;
-		if (got === want) return true;
-		if (want.endsWith('하다') && got === want.slice(0, -2)) return true;
-		if (got.endsWith('하다') && want === got.slice(0, -2)) return true;
+		if (samePart(got, want)) return true;
 	}
 	return false;
+}
+
+/**
+ * 두 단어를 같은 문제에 넣으면 안 되는지.
+ *
+ * 공식 목록에는 한자가 같은 단어가 두 번 나오고(把 · 背 · 调),
+ * 뜻이 겹치는 쌍도 백 개가 넘습니다(开展/展开, 情况/状况 …).
+ * 이런 둘이 한 문제에 같이 나오면 정답이 두 개가 됩니다.
+ */
+function clashes(a: Word, b: Word): boolean {
+	if (a.hanzi === b.hanzi) return true;
+
+	const partsA = meaningParts(a.meaning_ko).map(normalize).filter(Boolean);
+	const partsB = meaningParts(b.meaning_ko).map(normalize).filter(Boolean);
+	return partsA.some((x) => partsB.some((y) => samePart(x, y)));
 }
 
 /** 배열을 섞습니다 */
@@ -90,18 +117,29 @@ function shuffle<T>(list: T[]): T[] {
  *
  * 같은 품사를 먼저 씁니다. '먹다' 문제에 '학교' 가 섞이면
  * 뜻을 몰라도 소거법으로 맞힐 수 있어서 연습이 안 됩니다.
+ *
+ * 정답과 겹치는지만이 아니라 이미 고른 오답과도 견줍니다.
+ * 오답끼리 비교하지 않으면 보기 네 개 중 둘이 같은 말이 됩니다.
  */
 function pickWrong(word: Word, pool: Word[], howMany: number): Word[] {
-	const usable = pool.filter(
-		(w) => w.id !== word.id && w.meaning_ko && w.meaning_ko !== word.meaning_ko && w.hanzi !== word.hanzi,
-	);
+	const usable = pool.filter((w) => w.id !== word.id && w.meaning_ko && !clashes(w, word));
 
-	const samePos = word.pos ? usable.filter((w) => w.pos === word.pos) : [];
-	const picked = shuffle(samePos).slice(0, howMany);
+	const picked: Word[] = [];
+	const takeFrom = (list: Word[]) => {
+		for (const candidate of shuffle(list)) {
+			if (picked.length >= howMany) return;
+			if (picked.some((already) => clashes(already, candidate))) continue;
+			picked.push(candidate);
+		}
+	};
 
+	// 1순위: 품사가 같은 단어
+	if (word.pos) takeFrom(usable.filter((w) => w.pos === word.pos));
+
+	// 못 채웠으면 품사를 가리지 않고 채웁니다
 	if (picked.length < howMany) {
 		const taken = new Set(picked.map((w) => w.id));
-		picked.push(...shuffle(usable.filter((w) => !taken.has(w.id))).slice(0, howMany - picked.length));
+		takeFrom(usable.filter((w) => !taken.has(w.id)));
 	}
 	return picked;
 }

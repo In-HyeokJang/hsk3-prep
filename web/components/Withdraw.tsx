@@ -18,6 +18,11 @@ export default function Withdraw({ username }: { username: string | null }) {
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
+	// ★ 아이디를 모르면 탈퇴 화면을 아예 열지 않습니다.
+	//   아이디가 빈칸이면 "빈칸을 그대로 두는 것" 이 정답이 되어버려서,
+	//   확인 장치가 아무것도 확인하지 않게 됩니다. 실제로 그랬습니다.
+	if (!username) return null;
+
 	if (!asking) {
 		return (
 			<button
@@ -85,7 +90,7 @@ export default function Withdraw({ username }: { username: string | null }) {
 				</button>
 				<button
 					onClick={go}
-					disabled={busy || typed.trim() !== (username ?? '')}
+					disabled={busy || typed.trim() === '' || typed.trim() !== username}
 					className="rounded-xl bg-warn px-4 py-3 text-sm font-bold text-white disabled:opacity-40"
 				>
 					{busy ? '처리 중...' : '탈퇴합니다'}

@@ -1,8 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { getProgress, getSummary, getWords, markWord } from './api';
 import { useAuth } from './useAuth';
+import * as pending from './pending';
 import type { Progress, Status, Summary, Word } from './types';
 
 /**
@@ -16,13 +17,19 @@ import type { Progress, Status, Summary, Word } from './types';
  *   로그인이 끝나기 전에는 아무것도 부르지 않습니다.
  */
 export function useStore() {
-	const { userId, username, ready: authReady, signOut } = useAuth();
+	const { userId, username, profileFailed, ready: authReady, signOut } = useAuth();
 
 	const [words, setWords] = useState<Word[] | null>(null);
 	const [progress, setProgress] = useState<Map<string, Progress>>(new Map());
 	const [summary, setSummary] = useState<Summary | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(true);
+	const [pendingCount, setPendingCount] = useState(0);
+
+	// 아래 flushPending 을 담아두는 곳.
+	// 아래에서 만들어지는데 위쪽 useEffect 가 써야 해서, 값만 담아 씁니다.
+	// (useEffect 의 신호로 쓰면 함수가 새로 만들어질 때마다 다시 실행됩니다)
+	const flushPendingRef = useRef<() => Promise<number>>(async () => 0);
 
 	const load = useCallback(async (key: string) => {
 		setLoading(true);
@@ -50,26 +57,87 @@ export function useStore() {
 		void load(userId);
 	}, [authReady, userId, load]);
 
+	// 밀린 것이 있으면 화면을 열 때와 신호가 돌아왔을 때 다시 보냅니다.
+	useEffect(() => {
+		if (!userId) return;
+		setPendingCount(pending.count());
+
+		const retry = () => void flushPendingRef.current();
+		retry(); // 지금 한 번
+		window.addEventListener('online', retry);
+		return () => window.removeEventListener('online', retry);
+	}, [userId]);
+
 	/**
 	 * 상태를 저장합니다.
 	 *
-	 * ★ 서버가 저장했다고 확인해준 다음에 화면을 바꿉니다.
-	 *   먼저 화면부터 바꾸면, 저장에 실패해도 성공한 것처럼 보입니다.
-	 *   그 사실은 나중에 열어봤을 때야 드러나고, 그때는 이미 늦습니다.
+	 * 서버가 저장했다고 확인해준 다음에 화면을 바꿉니다.
+	 *
+	 * ★ 다만 신호가 끊겼을 때는 다릅니다.
+	 *   못 보낸 것을 브라우저에 적어두고 다음 문제로 넘어갑니다 (lib/pending.ts).
+	 *   "저장될 때까지 못 넘어감" 으로 두면 지하철에서 1번 문제에 갇힙니다.
+	 *   그렇다고 그냥 버리면 푼 것이 조용히 사라집니다. 둘 다 안 됩니다.
+	 *
+	 * 돌려주는 값: 저장됐으면 서버가 준 진도, 밀렸으면 null
 	 */
 	const mark = useCallback(
 		async (wordId: string, status: Status, correct?: boolean) => {
 			if (!userId) throw new Error('로그인이 필요합니다');
-			const saved = await markWord(userId, wordId, status, correct);
-			setProgress((prev) => {
-				const next = new Map(prev);
-				next.set(wordId, saved);
-				return next;
-			});
-			return saved;
+
+			try {
+				const saved = await markWord(userId, wordId, status, correct);
+				setProgress((prev) => {
+					const next = new Map(prev);
+					next.set(wordId, saved);
+					return next;
+				});
+				setPendingCount(pending.count());
+				return saved;
+			} catch (e) {
+				// ★ 못 보냈다고 버리지 않습니다.
+				//   지하철에서 신호가 끊기면 여기로 옵니다. 적어뒀다가 나중에 보냅니다.
+				//   던지지 않으므로 화면은 다음 문제로 넘어갑니다.
+				pending.push({ wordId, status, correct: correct === true, at: Date.now() });
+				setPendingCount(pending.count());
+
+				// 화면에 보이는 진도는 먼저 바꿔둡니다. 서버와는 나중에 맞춰집니다.
+				setProgress((prev) => {
+					const next = new Map(prev);
+					const before = prev.get(wordId);
+					next.set(wordId, {
+						word_id: wordId,
+						status,
+						seen_count: (before?.seen_count ?? 0) + 1,
+						correct_count: (before?.correct_count ?? 0) + (correct === true ? 1 : 0),
+						wrong_count: (before?.wrong_count ?? 0) + (correct === false ? 1 : 0),
+					});
+					return next;
+				});
+				return null;
+			}
 		},
 		[userId],
 	);
+
+	/** 밀린 것을 다시 보냅니다. 신호가 돌아왔을 때 불립니다. */
+	const flushPending = useCallback(async () => {
+		if (!userId || pending.count() === 0) return 0;
+
+		const sent = await pending.flush((m) => markWord(userId, m.wordId, m.status, m.correct));
+		setPendingCount(pending.count());
+
+		if (sent > 0) {
+			// 서버가 다시 계산한 값으로 맞춰둡니다
+			try {
+				setProgress(await getProgress(userId));
+			} catch {
+				// 다음 기회에
+			}
+		}
+		return sent;
+	}, [userId]);
+
+	flushPendingRef.current = flushPending;
 
 	const statusOf = useCallback(
 		(id: string): Status => progress.get(id)?.status ?? 'new',
@@ -81,9 +149,16 @@ export function useStore() {
 	return {
 		userKey: userId ?? '',
 		username,
+		profileFailed,
 		signedIn: !!userId,
 		authReady,
-		signOut,
+
+		// 로그아웃하면 밀린 것도 비웁니다. 다음 사람 진도에 섞이면 안 됩니다.
+		signOut: async () => {
+			pending.clear();
+			setPendingCount(0);
+			return signOut();
+		},
 
 		words,
 		progress,
@@ -99,6 +174,10 @@ export function useStore() {
 		ready: summary?.ready ?? words?.length ?? 0,
 
 		mark,
+		/** 아직 서버에 못 보낸 문제 수. 0이면 다 저장된 것입니다 */
+		pendingCount,
+		flushPending,
+
 		loading: loading || !authReady,
 		error,
 		reload: () => userId && load(userId),
