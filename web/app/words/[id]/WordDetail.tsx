@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { sharingHanzi } from '@/lib/api';
 import { useStore } from '@/lib/useStore';
 import { Empty, ErrorBox, Loading, StatusPill } from '@/components/ui';
 import ReadAloud from '@/components/ReadAloud';
@@ -36,6 +37,7 @@ export default function WordDetail({ id }: { id: string }) {
 	}
 
 	const status = statusOf(word.id);
+	const family = sharingHanzi(word, words ?? []);
 
 	async function save(next: Status) {
 		setSaving(next);
@@ -112,6 +114,30 @@ export default function WordDetail({ id }: { id: string }) {
 						<p className="pinyin mb-2 text-sm text-accent">{word.example_pinyin}</p>
 					)}
 					{word.example_ko && <p className="text-sm text-ink-2">{word.example_ko}</p>}
+				</section>
+			)}
+
+			{/* ── 이 한자가 들어간 다른 단어 ──
+			    한자는 뜻을 지고 다닙니다. 学을 알면 学校·同学·学生이 한 덩어리로 묶입니다.
+			    낱개로 973번 외우는 것과 묶어서 보는 것은 힘이 다릅니다. */}
+			{family.length > 0 && (
+				<section className="rounded-2xl border border-rule-soft bg-paper-2/40 px-4 py-4 md:px-6 md:py-5">
+					<p className="mb-3 text-xs font-semibold tracking-wide text-muted">
+						<span className="han">{word.hanzi}</span> 의 한자가 들어간 다른 단어
+					</p>
+					<div className="flex flex-wrap gap-2">
+						{family.map((w) => (
+							<Link
+								key={w.id}
+								href={`/words/${w.id}`}
+								className="flex items-baseline gap-2 rounded-xl border border-rule px-3 py-2 transition-colors hover:border-accent"
+							>
+								<span className="han text-lg">{shareMark(w.hanzi, word.hanzi)}</span>
+								<span className="pinyin text-xs text-accent">{w.pinyin}</span>
+								<span className="max-w-32 truncate text-xs text-muted">{w.meaning_ko}</span>
+							</Link>
+						))}
+					</div>
 				</section>
 			)}
 
@@ -206,6 +232,21 @@ export default function WordDetail({ id }: { id: string }) {
 			</p>
 		</div>
 	);
+}
+
+/**
+ * 같이 쓰는 글자에만 색을 칠합니다.
+ *
+ * 学习 을 보다가 学校 를 보면, 어느 글자가 같은지 눈에 안 들어옵니다.
+ * 색이 있으면 "아, 学 이 겹치는구나" 가 바로 보입니다.
+ */
+function shareMark(hanzi: string, mine: string) {
+	const shared = new Set([...mine]);
+	return [...hanzi].map((ch, i) => (
+		<span key={i} className={shared.has(ch) ? 'text-accent' : undefined}>
+			{ch}
+		</span>
+	));
 }
 
 /**

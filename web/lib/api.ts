@@ -248,6 +248,44 @@ export function topicsOf(words: Word[]): { topic: string; count: number }[] {
 		.sort((a, b) => b.count - a.count || a.topic.localeCompare(b.topic));
 }
 
+/**
+ * 이 단어와 한자를 나눠 쓰는 다른 단어들.
+ *
+ * 한자는 뜻을 지고 다닙니다. 学(배우다)를 알면 学校·同学·学生이 한 덩어리로 묶입니다.
+ * 낱개로 973번 외우는 것과 묶어서 보는 것은 힘이 다릅니다.
+ *
+ * ★ 한자가 같은 줄은 하나만 남깁니다.
+ *   공식 목록에는 같은 한자가 두 번 나옵니다 (把 개사/양사, 背 bēi/bèi, 为 동사/개사).
+ *   그걸 그대로 늘어놓으면 `为了` 아래에 **为 · 为** 가 나란히 뜹니다.
+ *   실제로 그렇게 나왔습니다. 똑같은 글자가 두 번 보이면 고장으로 읽힙니다.
+ *   여기는 "이 글자가 이렇게도 쓰인다" 를 보는 자리라 글자 하나면 충분하고,
+ *   눌러 들어가면 품사까지 다 나옵니다.
+ *
+ * 자기 자신과 자기와 한자가 같은 줄도 뺍니다.
+ *
+ * 글자 하나짜리 단어(学)에서는 그 글자가 들어간 모든 단어가 걸려서 수십 개가 됩니다.
+ * 그래서 개수를 끊고, 자주 쓰는 것부터 보여줍니다.
+ */
+export function sharingHanzi(word: Word, words: Word[], limit = 8): Word[] {
+	const chars = [...word.hanzi].filter((ch) => /[一-鿿]/.test(ch));
+	if (chars.length === 0) return [];
+
+	const found = words
+		.filter((w) => w.id !== word.id && w.hanzi !== word.hanzi)
+		.filter((w) => chars.some((ch) => w.hanzi.includes(ch)))
+		.sort((a, b) => (a.frequency ?? 9999) - (b.frequency ?? 9999));
+
+	const seen = new Set<string>();
+	const out: Word[] = [];
+	for (const w of found) {
+		if (seen.has(w.hanzi)) continue;
+		seen.add(w.hanzi);
+		out.push(w);
+		if (out.length >= limit) break;
+	}
+	return out;
+}
+
 export function filterWords(
 	words: Word[],
 	{
