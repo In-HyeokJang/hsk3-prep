@@ -74,6 +74,11 @@ function Study() {
 		known: 0,
 		unknown: 0,
 	});
+
+	// 이번 묶음에서 틀린 단어. 결과 화면에서 "이것만 다시" 에 씁니다.
+	// 진도의 due_at 은 3분 뒤로 밀려 있어서, 서버에 다시 물으면 이 단어들이 안 나옵니다.
+	// 그래서 서버를 부르지 않고 여기 담아둔 것으로 새 묶음을 만듭니다.
+	const [missed, setMissed] = useState<Word[]>([]);
 	const [saving, setSaving] = useState(false);
 	const [saveError, setSaveError] = useState<string | null>(null);
 
@@ -105,6 +110,7 @@ function Study() {
 		setAt(0);
 		setTyped('');
 		setJudged(null);
+		setMissed([]);
 	}
 
 	/** 약한 단어 묶음. 서버를 부르지 않습니다 — 진도는 이미 받아뒀습니다 */
@@ -200,6 +206,25 @@ function Study() {
 				)}
 
 				<div className="flex w-full max-w-xs flex-col gap-2">
+					{/* ── 틀린 것만 바로 다시 ──
+					    복습 일정은 틀린 단어를 3분 뒤로 미룹니다. 그건 며칠 뒤를 위한 일정이고,
+					    방금 틀린 것을 그 자리에서 한 번 더 보는 것은 다른 일입니다.
+					    서버에 다시 물으면 3분 전이라 안 나오므로, 담아둔 것으로 만듭니다. */}
+					{missed.length > 0 && (
+						<button
+							onClick={() => {
+								// startDeck 이 missed 를 비우므로 먼저 손에 쥡니다
+								const again = missed;
+								setResult({ known: 0, unknown: 0 });
+								startDeck(again, words!);
+							}}
+							className="rounded-xl bg-accent px-5 py-3.5 text-base font-bold text-paper"
+						>
+							틀린 {missed.length}개만 바로 다시
+						</button>
+					)}
+
+					{/* 틀린 게 있으면 그쪽을 앞세웁니다. 진한 버튼이 둘이면 어느 쪽이 먼저인지 안 보입니다 */}
 					<button
 						onClick={() => {
 							setResult({ known: 0, unknown: 0 });
@@ -218,9 +243,13 @@ function Study() {
 									startDeck(words!.filter((w) => statusOf(w.id) !== 'known').slice(0, COUNT), words!),
 								);
 						}}
-						className="rounded-xl bg-accent px-5 py-3.5 text-base font-bold text-paper"
+						className={
+							missed.length > 0
+								? 'rounded-xl border border-rule px-5 py-3.5 text-base font-semibold text-ink-2'
+								: 'rounded-xl bg-accent px-5 py-3.5 text-base font-bold text-paper'
+						}
 					>
-						10개 더 하기
+						{COUNT}개 더 하기
 					</button>
 					<Link
 						href={onlyWrong ? '/review' : topic ? '/words' : '/'}
@@ -273,6 +302,11 @@ function Study() {
 				known: r.known + (judged.correct ? 1 : 0),
 				unknown: r.unknown + (judged.correct ? 0 : 1),
 			}));
+			// 틀린 것을 적어둡니다. 결과 화면에서 바로 다시 풀 수 있게요.
+			// 같은 단어가 두 번 들어가지 않게 봅니다 (한 묶음에 같은 단어가 두 번 올 수 있습니다)
+			if (!judged.correct) {
+				setMissed((list) => (list.some((w) => w.id === card.id) ? list : [...list, card]));
+			}
 			setTyped('');
 			setJudged(null);
 			setAt((i) => i + 1);
