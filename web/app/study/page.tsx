@@ -52,8 +52,13 @@ function Study() {
 	const { userKey, words, progress, statusOf, mark, pendingCount, loading, error, reload } =
 		useStore();
 
+	const params = useSearchParams();
+
 	// 오답 노트(/review)에서 "약한 것만 풀기" 로 들어오면 이 값이 'wrong' 입니다.
-	const onlyWrong = useSearchParams().get('only') === 'wrong';
+	const onlyWrong = params.get('only') === 'wrong';
+
+	// 단어장에서 "감정 단어만 풀기" 로 들어오면 그 주제 이름이 들어옵니다.
+	const topic = params.get('topic');
 
 	// 홈의 설정에서 켜고 끕니다. 아래에 그만두는 길(return)이 여럿이라 맨 위에서 읽습니다.
 	const showPinyin = useShowPinyin();
@@ -107,11 +112,30 @@ function Study() {
 		return weakWords(pool, progressRef.current, COUNT).map((w) => w.word);
 	}
 
+	/**
+	 * 주제 하나에서 고른 묶음.
+	 *
+	 * 아직 안 외운 것을 먼저 채우고, 모자라면 외운 것으로 채웁니다.
+	 * "감정 단어만" 을 골랐는데 "다 외우셨어요" 만 나오면 고른 뜻이 없습니다 —
+	 * 이미 외운 것을 한 번 더 보는 것도 그 주제를 훑는 일입니다.
+	 */
+	function topicDeck(pool: Word[], name: string): Word[] {
+		const mine = pool.filter((w) => w.topic === name);
+		const status = statusOfRef.current;
+		const fresh = mine.filter((w) => status(w.id) !== 'known');
+		return [...fresh, ...mine.filter((w) => status(w.id) === 'known')].slice(0, COUNT);
+	}
+
 	useEffect(() => {
 		if (!userKey || !words) return;
 
 		if (onlyWrong) {
 			startDeck(weakDeck(words), words);
+			return;
+		}
+
+		if (topic) {
+			startDeck(topicDeck(words, topic), words);
 			return;
 		}
 
@@ -128,7 +152,7 @@ function Study() {
 			cancelled = true;
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userKey, words, onlyWrong]);
+	}, [userKey, words, onlyWrong, topic]);
 
 	if (loading) return <Loading />;
 	if (error) return <ErrorBox message={error} onRetry={reload} />;
@@ -141,11 +165,16 @@ function Study() {
 					text={
 						onlyWrong
 							? '틀린 단어가 없어요. 오답 노트가 비어 있습니다.'
-							: '오늘 볼 카드가 없어요. 준비된 단어를 다 외우셨습니다.'
+							: topic
+								? `'${topic}' 주제의 단어를 못 찾았어요.`
+								: '오늘 볼 카드가 없어요. 준비된 단어를 다 외우셨습니다.'
 					}
 				/>
-				<Link href={onlyWrong ? '/study' : '/words'} className="text-sm font-medium text-accent">
-					{onlyWrong ? '평소 학습으로 →' : '단어장 둘러보기 →'}
+				<Link
+					href={onlyWrong || topic ? '/study' : '/words'}
+					className="text-sm font-medium text-accent"
+				>
+					{onlyWrong || topic ? '평소 학습으로 →' : '단어장 둘러보기 →'}
 				</Link>
 			</div>
 		);
@@ -179,6 +208,10 @@ function Study() {
 								startDeck(weakDeck(words!), words!);
 								return;
 							}
+							if (topic) {
+								startDeck(topicDeck(words!, topic), words!);
+								return;
+							}
 							getDaily(userKey, COUNT)
 								.then((rows) => startDeck(rows, words!))
 								.catch(() =>
@@ -190,10 +223,10 @@ function Study() {
 						10개 더 하기
 					</button>
 					<Link
-						href={onlyWrong ? '/review' : '/'}
+						href={onlyWrong ? '/review' : topic ? '/words' : '/'}
 						className="rounded-xl border border-rule px-5 py-3.5 text-base font-semibold text-ink-2"
 					>
-						{onlyWrong ? '오답 노트로' : '오늘 화면으로'}
+						{onlyWrong ? '오답 노트로' : topic ? '단어장으로' : '오늘 화면으로'}
 					</Link>
 				</div>
 			</div>
@@ -259,7 +292,7 @@ function Study() {
 			<div>
 				<div className="mb-1.5 flex items-baseline justify-between">
 					<span className="text-sm font-medium">
-						{onlyWrong ? '오답 다시 풀기' : '학습'}{' '}
+						{onlyWrong ? '오답 다시 풀기' : (topic ?? '학습')}{' '}
 						<span className="text-muted">· {kindLabel}</span>
 					</span>
 					<span className="pinyin text-sm tabular-nums text-muted">

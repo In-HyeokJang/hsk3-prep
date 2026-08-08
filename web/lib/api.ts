@@ -228,9 +228,40 @@ export function plain(s: string): string {
 		.replace(/[^a-z0-9]/g, '');
 }
 
+/**
+ * 자료에 실제로 들어 있는 주제를 모읍니다.
+ *
+ * 주제 목록을 코드에 적어두지 않습니다. 자료에서 뽑습니다 —
+ * 적어두면 CSV 를 고칠 때마다 두 곳을 맞춰야 하고, 한쪽만 고치면
+ * 화면에 있는데 눌러도 아무것도 안 나오는 주제가 생깁니다.
+ *
+ * 단어가 많은 주제부터 보여줍니다.
+ */
+export function topicsOf(words: Word[]): { topic: string; count: number }[] {
+	const tally = new Map<string, number>();
+	for (const w of words) {
+		if (!w.topic) continue;
+		tally.set(w.topic, (tally.get(w.topic) ?? 0) + 1);
+	}
+	return [...tally.entries()]
+		.map(([topic, count]) => ({ topic, count }))
+		.sort((a, b) => b.count - a.count || a.topic.localeCompare(b.topic));
+}
+
 export function filterWords(
 	words: Word[],
-	{ q, status, progress }: { q: string; status: 'all' | Status; progress: Map<string, Progress> },
+	{
+		q,
+		status,
+		topic,
+		progress,
+	}: {
+		q: string;
+		status: 'all' | Status;
+		/** null 이면 주제를 가리지 않습니다 */
+		topic?: string | null;
+		progress: Map<string, Progress>;
+	},
 ): Word[] {
 	const query = q.trim();
 	const py = plain(query);
@@ -240,6 +271,8 @@ export function filterWords(
 			const cur = progress.get(w.id)?.status ?? 'new';
 			if (cur !== status) return false;
 		}
+
+		if (topic && w.topic !== topic) return false;
 
 		if (!query) return true;
 
