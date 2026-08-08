@@ -8,6 +8,7 @@
     "db:push": "node scripts/db-push.mjs",
     "db:seed": "node scripts/db-seed.mjs",
     "db:check": "node scripts/db-check.mjs",
+    "db:audit": "node scripts/db-audit.mjs",
     "db:all": "npm run db:push && npm run db:seed && npm run db:check",
     "env:sync": "node scripts/env-sync.mjs",
     "dev": "npm --prefix web run dev",
