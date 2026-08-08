@@ -6,13 +6,11 @@ import { Suspense, useEffect, useRef, useState } from 'react';
 import { getDaily, logAttempt, type QuizType } from '@/lib/api';
 import { useStore } from '@/lib/useStore';
 import { blankSentence, checkTyped, makeQuiz, type Quiz } from '@/lib/quiz';
-import { useShowPinyin } from '@/lib/settings';
+import { useDailyCount, useShowPinyin } from '@/lib/settings';
 import { weakWords } from '@/lib/weak';
 import type { Status, Word } from '@/lib/types';
 import Speak from '@/components/Speak';
 import { Empty, ErrorBox, Loading } from '@/components/ui';
-
-const COUNT = 10;
 
 /**
  * 주소의 ?only=wrong 을 읽으려면 Suspense 로 감싸야 합니다 (Next 규칙).
@@ -63,6 +61,9 @@ function Study() {
 	// 홈의 설정에서 켜고 끕니다. 아래에 그만두는 길(return)이 여럿이라 맨 위에서 읽습니다.
 	const showPinyin = useShowPinyin();
 
+	// 한 번에 몇 문제를 풀지. 홈 설정에서 5·10·20 중 고릅니다.
+	const count = useDailyCount();
+
 	const [quizzes, setQuizzes] = useState<Quiz[] | null>(null);
 	const [at, setAt] = useState(0);
 
@@ -95,6 +96,12 @@ function Study() {
 	const progressRef = useRef(progress);
 	progressRef.current = progress;
 
+	// 학습량도 마찬가지입니다. 아래 useEffect 의 신호에 넣으면,
+	// 다른 탭에서 설정을 바꾸는 순간 풀던 묶음이 새로 만들어져 1번 문제로 되돌아갑니다.
+	// 바꾼 값은 다음 묶음부터 쓰입니다.
+	const countRef = useRef(count);
+	countRef.current = count;
+
 	// 이 문제를 화면에 띄운 시각. 몇 초 만에 답했는지 재려고 담아둡니다.
 	// 화면을 다시 그려도 값이 유지돼야 해서 ref 에 넣습니다 (state 로 하면 매번 다시 그립니다).
 	const shownAtRef = useRef(0);
@@ -115,7 +122,7 @@ function Study() {
 
 	/** 약한 단어 묶음. 서버를 부르지 않습니다 — 진도는 이미 받아뒀습니다 */
 	function weakDeck(pool: Word[]): Word[] {
-		return weakWords(pool, progressRef.current, COUNT).map((w) => w.word);
+		return weakWords(pool, progressRef.current, countRef.current).map((w) => w.word);
 	}
 
 	/**
@@ -129,7 +136,7 @@ function Study() {
 		const mine = pool.filter((w) => w.topic === name);
 		const status = statusOfRef.current;
 		const fresh = mine.filter((w) => status(w.id) !== 'known');
-		return [...fresh, ...mine.filter((w) => status(w.id) === 'known')].slice(0, COUNT);
+		return [...fresh, ...mine.filter((w) => status(w.id) === 'known')].slice(0, countRef.current);
 	}
 
 	useEffect(() => {
@@ -147,11 +154,11 @@ function Study() {
 
 		let cancelled = false;
 
-		getDaily(userKey, COUNT)
+		getDaily(userKey, countRef.current)
 			.then((rows) => !cancelled && startDeck(rows, words))
 			.catch(() => {
 				if (cancelled) return;
-				startDeck(words.filter((w) => statusOfRef.current(w.id) !== 'known').slice(0, COUNT), words);
+				startDeck(words.filter((w) => statusOfRef.current(w.id) !== 'known').slice(0, countRef.current), words);
 			});
 
 		return () => {
@@ -237,10 +244,10 @@ function Study() {
 								startDeck(topicDeck(words!, topic), words!);
 								return;
 							}
-							getDaily(userKey, COUNT)
+							getDaily(userKey, count)
 								.then((rows) => startDeck(rows, words!))
 								.catch(() =>
-									startDeck(words!.filter((w) => statusOf(w.id) !== 'known').slice(0, COUNT), words!),
+									startDeck(words!.filter((w) => statusOf(w.id) !== 'known').slice(0, count), words!),
 								);
 						}}
 						className={
@@ -249,7 +256,7 @@ function Study() {
 								: 'rounded-xl bg-accent px-5 py-3.5 text-base font-bold text-paper'
 						}
 					>
-						{COUNT}개 더 하기
+						{count}개 더 하기
 					</button>
 					<Link
 						href={onlyWrong ? '/review' : topic ? '/words' : '/'}

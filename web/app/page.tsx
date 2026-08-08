@@ -8,10 +8,14 @@ import type { Word } from '@/lib/types';
 import ChangePassword from '@/components/ChangePassword';
 import StatsPanel from '@/components/StatsPanel';
 import Withdraw from '@/components/Withdraw';
-import { setShowPinyin, useShowPinyin } from '@/lib/settings';
+import {
+	DAILY_CHOICES,
+	setDailyCount,
+	setShowPinyin,
+	useDailyCount,
+	useShowPinyin,
+} from '@/lib/settings';
 import { Empty, ErrorBox, Loading, WordRow } from '@/components/ui';
-
-const TODAY_COUNT = 10;
 
 export default function HomePage() {
 	const {
@@ -29,6 +33,9 @@ export default function HomePage() {
 		reload,
 	} = useStore();
 
+	// 한 번에 몇 개를 볼지. 아래 설정 칸에서 5·10·20 중 고릅니다.
+	const todayCount = useDailyCount();
+
 	const [daily, setDaily] = useState<Word[] | null>(null);
 	const [dailyOffline, setDailyOffline] = useState(false);
 
@@ -37,7 +44,7 @@ export default function HomePage() {
 
 		let cancelled = false;
 
-		getDaily(userKey, TODAY_COUNT)
+		getDaily(userKey, todayCount)
 			.then((rows) => {
 				if (!cancelled) {
 					setDaily(rows);
@@ -48,7 +55,7 @@ export default function HomePage() {
 				// 오늘의 단어는 서버 함수라 신호가 끊기면 못 받아옵니다.
 				// 그럴 땐 이미 받아둔 목록에서 아직 안 외운 것으로 채웁니다.
 				if (cancelled) return;
-				const fallback = words.filter((w) => statusOf(w.id) !== 'known').slice(0, TODAY_COUNT);
+				const fallback = words.filter((w) => statusOf(w.id) !== 'known').slice(0, todayCount);
 				setDaily(fallback);
 				setDailyOffline(true);
 			});
@@ -56,7 +63,9 @@ export default function HomePage() {
 		return () => {
 			cancelled = true;
 		};
-	}, [userKey, words, statusOf]);
+		// 학습량을 바꾸면 오늘의 단어도 그만큼으로 다시 받아옵니다.
+		// 여기는 문제를 푸는 자리가 아니라 목록이라, 다시 그려도 잃을 게 없습니다.
+	}, [userKey, words, statusOf, todayCount]);
 
 	if (loading) return <Loading />;
 	if (error) return <ErrorBox message={error} onRetry={reload} />;
@@ -135,6 +144,9 @@ export default function HomePage() {
 				<h2 className="text-sm font-bold tracking-tight">설정</h2>
 				<PinyinToggle />
 				<div className="border-t border-rule-soft pt-4">
+					<DailyPicker />
+				</div>
+				<div className="border-t border-rule-soft pt-4">
 					<ChangePassword />
 				</div>
 			</section>
@@ -143,6 +155,42 @@ export default function HomePage() {
 			    맨 아래, 눈에 잘 안 띄는 자리에 둡니다. 실수로 누를 일이 아니어서요. */}
 			<div className="mt-4 flex flex-col border-t border-rule-soft pt-6">
 				<Withdraw username={username} />
+			</div>
+		</div>
+	);
+}
+
+/* ── 하루 학습량 ───────────────────────────────────────────
+   한 번에 몇 문제를 풀지. 오늘의 단어·학습 화면이 같이 이 값을 씁니다.
+
+   왜 고르게 하나: 10개는 대부분의 날에 맞지만, 못 지키는 날이 이어지면
+   아예 안 열게 됩니다. 5개로 낮춰서라도 이어가는 편이 낫습니다.
+   반대로 주말에 몰아서 하고 싶은 사람도 있습니다. */
+function DailyPicker() {
+	const now = useDailyCount();
+
+	return (
+		<div className="flex items-center justify-between gap-4">
+			<span className="min-w-0">
+				<span className="block text-base font-semibold">한 번에 풀 문제 수</span>
+				<span className="block text-sm text-muted">
+					오늘의 단어와 학습이 이만큼씩 나옵니다. 언제든 바꿀 수 있어요
+				</span>
+			</span>
+
+			<div className="flex shrink-0 gap-1 rounded-xl bg-paper-2 p-1">
+				{DAILY_CHOICES.map((n) => (
+					<button
+						key={n}
+						onClick={() => setDailyCount(n)}
+						aria-pressed={now === n}
+						className={`pinyin rounded-lg px-3 py-1.5 text-sm font-bold tabular-nums transition-colors ${
+							now === n ? 'bg-accent text-paper' : 'text-muted'
+						}`}
+					>
+						{n}
+					</button>
+				))}
 			</div>
 		</div>
 	);
