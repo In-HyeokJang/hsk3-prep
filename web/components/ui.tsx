@@ -58,7 +58,15 @@ export function StatusPill({ status }: { status: Status }) {
 
 /* ── 단어 한 줄 ────────────────────────────────────────────── */
 
-export function WordRow({ word, status }: { word: Word; status: Status }) {
+export function WordRow({
+	word,
+	status,
+	starred,
+}: {
+	word: Word;
+	status: Status;
+	starred?: boolean;
+}) {
 	return (
 		<Link
 			href={`/words/${word.id}`}
@@ -67,6 +75,13 @@ export function WordRow({ word, status }: { word: Word; status: Status }) {
 			<span className="han w-16 shrink-0 text-2xl leading-tight md:w-20 md:text-3xl">
 				{word.hanzi}
 			</span>
+
+			{/* 별표는 한자 옆에 작게. 오른쪽 끝에 두면 폰에서 상태 표시와 자리를 다툽니다 */}
+			{starred && (
+				<span aria-label="즐겨찾기" className="-ml-2 shrink-0 text-sm text-accent">
+					★
+				</span>
+			)}
 
 			<span className="min-w-0 flex-1">
 				{/* 같은 한자가 두 번 나오는 단어가 있습니다 (把 개사/양사, 背 bēi/bèi).

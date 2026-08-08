@@ -1,10 +1,10 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { getProgress, getSummary, getWords, markWord } from './api';
+import { getProgress, getSummary, getWords, markWord, starWord } from './api';
 import { useAuth } from './useAuth';
 import * as pending from './pending';
-import type { Progress, Status, Summary, Word } from './types';
+import { isStarred, type Progress, type Status, type Summary, type Word } from './types';
 
 /**
  * 세 화면이 같이 쓰는 데이터.
@@ -119,6 +119,31 @@ export function useStore() {
 		[userId],
 	);
 
+	/**
+	 * 즐겨찾기 별표를 켜고 끕니다.
+	 *
+	 * 서버가 저장했다고 확인해준 뒤에 화면을 바꿉니다.
+	 *
+	 * ★ 못 보낸 것을 적어두지 않습니다 (mark 와 다릅니다).
+	 *   진도는 못 보내면 푼 것이 사라지지만, 별표는 다시 누르면 그만입니다.
+	 *   여기까지 밀린 것 목록을 만들면, 나중에 보낼 때 순서가 꼬여서
+	 *   껐던 별표가 되살아나는 쪽이 더 나쁩니다.
+	 */
+	const star = useCallback(
+		async (wordId: string, on: boolean) => {
+			if (!userId) throw new Error('로그인이 필요합니다');
+
+			const saved = await starWord(wordId, on);
+			setProgress((prev) => {
+				const next = new Map(prev);
+				next.set(wordId, saved);
+				return next;
+			});
+			return saved;
+		},
+		[userId],
+	);
+
 	/** 밀린 것을 다시 보냅니다. 신호가 돌아왔을 때 불립니다. */
 	const flushPending = useCallback(async () => {
 		if (!userId || pending.count() === 0) return 0;
@@ -174,6 +199,12 @@ export function useStore() {
 		ready: summary?.ready ?? words?.length ?? 0,
 
 		mark,
+		star,
+		/** 이 단어에 별표가 켜져 있나 */
+		starredOf: (id: string) => isStarred(progress.get(id)),
+		/** 별표를 켜둔 단어 수 */
+		starCount: [...progress.values()].filter(isStarred).length,
+
 		/** 아직 서버에 못 보낸 문제 수. 0이면 다 저장된 것입니다 */
 		pendingCount,
 		flushPending,

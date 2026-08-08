@@ -12,9 +12,10 @@ import WriteBox from '@/components/WriteBox';
 import type { Status } from '@/lib/types';
 
 export default function WordDetail({ id }: { id: string }) {
-	const { words, statusOf, mark, loading, error, reload } = useStore();
+	const { words, statusOf, starredOf, mark, star, loading, error, reload } = useStore();
 	const [saving, setSaving] = useState<Status | null>(null);
 	const [saveError, setSaveError] = useState<string | null>(null);
+	const [starring, setStarring] = useState(false);
 
 	// 써보기 칸은 눌렀을 때만 엽니다.
 	// 늘 열어두면 이 단어를 눈으로만 훑고 싶은 사람에게도 획 자료를 받아옵니다.
@@ -37,7 +38,21 @@ export default function WordDetail({ id }: { id: string }) {
 	}
 
 	const status = statusOf(word.id);
+	const starred = starredOf(word.id);
 	const family = sharingHanzi(word, words ?? []);
+
+	/** 별표를 켜고 끕니다. 서버가 저장했다고 할 때까지 기다립니다 */
+	async function toggleStar() {
+		setStarring(true);
+		setSaveError(null);
+		try {
+			await star(word!.id, !starred);
+		} catch (e) {
+			setSaveError(e instanceof Error ? e.message : String(e));
+		} finally {
+			setStarring(false);
+		}
+	}
 
 	async function save(next: Status) {
 		setSaving(next);
@@ -95,6 +110,22 @@ export default function WordDetail({ id }: { id: string }) {
 						{word.pos && <span className="text-sm text-muted">{word.pos}</span>}
 						<StatusPill status={status} />
 					</div>
+
+					{/* ── 별표 ──
+					    복습 일정은 건드리지 않습니다. "나중에 다시 보고 싶다" 는 표시일 뿐입니다.
+					    그래서 '외웠어요' 버튼과 멀찍이 떨어뜨려 뒀습니다 — 나란히 두면
+					    누르는 사람이 둘을 같은 일로 여깁니다. */}
+					<button
+						onClick={toggleStar}
+						disabled={starring}
+						aria-pressed={starred}
+						className={`mt-1 flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors disabled:opacity-50 ${
+							starred ? 'border-accent bg-accent-soft text-accent' : 'border-rule text-muted'
+						}`}
+					>
+						<span aria-hidden>{starred ? '★' : '☆'}</span>
+						{starred ? '즐겨찾기에 있어요' : '즐겨찾기'}
+					</button>
 				</div>
 
 				<p className="text-center text-xl font-semibold md:text-2xl">{word.meaning_ko}</p>

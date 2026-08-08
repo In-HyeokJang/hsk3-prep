@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { filterWords, topicsOf } from '@/lib/api';
 import { useStore } from '@/lib/useStore';
-import { STATUS_LABEL, type Status } from '@/lib/types';
+import { isStarred, STATUS_LABEL, type Status } from '@/lib/types';
 import { Empty, ErrorBox, Loading, WordRow } from '@/components/ui';
 
 // 거르개는 네 개까지만. 다섯 개가 넘으면 폰에서 줄이 바뀝니다.
@@ -41,19 +41,24 @@ function Chip({
 }
 
 export default function WordsPage() {
-	const { words, progress, statusOf, loading, error, reload } = useStore();
+	const { words, progress, statusOf, starredOf, starCount, loading, error, reload } = useStore();
 	const [q, setQ] = useState('');
 	const [filter, setFilter] = useState<'all' | Status>('all');
 	// null 이면 주제를 안 가립니다
 	const [topic, setTopic] = useState<string | null>(null);
+	// 별표를 켠 것만 볼지
+	const [onlyStar, setOnlyStar] = useState(false);
 
 	// 주제 목록은 자료에서 뽑습니다. 단어가 안 바뀌면 다시 세지 않습니다.
 	const topics = useMemo(() => (words ? topicsOf(words) : []), [words]);
 
-	const list = useMemo(
-		() => (words ? filterWords(words, { q, status: filter, topic, progress }) : []),
-		[words, q, filter, topic, progress],
-	);
+	const list = useMemo(() => {
+		if (!words) return [];
+		const got = filterWords(words, { q, status: filter, topic, progress });
+		// 별표는 filterWords 에 넣지 않았습니다. 거기는 "단어가 어떤가" 를 보는 자리이고,
+		// 별표는 "내가 표시했나" 라서 결이 다릅니다.
+		return onlyStar ? got.filter((w) => isStarred(progress.get(w.id))) : got;
+	}, [words, q, filter, topic, onlyStar, progress]);
 
 	if (loading) return <Loading />;
 	if (error) return <ErrorBox message={error} onRetry={reload} />;
@@ -84,6 +89,13 @@ export default function WordsPage() {
 						{label}
 					</Chip>
 				))}
+
+				{/* 별표를 하나도 안 눌렀으면 안 보여줍니다. 눌러도 늘 빈 목록이라서요 */}
+				{starCount > 0 && (
+					<Chip active={onlyStar} onClick={() => setOnlyStar(!onlyStar)}>
+						★ 즐겨찾기 <span className="pinyin tabular-nums opacity-60">{starCount}</span>
+					</Chip>
+				)}
 			</div>
 
 			{/* ── 주제 ──
@@ -110,13 +122,13 @@ export default function WordsPage() {
 			<div className="flex items-baseline justify-between gap-3">
 				<p className="pinyin text-sm tabular-nums text-muted">{list.length}개</p>
 
-				{/* 고른 주제만 바로 풀 수 있게. 목록만 보고 끝나면 외워지지 않습니다 */}
-				{topic && list.length > 0 && (
+				{/* 고른 것만 바로 풀 수 있게. 목록만 보고 끝나면 외워지지 않습니다 */}
+				{list.length > 0 && (onlyStar || topic) && (
 					<Link
-						href={`/study?topic=${encodeURIComponent(topic)}`}
+						href={onlyStar ? '/study?only=star' : `/study?topic=${encodeURIComponent(topic!)}`}
 						className="shrink-0 rounded-lg bg-accent px-3.5 py-1.5 text-sm font-bold text-paper"
 					>
-						{topic} 단어만 풀기 →
+						{onlyStar ? '즐겨찾기만 풀기' : `${topic} 단어만 풀기`} →
 					</Link>
 				)}
 			</div>
@@ -134,7 +146,7 @@ export default function WordsPage() {
 				<ul className="grid gap-2 md:grid-cols-2">
 					{list.map((w) => (
 						<li key={w.id}>
-							<WordRow word={w} status={statusOf(w.id)} />
+							<WordRow word={w} status={statusOf(w.id)} starred={starredOf(w.id)} />
 						</li>
 					))}
 				</ul>

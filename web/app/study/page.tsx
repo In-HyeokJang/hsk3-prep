@@ -8,7 +8,7 @@ import { useStore } from '@/lib/useStore';
 import { blankSentence, checkTyped, makeQuiz, type Quiz } from '@/lib/quiz';
 import { useDailyCount, useShowPinyin } from '@/lib/settings';
 import { weakWords } from '@/lib/weak';
-import type { Status, Word } from '@/lib/types';
+import { isStarred, type Status, type Word } from '@/lib/types';
 import Speak from '@/components/Speak';
 import { Empty, ErrorBox, Loading } from '@/components/ui';
 
@@ -54,6 +54,9 @@ function Study() {
 
 	// 오답 노트(/review)에서 "약한 것만 풀기" 로 들어오면 이 값이 'wrong' 입니다.
 	const onlyWrong = params.get('only') === 'wrong';
+
+	// 단어장에서 "즐겨찾기만 풀기" 로 들어오면 'star' 입니다.
+	const onlyStar = params.get('only') === 'star';
 
 	// 단어장에서 "감정 단어만 풀기" 로 들어오면 그 주제 이름이 들어옵니다.
 	const topic = params.get('topic');
@@ -139,11 +142,31 @@ function Study() {
 		return [...fresh, ...mine.filter((w) => status(w.id) === 'known')].slice(0, countRef.current);
 	}
 
+	/**
+	 * 별표를 켠 단어 묶음.
+	 *
+	 * 안 외운 것을 먼저 채웁니다. 별표는 "다시 보고 싶다" 는 표시라
+	 * 이미 외운 것도 넣되 뒤로 보냅니다 (주제로 풀 때와 같은 규칙입니다).
+	 */
+	function starDeck(pool: Word[]): Word[] {
+		const mine = pool.filter((w) => isStarred(progressRef.current.get(w.id)));
+		const status = statusOfRef.current;
+		return [
+			...mine.filter((w) => status(w.id) !== 'known'),
+			...mine.filter((w) => status(w.id) === 'known'),
+		].slice(0, countRef.current);
+	}
+
 	useEffect(() => {
 		if (!userKey || !words) return;
 
 		if (onlyWrong) {
 			startDeck(weakDeck(words), words);
+			return;
+		}
+
+		if (onlyStar) {
+			startDeck(starDeck(words), words);
 			return;
 		}
 
@@ -165,7 +188,7 @@ function Study() {
 			cancelled = true;
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userKey, words, onlyWrong, topic]);
+	}, [userKey, words, onlyWrong, onlyStar, topic]);
 
 	if (loading) return <Loading />;
 	if (error) return <ErrorBox message={error} onRetry={reload} />;
@@ -178,16 +201,18 @@ function Study() {
 					text={
 						onlyWrong
 							? '틀린 단어가 없어요. 오답 노트가 비어 있습니다.'
-							: topic
-								? `'${topic}' 주제의 단어를 못 찾았어요.`
-								: '오늘 볼 카드가 없어요. 준비된 단어를 다 외우셨습니다.'
+							: onlyStar
+								? '즐겨찾기가 비어 있어요. 단어장에서 별표를 눌러보세요.'
+								: topic
+									? `'${topic}' 주제의 단어를 못 찾았어요.`
+									: '오늘 볼 카드가 없어요. 준비된 단어를 다 외우셨습니다.'
 					}
 				/>
 				<Link
-					href={onlyWrong || topic ? '/study' : '/words'}
+					href={onlyWrong || onlyStar || topic ? '/study' : '/words'}
 					className="text-sm font-medium text-accent"
 				>
-					{onlyWrong || topic ? '평소 학습으로 →' : '단어장 둘러보기 →'}
+					{onlyWrong || onlyStar || topic ? '평소 학습으로 →' : '단어장 둘러보기 →'}
 				</Link>
 			</div>
 		);
@@ -240,6 +265,10 @@ function Study() {
 								startDeck(weakDeck(words!), words!);
 								return;
 							}
+							if (onlyStar) {
+								startDeck(starDeck(words!), words!);
+								return;
+							}
 							if (topic) {
 								startDeck(topicDeck(words!, topic), words!);
 								return;
@@ -259,10 +288,10 @@ function Study() {
 						{count}개 더 하기
 					</button>
 					<Link
-						href={onlyWrong ? '/review' : topic ? '/words' : '/'}
+						href={onlyWrong ? '/review' : onlyStar || topic ? '/words' : '/'}
 						className="rounded-xl border border-rule px-5 py-3.5 text-base font-semibold text-ink-2"
 					>
-						{onlyWrong ? '오답 노트로' : topic ? '단어장으로' : '오늘 화면으로'}
+						{onlyWrong ? '오답 노트로' : onlyStar || topic ? '단어장으로' : '오늘 화면으로'}
 					</Link>
 				</div>
 			</div>
@@ -333,7 +362,7 @@ function Study() {
 			<div>
 				<div className="mb-1.5 flex items-baseline justify-between">
 					<span className="text-sm font-medium">
-						{onlyWrong ? '오답 다시 풀기' : (topic ?? '학습')}{' '}
+						{onlyWrong ? '오답 다시 풀기' : onlyStar ? '★ 즐겨찾기' : (topic ?? '학습')}{' '}
 						<span className="text-muted">· {kindLabel}</span>
 					</span>
 					<span className="pinyin text-sm tabular-nums text-muted">

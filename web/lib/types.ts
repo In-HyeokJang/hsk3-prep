@@ -27,7 +27,18 @@ export type Progress = {
 	seen_count: number;
 	correct_count: number;
 	wrong_count: number;
+	/**
+	 * 칸을 새로 만들지 않고 담아두는 자리.
+	 *   streak  연속으로 몇 번 맞혔나 (복습 간격을 정할 때 씀)
+	 *   star    즐겨찾기 별표
+	 */
+	meta?: { streak?: number; star?: boolean } | null;
 };
+
+/** 이 단어에 별표가 켜져 있나 */
+export function isStarred(p: Progress | undefined): boolean {
+	return p?.meta?.star === true;
+}
 
 export type Summary = {
 	total: number;

@@ -62,7 +62,8 @@ export async function getProgress(userKey: string): Promise<Map<string, Progress
 
 	const { data, error } = await supabase
 		.from('progress')
-		.select('word_id, status, seen_count, correct_count, wrong_count')
+		// meta 에는 연속 정답 횟수(streak)와 별표(star)가 들어 있습니다
+		.select('word_id, status, seen_count, correct_count, wrong_count, meta')
 		.eq('user_key', userKey)
 		.range(0, 1999);
 
@@ -95,6 +96,24 @@ export async function markWord(
 	if (error) throw new Error(`저장하지 못했습니다: ${error.message}`);
 	if (!data) throw new Error('저장은 됐다는데 서버가 결과를 안 돌려줬습니다');
 
+	return data as Progress;
+}
+
+/**
+ * 즐겨찾기 별표를 켜고 끕니다.
+ *
+ * ★ 복습 일정을 건드리지 않습니다. 서버가 `meta.star` 하나만 바꿉니다.
+ *   별표는 "나중에 다시 보고 싶다" 는 표시일 뿐이라, 누른다고 다음에 볼
+ *   날짜가 당겨지거나 밀리면 표시를 할수록 일정이 망가집니다 (마이그레이션 21).
+ */
+export async function starWord(wordId: string, on: boolean): Promise<Progress> {
+	const { data, error } = await supabase.rpc('star_word', {
+		p_word_id: wordId,
+		p_on: on,
+	});
+
+	if (error) throw new Error(`별표를 저장하지 못했습니다: ${error.message}`);
+	if (!data) throw new Error('별표는 저장했다는데 서버가 결과를 안 돌려줬습니다');
 	return data as Progress;
 }
 
