@@ -10,6 +10,7 @@ import { useDailyCount, useShowPinyin } from '@/lib/settings';
 import { weakWords } from '@/lib/weak';
 import { isStarred, type Status, type Word } from '@/lib/types';
 import Speak from '@/components/Speak';
+import WriteBox from '@/components/WriteBox';
 import { Empty, ErrorBox, Loading } from '@/components/ui';
 
 /**
@@ -83,6 +84,12 @@ function Study() {
 	// 진도의 due_at 은 3분 뒤로 밀려 있어서, 서버에 다시 물으면 이 단어들이 안 나옵니다.
 	// 그래서 서버를 부르지 않고 여기 담아둔 것으로 새 묶음을 만듭니다.
 	const [missed, setMissed] = useState<Word[]>([]);
+
+	// 채점 결과에서 '손으로 써보기' 를 눌렀나, 그리고 그 결과.
+	// 눌렀을 때만 엽니다 — 늘 열어두면 문제마다 획 자료를 받아옵니다.
+	const [writing, setWriting] = useState(false);
+	const [wrote, setWrote] = useState<boolean | null>(null);
+
 	const [saving, setSaving] = useState(false);
 	const [saveError, setSaveError] = useState<string | null>(null);
 
@@ -120,6 +127,9 @@ function Study() {
 		setAt(0);
 		setTyped('');
 		setJudged(null);
+		// 쓰기 칸도 닫습니다. 안 닫으면 다음 문제의 답을 보기도 전에 그 한자가 뜹니다
+		setWriting(false);
+		setWrote(null);
 		setMissed([]);
 	}
 
@@ -345,6 +355,9 @@ function Study() {
 			}
 			setTyped('');
 			setJudged(null);
+		// 쓰기 칸도 닫습니다. 안 닫으면 다음 문제의 답을 보기도 전에 그 한자가 뜹니다
+		setWriting(false);
+		setWrote(null);
 			setAt((i) => i + 1);
 		} catch (e) {
 			// 여기까지 오는 건 로그인이 풀린 것처럼 다시 시도해도 소용없는 경우입니다.
@@ -503,6 +516,47 @@ function Study() {
 								)}
 								{card.example_ko && <p className="mt-1 text-sm text-ink-2">{card.example_ko}</p>}
 							</div>
+						)}
+					</div>
+
+					{/* ── 손으로 써보기 ──
+					    상세 페이지에만 있던 것을 매일 푸는 자리로 가져왔습니다.
+					    알아보는 것(고르기)과 꺼내는 것(쓰기)은 실력이 다릅니다.
+
+					    답을 본 **뒤에** 엽니다. 답을 모르는 채로 쓰라고 하면 쓸 수가 없습니다.
+					    눌렀을 때만 엽니다 — 늘 열어두면 열 문제마다 열 번 획 자료를 받아옵니다.
+
+					    ★ 여기서는 진도를 건드리지 않습니다.
+					      뜻을 틀렸는데 글자를 잘 썼다고 '외웠어요' 가 되면 안 됩니다.
+					      이 문제의 진도는 이미 위에서 정해졌습니다. 푼 기록만 따로 남깁니다. */}
+					<div className="rounded-2xl border border-rule-soft bg-paper-2/40 px-4 py-4">
+						{writing ? (
+							<WriteBox
+								key={card.id}
+								hanzi={card.hanzi}
+								onFinish={(good) => {
+									setWriting(false);
+									setWrote(good);
+									void logAttempt(card.id, 'write', good, null, { after: quiz.kind });
+								}}
+							/>
+						) : (
+							<button
+								onClick={() => {
+									setWrote(null);
+									setWriting(true);
+								}}
+								className="flex w-full items-center justify-center gap-2 text-base font-semibold text-ink-2"
+							>
+								✍️ 손으로 써보기
+								<span className="text-xs font-normal text-muted">손가락 · 마우스</span>
+							</button>
+						)}
+
+						{!writing && wrote !== null && (
+							<p className={`mt-3 text-center text-sm ${wrote ? 'text-accent' : 'text-muted'}`}>
+								{wrote ? '다 맞게 쓰셨어요.' : '아직 손에 안 익었어요. 한 번 더 써보세요.'}
+							</p>
 						)}
 					</div>
 

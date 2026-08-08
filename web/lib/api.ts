@@ -122,7 +122,15 @@ export async function starWord(wordId: string, on: boolean): Promise<Progress> {
    "언제 · 어떤 문제로 · 뭘 틀렸나" 는 쌓인 기록이 있어야 나옵니다. */
 
 /** 서버가 아는 문제 유형. attempts 표가 이것들만 받습니다 (마이그레이션 18) */
-export type QuizType = 'meaning' | 'pinyin' | 'hanzi' | 'blank' | 'tone' | 'listen' | 'speak';
+export type QuizType =
+	| 'meaning'
+	| 'pinyin'
+	| 'hanzi'
+	| 'blank'
+	| 'tone'
+	| 'write'
+	| 'listen'
+	| 'speak';
 
 /**
  * 문제 하나를 푼 기록을 남깁니다.
