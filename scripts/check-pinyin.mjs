@@ -282,6 +282,19 @@ for (const spot of spots) {
 	for (const v of vs) if (stripTone(v.text) !== bare) differs.push(`${spot.syllable.text} → ${v.text}`);
 }
 
+// ★ tonesOf 와 splitPinyin 은 서로 다른 방식입니다.
+//   tonesOf 는 성조 기호를 **순서대로 세고**, splitPinyin 은 **음절로 나눕니다**.
+//   둘이 어긋나면 화면에서 밑줄 친 글자와 보기가 서로 다른 글자를 가리킵니다.
+//   한쪽이 맞다고 다른 쪽이 맞는 게 아니라서 따로 세야 합니다.
+report(
+	'C6',
+	'짚은 글자의 성조가 음절의 성조와 다른 자리',
+	spots
+		.filter((s) => s.syllable.tone !== s.tone)
+		.map((s) => `${s.w.hanzi} ${s.w.pinyin} ${s.at}번째 — 기호 ${s.tone}성 / 음절 ${s.syllable.text} ${s.syllable.tone}성`),
+	spots.length,
+);
+
 report('C0', '보기를 못 만든 자리', noVariants, spots.length);
 report('C1', '같은 글자로 보이는 보기 쌍', clash, pairs);
 report('C2', '정답이 보기 안에 없는 문제', missing, spots.length);
