@@ -106,3 +106,15 @@ Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
 | 버튼·링크 **안에** 버튼 넣기 | 누르면 엉뚱한 것이 선택됨. **형제로** 둘 것 |
 | 화면이 바뀌는 자리에 잠금이 없음 | 연타의 두 번째 탭이 새 화면 버튼을 누름. 300ms 무시 |
 | 4지선다를 새로 짜기 | 고쳐놓은 사고를 처음부터 다시. **`quiz.ts` 재사용** |
+
+## 마이그레이션을 건드릴 때 (자주 틀리는 자리)
+
+- **새 파일을 만듭니다.** 기존 파일을 고치지 않습니다. `db:push` 가 매번 전부 다시 실행합니다
+- **`db:push` 를 두 번 연속 돌립니다.** 처음엔 지울 게 없어 지나가고, **두 번째 실행에서만 터지는 것**이 있습니다
+- `add column if not exists` · `create or replace` · `drop policy if exists` → `create policy`
+- **`returns table (...)` 함수는 칸을 하나만 더해도** 두 번째 실행에서 `cannot change return type` 으로 멈춥니다.
+  앞에 `drop function if exists` 를 씁니다
+- **함수의 최종 정의는 가장 나중 파일에 있어야 합니다.** 함수를 다시 만들었으면
+  `docs/09-handoff.md` 의 "함수의 최종 정의가 어디 있나" 표도 **같이 고칩니다**
+- **실제 자료를 마이그레이션에 넣지 않습니다.** (누가 관리자인지, 초대 코드 같은 것)
+  구조와 자료는 다릅니다. 자료는 SQL Editor 나 시드로 넣습니다
