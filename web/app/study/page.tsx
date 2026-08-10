@@ -394,7 +394,10 @@ function Study() {
 			    답을 내면 감춥니다. 아래 정답 카드에 같은 내용이 다 들어 있어서,
 			    남겨두면 한자나 뜻이 화면에 두 번 나옵니다. */}
 			{!judged && (
-				<div className="flex min-h-[13rem] flex-col items-center justify-center gap-4 rounded-2xl border border-rule-soft bg-paper-2/60 px-5 py-8">
+				/* 보기에 병음 한 줄이 붙어 세로가 길어졌습니다.
+				   폰에서 보기 넷이 한 화면에 안 들어가면 아래 것을 안 읽고 고르게 되므로
+				   문제 칸을 그만큼 줄입니다. 한자 카드는 내용이 커서 실제로는 안 줄어듭니다. */
+				<div className="flex min-h-[10rem] flex-col items-center justify-center gap-4 rounded-2xl border border-rule-soft bg-paper-2/60 px-5 py-8">
 					{quiz.kind === 'blank' ? (
 						/* 예문에서 그 단어만 가립니다.
 						   병음도 뜻도 붙이지 않습니다 — 둘 다 답을 그대로 알려줍니다. */
@@ -459,19 +462,37 @@ function Study() {
 			)}
 
 			{!judged && quiz.kind !== 'type' && (
-				<div className="grid gap-2.5">
+				<div className="grid gap-2">
 					{quiz.choices.map((c) => (
 						<button
 							key={c.id}
 							onClick={() => judge(c.id === card.id, c.id)}
-							className="rounded-xl border border-rule px-4 py-4 text-center active:bg-paper-2"
+							className="rounded-xl border border-rule px-4 py-3 text-center active:bg-paper-2"
 						>
 							{quiz.kind === 'pick-ko' ? (
 								<span className="text-base font-semibold">{c.meaning_ko}</span>
 							) : quiz.kind === 'pick-py' ? (
 								<span className="pinyin text-xl">{c.pinyin}</span>
 							) : (
-								<span className="han text-2xl">{c.hanzi}</span>
+								/* ── 한자 보기에는 병음을 작게 답니다 ──
+								   한자만 넉 줄 서 있으면 읽을 줄 모르는 채로 모양만 보고 고릅니다.
+								   여기서 병음은 답을 알려주지 않습니다 —
+								   한자 고르기(pick-zh)의 문제는 한국어 뜻이고,
+								   빈칸(blank)의 문제는 가려진 예문이라 둘 다 소리와 상관이 없습니다.
+
+								   ★ 설정의 '병음 보이기' 에 묶지 않았습니다.
+								     그건 *문제*에 병음을 붙이는 설정이고 기본이 꺼짐입니다.
+								     여기 묶으면 요청하신 것이 기본으로 안 보입니다.
+
+								   ★ 폰에서 숨기지 않습니다.
+								     세로가 모자라면 hidden sm:block 을 쓰고 싶어지는데,
+								     그러면 폰에서만 이 기능이 사라집니다 (09-handoff.md 의 지뢰). */
+								<>
+									<span className="han block text-2xl">{c.hanzi}</span>
+									{c.pinyin && (
+										<span className="pinyin block text-xs text-muted">{c.pinyin}</span>
+									)}
+								</>
 							)}
 						</button>
 					))}
