@@ -6,6 +6,12 @@
         "hooks": [
           {
             "type": "command",
+            "command": "node scripts/hook-guard-push.mjs",
+            "timeout": 10,
+            "statusMessage": "푸시 대상 확인..."
+          },
+          {
+            "type": "command",
             "command": "node scripts/hook-build-check.mjs",
             "timeout": 300,
             "statusMessage": "커밋 전 빌드 검사..."

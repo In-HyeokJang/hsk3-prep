@@ -63,7 +63,17 @@ docs/09-handoff.md 와 docs/10-wbs.md 를 읽고, 지금 상태를 확인해줘.
 
 ---
 
-## ▶ 지금 할 것 — 폰으로 눈 확인
+## ▶ 지금 할 것 — 오프라인 모임 화면 `/live`
+
+**작업 목록: [14-wbs3.md](14-wbs3.md)** · 기획: [13-offline-game.md](13-offline-game.md)
+
+새 대화에서 **`/hsk3-next`** 만 치면 이어집니다.
+TV에 띄우고 6~10명이 다같이 보는 화면 하나를 만듭니다 (6회차 × 2시간).
+새 표 0개 · 마이그레이션 0개 · 새 라이브러리 0개.
+
+---
+
+## 그 전에 · 폰으로 눈 확인 (6회차 몫, 아직 남음)
 
 **코딩 항목은 다 끝났고 배포도 됐습니다.** 남은 것은 **사장님 손이 필요한 것뿐**입니다.
 목록은 `docs/11-wbs2.md` 의 **T17** 과 **F** 칸에 있습니다.
@@ -253,6 +263,7 @@ update public.words   set verified = true, verified_at = now() where id = 'L3-00
 | `npm run db:check` | **제대로 들어갔나** — 줄 수 · 한자 안 깨졌는지 · 권한 · 함수 |
 | `npm run db:audit` | **내용이 맞는가** — 번체자 · 성조 없는 병음 · 빈 예문 · 신고 |
 | `npm run check:pinyin` | **규칙이 맞는가** — 병음을 음절로 나눈 것이 한자와 맞나 (DB 없이 돕니다) |
+| `/hsk3-next` | **다음 작업 이어가기** — 번호가 제일 큰 WBS 문서를 읽고 알아서 진행합니다 |
 | `npm run db:seed` | `data/` 의 CSV를 DB에 반영 (몇 번을 돌려도 같음) |
 | `npm run db:push` | 스키마 변경 반영 |
 | `npm run dev` | 사이트 켜기 → `localhost:3000` |
