@@ -136,6 +136,22 @@ function Study() {
 		shownAtRef.current = Date.now();
 	}, [at, quizzes]);
 
+	/**
+	 * 새 문제가 뜨자마자 들어온 탭인가.
+	 *
+	 * ★ 채점 화면의 '다음' 버튼과 다음 문제의 **4번째 보기**가 화면에서 거의 같은 자리입니다.
+	 *   둘 다 자기 화면의 마지막 요소이고 두 화면 높이가 거의 같아서요.
+	 *   '다음' 을 빠르게 두 번 치면 두 번째 탭이 새 문제의 보기에 떨어집니다.
+	 *   지금까지는 서버 응답을 기다리는 시간(80~200ms)이 유일한 방어였는데,
+	 *   보통 더블탭 간격이 150~250ms라 그냥 뚫립니다.
+	 *
+	 * 시간을 재는 값이 이미 있어서(shownAtRef) 새 상태를 만들지 않습니다.
+	 * 버튼을 disabled 로 만들지도 않습니다 — 초점이 튕겨나가
+	 * 화면 읽어주는 기계를 쓰는 사람이 길을 잃습니다. 조용히 무시만 합니다.
+	 */
+	const TAP_GUARD_MS = 300;
+	const tooSoon = () => Date.now() - shownAtRef.current < TAP_GUARD_MS;
+
 	/** 카드 묶음을 문제로 바꿔서 담아둡니다.
 	    한 번만 만들어 둡니다. 그릴 때마다 만들면 보기 순서가 계속 바뀝니다. */
 	function startDeck(rows: Word[], pool: Word[]) {
@@ -340,6 +356,7 @@ function Study() {
 	 */
 	function pick(id: string) {
 		if (judged) return;
+		if (tooSoon()) return;
 		if (picked !== id) {
 			setPicked(id);
 			return;
@@ -490,22 +507,30 @@ function Study() {
 						aria-label="한국어 뜻"
 						className="rounded-xl border border-rule bg-paper px-4 py-4 text-center text-lg outline-none focus:border-accent"
 					/>
-					<div className="grid grid-cols-2 gap-3">
-						<button
-							type="button"
-							onClick={() => judge(false, null)}
-							className="rounded-xl border border-rule px-4 py-4 text-base font-semibold text-ink-2 active:bg-paper-2"
-						>
-							모르겠어요
-						</button>
-						<button
-							type="submit"
-							disabled={!typed.trim()}
-							className="rounded-xl bg-accent px-4 py-4 text-base font-semibold text-paper disabled:opacity-40"
-						>
-							확인
-						</button>
-					</div>
+					<button
+						type="submit"
+						disabled={!typed.trim()}
+						className="rounded-xl bg-accent px-4 py-4 text-base font-semibold text-paper disabled:opacity-40"
+					>
+						확인
+					</button>
+
+					{/* ── 모르겠어요 ──
+					    ★ 이건 한 번 누르면 그대로 오답 확정입니다.
+					      보기가 아니라 단일 버튼이라 '두 번 누르기' 가 안 걸립니다.
+					      '확인' 과 나란히 두면 손가락이 반반 확률로 여기에 떨어집니다.
+
+					    아래 줄로 내리고 테두리를 뺐습니다. 누를 사람은 찾아서 누릅니다. */}
+					<button
+						type="button"
+						onClick={() => {
+							if (tooSoon()) return;
+							judge(false, null);
+						}}
+						className="py-2 text-sm font-medium text-muted underline decoration-rule underline-offset-4"
+					>
+						모르겠어요
+					</button>
 				</form>
 			)}
 
