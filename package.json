@@ -10,6 +10,7 @@
     "db:check": "node scripts/db-check.mjs",
     "db:audit": "node scripts/db-audit.mjs",
     "db:all": "npm run db:push && npm run db:seed && npm run db:check",
+    "check:pinyin": "node scripts/check-pinyin.mjs",
     "env:sync": "node scripts/env-sync.mjs",
     "dev": "npm --prefix web run dev",
     "build": "npm --prefix web run build"
