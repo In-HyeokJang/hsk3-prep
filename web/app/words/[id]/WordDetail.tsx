@@ -2,15 +2,20 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { sharingHanzi } from '@/lib/api';
 import { useStore } from '@/lib/useStore';
 import { Empty, ErrorBox, Loading, StatusPill } from '@/components/ui';
+import ReadAloud from '@/components/ReadAloud';
+import ReportButton from '@/components/ReportButton';
+import Speak, { SpeakNote } from '@/components/Speak';
 import WriteBox from '@/components/WriteBox';
 import type { Status } from '@/lib/types';
 
 export default function WordDetail({ id }: { id: string }) {
-	const { words, statusOf, mark, loading, error, reload } = useStore();
+	const { words, statusOf, starredOf, mark, star, loading, error, reload } = useStore();
 	const [saving, setSaving] = useState<Status | null>(null);
 	const [saveError, setSaveError] = useState<string | null>(null);
+	const [starring, setStarring] = useState(false);
 
 	// 써보기 칸은 눌렀을 때만 엽니다.
 	// 늘 열어두면 이 단어를 눈으로만 훑고 싶은 사람에게도 획 자료를 받아옵니다.
@@ -33,6 +38,21 @@ export default function WordDetail({ id }: { id: string }) {
 	}
 
 	const status = statusOf(word.id);
+	const starred = starredOf(word.id);
+	const family = sharingHanzi(word, words ?? []);
+
+	/** 별표를 켜고 끕니다. 서버가 저장했다고 할 때까지 기다립니다 */
+	async function toggleStar() {
+		setStarring(true);
+		setSaveError(null);
+		try {
+			await star(word!.id, !starred);
+		} catch (e) {
+			setSaveError(e instanceof Error ? e.message : String(e));
+		} finally {
+			setStarring(false);
+		}
+	}
 
 	async function save(next: Status) {
 		setSaving(next);
@@ -80,11 +100,32 @@ export default function WordDetail({ id }: { id: string }) {
 				</div>
 
 				<div className="flex flex-col items-center gap-1.5">
-					<p className="pinyin text-xl text-accent md:text-2xl">{word.pinyin}</p>
+					{/* 병음 옆에 스피커. 병음을 눈으로만 보면 실제 소리와 다르게 굳습니다.
+					    중국어 목소리가 없는 기기에서는 이 버튼이 아예 안 나옵니다. */}
+					<div className="flex items-center gap-3">
+						<p className="pinyin text-xl text-accent md:text-2xl">{word.pinyin}</p>
+						<Speak text={word.hanzi} label={`${word.hanzi} 듣기`} big />
+					</div>
 					<div className="flex items-center gap-2">
 						{word.pos && <span className="text-sm text-muted">{word.pos}</span>}
 						<StatusPill status={status} />
 					</div>
+
+					{/* ── 별표 ──
+					    복습 일정은 건드리지 않습니다. "나중에 다시 보고 싶다" 는 표시일 뿐입니다.
+					    그래서 '외웠어요' 버튼과 멀찍이 떨어뜨려 뒀습니다 — 나란히 두면
+					    누르는 사람이 둘을 같은 일로 여깁니다. */}
+					<button
+						onClick={toggleStar}
+						disabled={starring}
+						aria-pressed={starred}
+						className={`mt-1 flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors disabled:opacity-50 ${
+							starred ? 'border-accent bg-accent-soft text-accent' : 'border-rule text-muted'
+						}`}
+					>
+						<span aria-hidden>{starred ? '★' : '☆'}</span>
+						{starred ? '즐겨찾기에 있어요' : '즐겨찾기'}
+					</button>
 				</div>
 
 				<p className="text-center text-xl font-semibold md:text-2xl">{word.meaning_ko}</p>
@@ -93,7 +134,10 @@ export default function WordDetail({ id }: { id: string }) {
 			{/* ── 예문 ── */}
 			{word.example_zh && (
 				<section className="rounded-2xl border border-rule-soft bg-paper-2/60 px-4 py-4 md:px-6 md:py-5">
-					<p className="mb-3 text-xs font-semibold tracking-wide text-muted">예문</p>
+					<div className="mb-3 flex items-center justify-between gap-3">
+						<p className="text-xs font-semibold tracking-wide text-muted">예문</p>
+						<Speak text={word.example_zh} label="예문 듣기" />
+					</div>
 					<p className="han mb-2 text-xl leading-relaxed md:text-2xl">
 						{highlight(word.example_zh, word.hanzi)}
 					</p>
@@ -101,6 +145,30 @@ export default function WordDetail({ id }: { id: string }) {
 						<p className="pinyin mb-2 text-sm text-accent">{word.example_pinyin}</p>
 					)}
 					{word.example_ko && <p className="text-sm text-ink-2">{word.example_ko}</p>}
+				</section>
+			)}
+
+			{/* ── 이 한자가 들어간 다른 단어 ──
+			    한자는 뜻을 지고 다닙니다. 学을 알면 学校·同学·学生이 한 덩어리로 묶입니다.
+			    낱개로 973번 외우는 것과 묶어서 보는 것은 힘이 다릅니다. */}
+			{family.length > 0 && (
+				<section className="rounded-2xl border border-rule-soft bg-paper-2/40 px-4 py-4 md:px-6 md:py-5">
+					<p className="mb-3 text-xs font-semibold tracking-wide text-muted">
+						<span className="han">{word.hanzi}</span> 의 한자가 들어간 다른 단어
+					</p>
+					<div className="flex flex-wrap gap-2">
+						{family.map((w) => (
+							<Link
+								key={w.id}
+								href={`/words/${w.id}`}
+								className="flex items-baseline gap-2 rounded-xl border border-rule px-3 py-2 transition-colors hover:border-accent"
+							>
+								<span className="han text-lg">{shareMark(w.hanzi, word.hanzi)}</span>
+								<span className="pinyin text-xs text-accent">{w.pinyin}</span>
+								<span className="max-w-32 truncate text-xs text-muted">{w.meaning_ko}</span>
+							</Link>
+						))}
+					</div>
 				</section>
 			)}
 
@@ -140,6 +208,14 @@ export default function WordDetail({ id }: { id: string }) {
 				)}
 			</section>
 
+			{/* ── 소리내어 읽기 ──
+			    예문이 있으면 예문을, 없으면 단어를 읽습니다.
+			    음성 인식이 안 되는 브라우저에서는 이 칸이 통째로 안 나옵니다. */}
+			<ReadAloud
+				text={word.example_zh || word.hanzi}
+				label={word.example_zh ? '예문을 소리내어 읽기' : '소리내어 읽기'}
+			/>
+
 			{/* ── 외웠는지 ── */}
 			<section className="flex flex-col gap-3">
 				<div className="grid grid-cols-2 gap-3">
@@ -170,12 +246,38 @@ export default function WordDetail({ id }: { id: string }) {
 				)}
 			</section>
 
+			{/* 중국어 목소리가 없는 기기에서만 나옵니다.
+			    있으면 아무것도 안 그립니다 — 있는 사람에게 없다는 안내를 보일 이유가 없습니다. */}
+			<SpeakNote />
+
+			{/* ── 이상한 곳 알려주기 ──
+			    눈에 띄지 않는 자리에 작게 둡니다. 자주 누를 것이 아니라서요.
+			    한국어 뜻과 예문은 사람이 아직 안 본 것이라 이 버튼이 검수의 출발점입니다. */}
+			<div className="flex flex-col border-t border-rule-soft pt-5">
+				<ReportButton wordId={word.id} />
+			</div>
+
 			<p className="pinyin text-center text-xs text-muted">
 				{word.id}
 				{word.frequency ? ` · 빈도 ${word.frequency}위` : ''}
 			</p>
 		</div>
 	);
+}
+
+/**
+ * 같이 쓰는 글자에만 색을 칠합니다.
+ *
+ * 学习 을 보다가 学校 를 보면, 어느 글자가 같은지 눈에 안 들어옵니다.
+ * 색이 있으면 "아, 学 이 겹치는구나" 가 바로 보입니다.
+ */
+function shareMark(hanzi: string, mine: string) {
+	const shared = new Set([...mine]);
+	return [...hanzi].map((ch, i) => (
+		<span key={i} className={shared.has(ch) ? 'text-accent' : undefined}>
+			{ch}
+		</span>
+	));
 }
 
 /**

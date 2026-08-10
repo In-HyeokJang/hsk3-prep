@@ -25,6 +25,8 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
 	const [phone, setPhone] = useState('');
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	// 나쁜 소식만 있고 좋은 소식이 없으면, 잘된 건지 아무 일도 안 일어난 건지 모릅니다
+	const [notice, setNotice] = useState<string | null>(null);
 
 	// 로그아웃하면 폼을 처음 상태로 되돌립니다.
 	//
@@ -40,6 +42,7 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
 		setEmail('');
 		setPhone('');
 		setError(null);
+		setNotice(null);
 	}, [userId]);
 
 	if (!ready) return <Loading text="확인하는 중..." />;
@@ -49,6 +52,7 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
 	async function submit(e: React.FormEvent) {
 		e.preventDefault();
 		setError(null);
+		setNotice(null);
 
 		if (mode === 'up') {
 			const bad = checkSignUp({ username, password, password2, email, phone });
@@ -60,7 +64,19 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
 		setBusy(true);
 		try {
 			if (mode === 'up') {
-				await signUp({ username, password, email, phone });
+				const how = await signUp({ username, password, email, phone });
+
+				// 'signed-in' 이면 화면이 알아서 안쪽으로 바뀝니다. 여기서 할 일이 없습니다.
+				// 'need-login' 은 계정은 생겼는데 로그인이 안 된 것입니다.
+				// 그대로 두면 가입 화면에 그냥 앉아 있게 됩니다 — 로그인 쪽으로 옮겨주고 말해줍니다.
+				if (how === 'need-login') {
+					setMode('in');
+					setPassword('');
+					setPassword2('');
+					setEmail('');
+					setPhone('');
+					setNotice(`가입됐습니다. 이제 ${username.trim()} 로 로그인해 주세요.`);
+				}
 			} else {
 				await signIn(username, password);
 			}
@@ -180,6 +196,12 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
 					</>
 				)}
 
+				{notice && (
+					<p className="rounded-xl border-l-[3px] border-accent bg-accent-soft px-4 py-3 text-sm text-ink-2">
+						{notice}
+					</p>
+				)}
+
 				{error && (
 					<p className="rounded-xl border-l-[3px] border-warn bg-warn-soft px-4 py-3 text-sm text-ink-2">
 						{error}
@@ -209,6 +231,7 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
 					onClick={() => {
 						setMode(mode === 'in' ? 'up' : 'in');
 						setError(null);
+						setNotice(null);
 					}}
 					className="px-4 py-2 text-sm text-muted underline underline-offset-4"
 				>

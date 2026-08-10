@@ -1,0 +1,27 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/hook-build-check.mjs",
+            "timeout": 300,
+            "statusMessage": "커밋 전 빌드 검사..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/hook-done.mjs"
+          }
+        ]
+      }
+    ]
+  }
+}
