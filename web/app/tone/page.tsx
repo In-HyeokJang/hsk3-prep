@@ -329,6 +329,17 @@ export default function TonePage() {
 
 	function answer(chosen: Tone) {
 		if (judged) return;
+
+		// ★ 맞히면 0.7초 뒤 **저절로** 다음 문제로 넘어갑니다(아래 useEffect).
+		//   그때 새 보기가 거의 같은 자리·같은 열에 다시 그려지므로,
+		//   박자를 맞춰 톡톡 누르던 손가락이 다음 문제를 **같은 성조로** 답해버립니다.
+		//   문제 카드가 min-h 로 고정이라 문제가 바뀌어도 자리가 거의 안 움직입니다.
+		//
+		//   화면이 스스로 바뀌는 자리는 잠금이 있어야 합니다.
+		//   여기서는 두 번 누르기를 안 씁니다 — 스무 문제를 몰아 푸는 자리라
+		//   탭이 20에서 40이 되고, 진도(progress)를 안 건드려 오탭의 대가도 작습니다.
+		if (Date.now() - shownAtRef.current < 300) return;
+
 		const correct = chosen === q.tone;
 
 		setJudged({ correct, chosen });
@@ -421,8 +432,8 @@ export default function TonePage() {
 			      보기 글자가 바뀌어도 '몇 성인지' 는 여전히 이 문제가 묻는 것이고,
 			      채점 칸과 결과 화면이 같은 라벨을 씁니다. */}
 			{!judged && (
-				<div className="flex flex-col gap-1.5">
-					<div className="grid grid-cols-4 gap-1.5">
+				<div className="flex flex-col gap-2">
+					<div className="grid grid-cols-4 gap-2">
 						{choices
 							.filter((c) => c.tone !== 0)
 							.map((c) => (

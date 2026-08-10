@@ -80,6 +80,17 @@ function Study() {
 	const [typed, setTyped] = useState('');
 	const [judged, setJudged] = useState<{ correct: boolean; chosenId: string | null } | null>(null);
 
+	// 골라만 둔 보기. 아직 답한 것이 아닙니다.
+	//
+	// ★ 한 번 눌러 바로 확정하면 잘못 눌렀을 때 되돌릴 길이 없습니다 —
+	//   틀린 기록이 남고, 연속 정답이 끊기고, 복습이 35일 뒤에서 3분 뒤로 당겨집니다.
+	//   그래서 같은 보기를 **두 번** 눌러야 확정됩니다.
+	//
+	//   따로 '확인' 버튼을 두지 않은 이유: 그 버튼은 화면 맨 아래에 놓이는데,
+	//   거기는 채점 뒤 '다음' 버튼이 오는 자리입니다. 연타하면 채점 화면을 건너뜁니다.
+	//   같은 자리에서 한 번 더 누르면 손가락이 움직이지 않아 그 사고가 없습니다.
+	const [picked, setPicked] = useState<string | null>(null);
+
 	const [result, setResult] = useState<{ known: number; unknown: number }>({
 		known: 0,
 		unknown: 0,
@@ -125,6 +136,22 @@ function Study() {
 		shownAtRef.current = Date.now();
 	}, [at, quizzes]);
 
+	/**
+	 * 새 문제가 뜨자마자 들어온 탭인가.
+	 *
+	 * ★ 채점 화면의 '다음' 버튼과 다음 문제의 **4번째 보기**가 화면에서 거의 같은 자리입니다.
+	 *   둘 다 자기 화면의 마지막 요소이고 두 화면 높이가 거의 같아서요.
+	 *   '다음' 을 빠르게 두 번 치면 두 번째 탭이 새 문제의 보기에 떨어집니다.
+	 *   지금까지는 서버 응답을 기다리는 시간(80~200ms)이 유일한 방어였는데,
+	 *   보통 더블탭 간격이 150~250ms라 그냥 뚫립니다.
+	 *
+	 * 시간을 재는 값이 이미 있어서(shownAtRef) 새 상태를 만들지 않습니다.
+	 * 버튼을 disabled 로 만들지도 않습니다 — 초점이 튕겨나가
+	 * 화면 읽어주는 기계를 쓰는 사람이 길을 잃습니다. 조용히 무시만 합니다.
+	 */
+	const TAP_GUARD_MS = 300;
+	const tooSoon = () => Date.now() - shownAtRef.current < TAP_GUARD_MS;
+
 	/** 카드 묶음을 문제로 바꿔서 담아둡니다.
 	    한 번만 만들어 둡니다. 그릴 때마다 만들면 보기 순서가 계속 바뀝니다. */
 	function startDeck(rows: Word[], pool: Word[]) {
@@ -132,6 +159,9 @@ function Study() {
 		setAt(0);
 		setTyped('');
 		setJudged(null);
+		// ★ 골라둔 것을 반드시 비웁니다. 안 비우면 앞 문제에서 고른 자리가 남아
+		//   새 문제의 첫 탭이 곧바로 확정돼 버립니다.
+		setPicked(null);
 		// 쓰기 칸도 닫습니다. 안 닫으면 다음 문제의 답을 보기도 전에 그 한자가 뜹니다
 		setWriting(false);
 		setWrote(null);
@@ -316,6 +346,24 @@ function Study() {
 	const quiz = quizzes[at];
 	const card = quiz.word;
 
+	/**
+	 * 보기를 눌렀습니다.
+	 *
+	 * 처음 누르면 **고르기만** 합니다. 같은 것을 한 번 더 눌러야 확정됩니다.
+	 * 다른 보기를 누르면 고른 것이 그쪽으로 옮겨갈 뿐, 답이 나가지 않습니다.
+	 *
+	 * ★ 첫 탭에서는 기록도 남기지 않습니다. logAttempt 는 judge() 안에 있습니다.
+	 */
+	function pick(id: string) {
+		if (judged) return;
+		if (tooSoon()) return;
+		if (picked !== id) {
+			setPicked(id);
+			return;
+		}
+		judge(id === card.id, id);
+	}
+
 	/** 답을 냈습니다. 진도는 아직 저장하지 않습니다 — '다음' 을 누를 때 저장합니다. */
 	function judge(correct: boolean, chosenId: string | null) {
 		if (judged) return;
@@ -360,9 +408,11 @@ function Study() {
 			}
 			setTyped('');
 			setJudged(null);
-		// 쓰기 칸도 닫습니다. 안 닫으면 다음 문제의 답을 보기도 전에 그 한자가 뜹니다
-		setWriting(false);
-		setWrote(null);
+			// ★ 여기서도 반드시 비웁니다 (startDeck 과 같은 이유)
+			setPicked(null);
+			// 쓰기 칸도 닫습니다. 안 닫으면 다음 문제의 답을 보기도 전에 그 한자가 뜹니다
+			setWriting(false);
+			setWrote(null);
 			setAt((i) => i + 1);
 		} catch (e) {
 			// 여기까지 오는 건 로그인이 풀린 것처럼 다시 시도해도 소용없는 경우입니다.
@@ -457,22 +507,30 @@ function Study() {
 						aria-label="한국어 뜻"
 						className="rounded-xl border border-rule bg-paper px-4 py-4 text-center text-lg outline-none focus:border-accent"
 					/>
-					<div className="grid grid-cols-2 gap-3">
-						<button
-							type="button"
-							onClick={() => judge(false, null)}
-							className="rounded-xl border border-rule px-4 py-4 text-base font-semibold text-ink-2 active:bg-paper-2"
-						>
-							모르겠어요
-						</button>
-						<button
-							type="submit"
-							disabled={!typed.trim()}
-							className="rounded-xl bg-accent px-4 py-4 text-base font-semibold text-paper disabled:opacity-40"
-						>
-							확인
-						</button>
-					</div>
+					<button
+						type="submit"
+						disabled={!typed.trim()}
+						className="rounded-xl bg-accent px-4 py-4 text-base font-semibold text-paper disabled:opacity-40"
+					>
+						확인
+					</button>
+
+					{/* ── 모르겠어요 ──
+					    ★ 이건 한 번 누르면 그대로 오답 확정입니다.
+					      보기가 아니라 단일 버튼이라 '두 번 누르기' 가 안 걸립니다.
+					      '확인' 과 나란히 두면 손가락이 반반 확률로 여기에 떨어집니다.
+
+					    아래 줄로 내리고 테두리를 뺐습니다. 누를 사람은 찾아서 누릅니다. */}
+					<button
+						type="button"
+						onClick={() => {
+							if (tooSoon()) return;
+							judge(false, null);
+						}}
+						className="py-2 text-sm font-medium text-muted underline decoration-rule underline-offset-4"
+					>
+						모르겠어요
+					</button>
 				</form>
 			)}
 
@@ -490,12 +548,15 @@ function Study() {
 					{quiz.choices.map((c) => (
 						<div
 							key={c.id}
-							className={`flex min-h-[3.5rem] items-center rounded-xl border border-rule ${
-								canHearChoice ? 'gap-1.5 pr-2.5' : ''
-							}`}
+							className={`flex min-h-[3.5rem] items-center rounded-xl border transition-colors ${
+								picked === c.id
+									? 'border-accent bg-accent-soft ring-1 ring-accent'
+									: 'border-rule'
+							} ${canHearChoice ? 'gap-1.5 pr-2.5' : ''}`}
 						>
 							<button
-								onClick={() => judge(c.id === card.id, c.id)}
+								onClick={() => pick(c.id)}
+								aria-pressed={picked === c.id}
 								className="min-w-0 flex-1 rounded-xl px-4 py-3 text-center active:bg-paper-2"
 							>
 								{quiz.kind === 'pick-ko' ? (
@@ -531,6 +592,17 @@ function Study() {
 							{canHearChoice && <Speak text={c.hanzi} label={`${c.hanzi} 듣기`} big />}
 						</div>
 					))}
+
+					{/* ── 한 번 더 누르면 확정 ──
+					    ★ 이 줄은 보기 **바깥**에 있고, 글자가 없을 때도 높이를 차지합니다.
+					      고른 보기 안에 넣으면 그 보기가 높아지면서 아래 보기들이 밀립니다.
+					      그러면 두 번째 탭이 엉뚱한 데 떨어져서,
+					      오탭을 막으려던 장치가 오탭을 만듭니다.
+
+					    한 번도 안 골랐을 때는 비워둡니다. 아직 할 말이 없습니다. */}
+					<p role="status" className="h-5 text-center text-sm text-accent">
+						{picked ? '한 번 더 누르면 확정돼요' : ''}
+					</p>
 				</div>
 			)}
 
