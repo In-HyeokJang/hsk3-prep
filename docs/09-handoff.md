@@ -3,7 +3,7 @@
 > **`/clear` 를 하면 지금까지 나눈 대화가 사라집니다.**
 > 이 파일은 그때 잃어버리면 안 되는 것만 적어둔 곳입니다.
 >
-> 마지막 갱신: 2026-08-10 (6회차 작업 끝) · 단어 973/973 · 검수 0
+> 마지막 갱신: 2026-08-10 (**7회차 L0 까지** · PC 옮기는 중) · 단어 973/973 · 검수 0
 >
 > **6회차 작업 목록은 `docs/10-wbs.md` 가 아니라 `docs/11-wbs2.md` 입니다.**
 > 이어서 하려면 `/hsk3-next` 만 치시면 됩니다.
@@ -15,7 +15,7 @@
 | | 상태 |
 |---|---|
 | 자료 | 공식 3급 973단어 · 한국어 뜻과 예문 973개 전부 · **기계 검사 통과(고칠 것 0건)** |
-| 데이터베이스 | 표 6개 · 보기 2개 · **마이그레이션 22개** · 권한 설정 완료 |
+| 데이터베이스 | 표 6개 · 보기 2개 · **마이그레이션 23개** · 권한 설정 완료 |
 | 사이트 | **화면 6개** + 로그인 화면 · 반응형 · PWA · 밝은/어두운 화면 |
 | 학습 | **5가지 문제** (뜻 쓰기 / 뜻 고르기 / 한자 고르기 / 빈칸 / 병음) + 간격 반복 |
 | 성조 | 눈으로 고르기 + **🎤 말해보기 (마이크로 높낮이 재기)** |
@@ -69,7 +69,76 @@ docs/09-handoff.md 와 docs/10-wbs.md 를 읽고, 지금 상태를 확인해줘.
 
 새 대화에서 **`/hsk3-next`** 만 치면 이어집니다.
 TV에 띄우고 6~10명이 다같이 보는 화면 하나를 만듭니다 (6회차 × 2시간).
-새 표 0개 · 마이그레이션 0개 · 새 라이브러리 0개.
+새 표 0개 · 새 라이브러리 0개 · **마이그레이션 1개(L0, 이미 끝남)**.
+
+### 어디까지 했나 (2026-08-10)
+
+| 항목 | 상태 |
+|---|---|
+| **L0** 관리자 칸 | **끝.** `20260810010000_admin.sql` · `db:push` 두 번 연속 통과 |
+| **L0-1** 화면에서 관리자만 통과 | **다음에 할 것** ← 여기서 이어갑니다 |
+| L1 이후 | 손 안 댐 |
+
+**아직 화면에는 아무것도 안 생겼습니다.** DB에 칸과 함수만 생겼습니다.
+
+---
+
+## ▶ 다른 PC에서 이어받는 법 (2026-08-10 · PC 옮김)
+
+### 1. 받아오기
+
+```
+git clone https://github.com/In-HyeokJang/hsk3-prep.git
+cd hsk3-prep
+git checkout dev
+npm install
+cd web && npm install && cd ..
+```
+
+이미 받아둔 PC라면 `git checkout dev` 후 `git pull` 만 하면 됩니다.
+
+### 2. `.env.local` 을 손으로 만듭니다 ★
+
+**이 파일은 깃에 안 올라갑니다.** 비밀번호가 들어 있어서요.
+새 PC에서는 **없는 채로 시작**하므로 직접 만들어야 합니다.
+
+| 어디 | 뭐가 필요한가 | 어디서 보나 |
+|---|---|---|
+| 프로젝트 맨 위 `.env.local` | `SUPABASE_DB_URL` | Supabase → Project Settings → Database → Connection string |
+| `web/.env.local` | `NEXT_PUBLIC_SUPABASE_URL`<br>`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase → Project Settings → API |
+
+`SUPABASE_DB_URL` 은 **`web/` 쪽에 절대 넣지 마세요.** 사이트에 필요 없고 위험합니다.
+
+### 3. 잘 옮겨졌는지 확인
+
+```
+npm run db:check      정상이면 줄 수·권한·함수가 다 초록
+cd web && npm run build
+```
+
+### 4. 이어서 작업
+
+새 대화에서 **`/hsk3-next`** 만 치면 `docs/14-wbs3.md` 의 **L0-1** 부터 갑니다.
+
+---
+
+## ⚠ 사장님이 손으로 하셔야 하는 것 — 관리자 켜기
+
+**L0 은 칸만 만들었습니다. 아직 아무도 관리자가 아닙니다.**
+Supabase → SQL Editor 에서 **이 한 줄**을 실행해 주세요.
+
+```sql
+update public.profiles set is_admin = true where lower(username) = 'tass';
+```
+
+제대로 켜졌는지 보는 줄:
+
+```sql
+select username, is_admin from public.profiles where is_admin;
+```
+
+`tass` 가 한 줄 나오면 됩니다. 이걸 해두셔야 다음 항목(L0-1)을 만들었을 때
+`tass` 계정 메뉴에 `/live` 가 보입니다. **지금 안 하셔도 작업은 계속 진행됩니다.**
 
 ---
 
@@ -211,6 +280,7 @@ update public.words   set verified = true, verified_at = now() where id = 'L3-00
 | `report_word` · `withdraw_account` | 19 `20260807030000_reports.sql` |
 | `star_word` · `daily_words` · `my_stats` | **21 `20260808010000_star.sql`** |
 | `attempts` 유형 목록 | 22 `20260808020000_write_quiz.sql` |
+| `my_profile` · `is_admin` | **23 `20260810010000_admin.sql`** |
 
 ---
 
