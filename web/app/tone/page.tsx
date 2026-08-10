@@ -5,8 +5,10 @@ import { useEffect, useRef, useState } from 'react';
 import { logAttempt } from '@/lib/api';
 import { useStore } from '@/lib/useStore';
 import { pickSpeakDeck, pickToneDeck, type Tone, type ToneQuiz } from '@/lib/quiz';
+import { splitPinyin, toneVariants } from '@/lib/pinyin';
 import type { SpokenTone } from '@/lib/pitch';
 import ToneSpeak from '@/components/ToneSpeak';
+import Speak from '@/components/Speak';
 import { Empty, ErrorBox, Loading } from '@/components/ui';
 
 /**
@@ -43,6 +45,28 @@ const TONE_BUTTONS: { tone: Tone; mark: string; label: string }[] = [
 ];
 
 const LABEL_OF = (t: Tone) => TONE_BUTTONS.find((b) => b.tone === t)?.label ?? '';
+
+/**
+ * 이 문제의 보기 다섯 개.
+ *
+ * ★ 모음 a 로만 낼 수 없습니다.
+ *   `ā á ǎ à a` 는 결국 "몇 성입니까" 만 묻는 것이라, 그 단어를 읽는 연습이 안 됩니다.
+ *   被 문제라면 `bēi béi běi bèi bei` 여야 실제로 읽어보게 됩니다.
+ *
+ * 짚은 글자의 음절만 떼어 성조를 갈아끼웁니다 (lib/pinyin.ts).
+ * 음절을 못 떼어내면 예전처럼 모음 a 로 돌아갑니다 —
+ * 틀린 음절을 보여주느니 덜 친절한 편이 낫습니다.
+ *
+ * 철자(bei)가 미리 보이는 만큼 문제는 조금 쉬워집니다.
+ * 대신 "읽을 줄 아는가 + 몇 성인가" 를 한꺼번에 묻던 것이 성조만 묻는 문제가 됩니다.
+ */
+function choicesOf(q: ToneQuiz): { tone: Tone; text: string }[] {
+	const split = splitPinyin(q.word.pinyin, [...q.word.hanzi].length);
+	const variants = split ? toneVariants(split[q.at].text) : null;
+
+	if (variants) return variants.map((v) => ({ tone: v.tone as Tone, text: v.text }));
+	return TONE_BUTTONS.map((b) => ({ tone: b.tone, text: b.mark }));
+}
 
 /**
  * 눈으로 고르기 / 말해보기.
@@ -241,29 +265,39 @@ export default function TonePage() {
 				{wrong.length > 0 && (
 					<div className="flex flex-col gap-2">
 						<p className="text-sm font-semibold text-ink-2">놓친 것</p>
+						{/* ★ 스피커를 Link 안에 넣으면 안 됩니다.
+						    누르는 순간 단어 화면으로 넘어가서 소리를 못 듣습니다.
+						    학습 화면의 보기와 같은 이유로, 여기서도 형제로 둡니다. */}
 						{wrong.map((q, i) => (
-							<Link
+							<div
 								key={`${q.word.id}-${i}`}
-								href={`/words/${q.word.id}`}
-								className="flex items-center gap-3 rounded-xl border border-rule-soft bg-paper-2/60 px-3.5 py-3"
+								className="flex items-center gap-1 rounded-xl border border-rule-soft bg-paper-2/60 pr-2.5"
 							>
-								<span className="han w-16 shrink-0 text-2xl">
-									{[...q.word.hanzi].map((ch, k) => (
-										<span key={k} className={k === q.at ? 'text-warn' : undefined}>
-											{ch}
-										</span>
-									))}
-								</span>
-								<span className="min-w-0 flex-1">
-									<span className="pinyin block truncate text-[13px] text-accent">
-										{q.word.pinyin}
+								<Link
+									href={`/words/${q.word.id}`}
+									className="flex min-w-0 flex-1 items-center gap-3 rounded-xl px-3.5 py-3"
+								>
+									<span className="han w-16 shrink-0 text-2xl">
+										{[...q.word.hanzi].map((ch, k) => (
+											<span key={k} className={k === q.at ? 'text-warn' : undefined}>
+												{ch}
+											</span>
+										))}
 									</span>
-									<span className="block truncate text-sm text-ink-2">{q.word.meaning_ko}</span>
-								</span>
-								<span className="shrink-0 rounded-full bg-warn-soft px-2 py-0.5 text-[11px] font-medium text-warn">
-									{LABEL_OF(q.tone)}
-								</span>
-							</Link>
+									<span className="min-w-0 flex-1">
+										<span className="pinyin block truncate text-[13px] text-accent">
+											{q.word.pinyin}
+										</span>
+										<span className="block truncate text-sm text-ink-2">{q.word.meaning_ko}</span>
+									</span>
+									<span className="shrink-0 rounded-full bg-warn-soft px-2 py-0.5 text-[11px] font-medium text-warn">
+										{LABEL_OF(q.tone)}
+									</span>
+								</Link>
+
+								{/* 놓친 것을 한 번 더 들어보는 자리입니다. 여기는 이미 답이 다 나와 있습니다 */}
+								<Speak text={q.word.hanzi} label={`${q.word.hanzi} 듣기`} />
+							</div>
 						))}
 					</div>
 				)}
@@ -288,6 +322,10 @@ export default function TonePage() {
 
 	const q = deck[at];
 	const chars = [...q.word.hanzi];
+
+	// 보기 다섯 개. 그릴 때마다 다시 만들지만 뽑기가 없어서 늘 같은 것이 나옵니다.
+	// (useEffect 로 담아두면 신호를 하나 더 만드는 셈이라 1번 문제로 되돌아갈 길이 생깁니다)
+	const choices = choicesOf(q);
 
 	function answer(chosen: Tone) {
 		if (judged) return;
@@ -333,7 +371,8 @@ export default function TonePage() {
 			    단어를 통째로 보여주고 그중 한 글자만 짚습니다.
 			    한 글자만 떼어 보여주면 背(bēi/bèi)처럼 답이 둘이 되는 글자가 있습니다.
 			    뜻은 같이 보여줍니다 — 어느 단어인지 정해주면서 높낮이는 안 알려주니까요.
-			    병음은 답을 낸 뒤에야 나옵니다. 그게 곧 정답입니다. */}
+			    단어 전체의 병음은 답을 낸 뒤에야 나옵니다.
+			    (보기에 짚은 글자의 철자는 보이지만, 나머지 글자의 성조까지 알려주지는 않습니다) */}
 			<div className="flex min-h-[13rem] flex-col items-center justify-center gap-3 rounded-2xl border border-rule-soft bg-paper-2/60 px-5 py-8">
 				<p className="han text-center text-7xl leading-none md:text-8xl">
 					{chars.map((ch, i) => (
@@ -357,25 +396,59 @@ export default function TonePage() {
 				<p className="text-base text-ink-2">{q.word.meaning_ko}</p>
 				{q.word.pos && <p className="text-sm text-muted">{q.word.pos}</p>}
 
-				{/* 답을 낸 뒤에 병음을 펼칩니다 */}
-				{judged && <p className="pinyin mt-1 text-2xl text-accent">{q.word.pinyin}</p>}
+				{/* 답을 낸 뒤에 병음을 펼칩니다.
+				    ★ 소리는 **틀렸을 때만** 답니다.
+				      답을 내기 전에 붙이면 읽어주는 소리가 곧 정답입니다.
+				      맞혔을 때는 0.7초 뒤 저절로 넘어가서 누를 새가 없고,
+				      사라지는 버튼은 고장난 것처럼 보입니다. 맞힌 소리는 이미 아는 소리이기도 합니다. */}
+				{judged && (
+					<div className="mt-1 flex items-center gap-3">
+						<p className="pinyin text-2xl text-accent">{q.word.pinyin}</p>
+						{!judged.correct && <Speak text={q.word.hanzi} label={`${q.word.hanzi} 듣기`} big />}
+					</div>
+				)}
 			</div>
 
 			{/* ── 답하기 ──
-			    다섯 개가 늘 같은 자리에 있습니다. 한 줄에 늘어놓아
-			    폰에서 한 손 엄지로 누를 수 있게 했습니다. */}
+			    1·2·3·4성을 한 줄에 넷, 경성을 그 아래 한 줄로 나눴습니다.
+
+			    다섯을 한 줄에 넣던 때는 보기가 `ā` 한 글자였습니다.
+			    이제 `chuáng` 처럼 여섯 글자가 들어오는데, 폰에서 다섯 칸이면
+			    한 칸이 60px 남짓이라 글자가 잘립니다.
+			    1~4성은 한 무리이고 경성은 성질이 다르니 의미로도 맞는 자리입니다.
+
+			    ★ 라벨(1성·2성…)은 그대로 둡니다.
+			      보기 글자가 바뀌어도 '몇 성인지' 는 여전히 이 문제가 묻는 것이고,
+			      채점 칸과 결과 화면이 같은 라벨을 씁니다. */}
 			{!judged && (
-				<div className="grid grid-cols-5 gap-1.5">
-					{TONE_BUTTONS.map((b) => (
-						<button
-							key={b.tone}
-							onClick={() => answer(b.tone)}
-							className="flex flex-col items-center gap-1 rounded-xl border border-rule px-1 py-3.5 active:bg-paper-2"
-						>
-							<span className="pinyin text-2xl leading-none">{b.mark}</span>
-							<span className="text-xs font-semibold text-ink-2">{b.label}</span>
-						</button>
-					))}
+				<div className="flex flex-col gap-1.5">
+					<div className="grid grid-cols-4 gap-1.5">
+						{choices
+							.filter((c) => c.tone !== 0)
+							.map((c) => (
+								<button
+									key={c.tone}
+									onClick={() => answer(c.tone)}
+									className="flex flex-col items-center gap-1 rounded-xl border border-rule px-1 py-3.5 active:bg-paper-2"
+								>
+									<span className="pinyin text-lg leading-none">{c.text}</span>
+									<span className="text-[11px] font-semibold text-ink-2">{LABEL_OF(c.tone)}</span>
+								</button>
+							))}
+					</div>
+
+					{choices
+						.filter((c) => c.tone === 0)
+						.map((c) => (
+							<button
+								key={c.tone}
+								onClick={() => answer(c.tone)}
+								className="flex items-center justify-center gap-2 rounded-xl border border-rule px-1 py-3 active:bg-paper-2"
+							>
+								<span className="pinyin text-lg leading-none">{c.text}</span>
+								<span className="text-[11px] font-semibold text-ink-2">{LABEL_OF(c.tone)}</span>
+							</button>
+						))}
 				</div>
 			)}
 

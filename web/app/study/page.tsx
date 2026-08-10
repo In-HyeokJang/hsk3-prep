@@ -9,6 +9,7 @@ import { blankSentence, checkTyped, makeQuiz, type Quiz } from '@/lib/quiz';
 import { useDailyCount, useShowPinyin } from '@/lib/settings';
 import { weakWords } from '@/lib/weak';
 import { isStarred, type Status, type Word } from '@/lib/types';
+import { useCanSpeak } from '@/lib/speak';
 import Speak from '@/components/Speak';
 import WriteBox from '@/components/WriteBox';
 import { Empty, ErrorBox, Loading } from '@/components/ui';
@@ -67,6 +68,10 @@ function Study() {
 
 	// 한 번에 몇 문제를 풀지. 홈 설정에서 5·10·20 중 고릅니다.
 	const count = useDailyCount();
+
+	// 이 기기에 중국어 목소리가 있나. 보기 옆에 스피커 자리를 비워둘지 정합니다.
+	// 목소리가 없으면 Speak 가 아무것도 안 그리므로, 자리도 비우지 않아야 글자가 가운데에 옵니다.
+	const canSpeak = useCanSpeak();
 
 	const [quizzes, setQuizzes] = useState<Quiz[] | null>(null);
 	const [at, setAt] = useState(0);
@@ -369,6 +374,16 @@ function Study() {
 
 	const kindLabel = KIND_LABEL[quiz.kind];
 
+	/**
+	 * 보기 옆에 스피커를 붙일 문제인가.
+	 *
+	 * 한자가 보기로 나오는 둘(pick-zh · blank)에만 붙입니다.
+	 * · pick-ko 는 보기가 한국어 뜻입니다. 각 보기의 한자를 읽어주면
+	 *   뜻을 몰라도 문제의 한자와 소리를 견줘서 정답을 찾을 수 있습니다.
+	 * · pick-py 는 보기가 병음입니다. 소리가 곧 정답입니다.
+	 */
+	const canHearChoice = canSpeak === true && (quiz.kind === 'pick-zh' || quiz.kind === 'blank');
+
 	return (
 		<div className="flex flex-col gap-5">
 			{/* ── 진행 ── */}
@@ -394,7 +409,10 @@ function Study() {
 			    답을 내면 감춥니다. 아래 정답 카드에 같은 내용이 다 들어 있어서,
 			    남겨두면 한자나 뜻이 화면에 두 번 나옵니다. */}
 			{!judged && (
-				<div className="flex min-h-[13rem] flex-col items-center justify-center gap-4 rounded-2xl border border-rule-soft bg-paper-2/60 px-5 py-8">
+				/* 보기에 병음 한 줄이 붙어 세로가 길어졌습니다.
+				   폰에서 보기 넷이 한 화면에 안 들어가면 아래 것을 안 읽고 고르게 되므로
+				   문제 칸을 그만큼 줄입니다. 한자 카드는 내용이 커서 실제로는 안 줄어듭니다. */
+				<div className="flex min-h-[10rem] flex-col items-center justify-center gap-4 rounded-2xl border border-rule-soft bg-paper-2/60 px-5 py-8">
 					{quiz.kind === 'blank' ? (
 						/* 예문에서 그 단어만 가립니다.
 						   병음도 뜻도 붙이지 않습니다 — 둘 다 답을 그대로 알려줍니다. */
@@ -458,22 +476,60 @@ function Study() {
 				</form>
 			)}
 
+			{/* ── 보기 ──
+			    ★ 스피커를 이 버튼 **안에** 넣으면 안 됩니다.
+			      버튼 안의 버튼은 HTML 규칙 위반이고, 무엇보다
+			      스피커를 눌렀는데 그 보기가 선택돼서 judge() 가 돕니다 —
+			      틀린 기록이 남고 복습이 3분 뒤로 당겨집니다.
+			      ('버튼 표시를 퀴즈 정답으로 기록' · 09-handoff.md 의 지뢰)
+
+			      그래서 테두리는 감싸는 div 가 갖고, 답 버튼과 스피커를 **형제**로 둡니다.
+			      둘이 겹치는 자리가 없어서 폰에서 잘못 눌리는 일이 생기지 않습니다. */}
 			{!judged && quiz.kind !== 'type' && (
-				<div className="grid gap-2.5">
+				<div className="grid gap-2">
 					{quiz.choices.map((c) => (
-						<button
+						<div
 							key={c.id}
-							onClick={() => judge(c.id === card.id, c.id)}
-							className="rounded-xl border border-rule px-4 py-4 text-center active:bg-paper-2"
+							className={`flex min-h-[3.5rem] items-center rounded-xl border border-rule ${
+								canHearChoice ? 'gap-1.5 pr-2.5' : ''
+							}`}
 						>
-							{quiz.kind === 'pick-ko' ? (
-								<span className="text-base font-semibold">{c.meaning_ko}</span>
-							) : quiz.kind === 'pick-py' ? (
-								<span className="pinyin text-xl">{c.pinyin}</span>
-							) : (
-								<span className="han text-2xl">{c.hanzi}</span>
-							)}
-						</button>
+							<button
+								onClick={() => judge(c.id === card.id, c.id)}
+								className="min-w-0 flex-1 rounded-xl px-4 py-3 text-center active:bg-paper-2"
+							>
+								{quiz.kind === 'pick-ko' ? (
+									<span className="text-base font-semibold">{c.meaning_ko}</span>
+								) : quiz.kind === 'pick-py' ? (
+									<span className="pinyin text-xl">{c.pinyin}</span>
+								) : (
+									/* ── 한자 보기에는 병음을 작게 답니다 ──
+									   한자만 넉 줄 서 있으면 읽을 줄 모르는 채로 모양만 보고 고릅니다.
+									   여기서 병음은 답을 알려주지 않습니다 —
+									   한자 고르기(pick-zh)의 문제는 한국어 뜻이고,
+									   빈칸(blank)의 문제는 가려진 예문이라 둘 다 소리와 상관이 없습니다.
+
+									   ★ 설정의 '병음 보이기' 에 묶지 않았습니다.
+									     그건 *문제*에 병음을 붙이는 설정이고 기본이 꺼짐입니다.
+									     여기 묶으면 요청하신 것이 기본으로 안 보입니다.
+
+									   ★ 폰에서 숨기지 않습니다.
+									     세로가 모자라면 hidden sm:block 을 쓰고 싶어지는데,
+									     그러면 폰에서만 이 기능이 사라집니다 (09-handoff.md 의 지뢰). */
+									<>
+										<span className="han block text-2xl">{c.hanzi}</span>
+										{c.pinyin && (
+											<span className="pinyin block text-xs text-muted">{c.pinyin}</span>
+										)}
+									</>
+								)}
+							</button>
+
+							{/* 소리는 한자 보기에만. 읽어주는 것은 c.hanzi 뿐입니다 —
+							    ＿＿＿ 나 병음을 넘기면 엉뚱하게 읽습니다.
+							    중국어 목소리가 없는 기기에서는 이 자리 자체가 없어집니다. */}
+							{canHearChoice && <Speak text={c.hanzi} label={`${c.hanzi} 듣기`} big />}
+						</div>
 					))}
 				</div>
 			)}

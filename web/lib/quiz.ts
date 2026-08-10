@@ -299,14 +299,27 @@ export function canPinyin(word: Word): boolean {
  */
 function pickWrongPinyin(word: Word, pool: Word[], howMany: number): Word[] {
 	const usable = pool.filter(
-		(w) => w.id !== word.id && canPinyin(w) && !samePinyin(w.pinyin, word.pinyin),
+		(w) =>
+			w.id !== word.id &&
+			canPinyin(w) &&
+			!samePinyin(w.pinyin, word.pinyin) &&
+			// ★ 한자가 같은 단어도 뺍니다. 병음만 견주면 이게 안 걸립니다.
+			//   공식 목록에 한자가 같은 단어가 여섯 쌍 있는데,
+			//   그중 셋은 병음이 **다릅니다** — 背(bēi/bèi) · 调(diào/tiáo) · 精神(jīngshén/jīngshen).
+			//   화면에는 한자만 나오므로, 背 문제의 보기에 bēi 와 bèi 가 같이 뜨면
+			//   둘 다 背 의 옳은 읽기라 정답이 둘이 됩니다.
+			//   48,650문제를 만들어보니 실제로 1건 나왔습니다.
+			w.hanzi !== word.hanzi,
 	);
 
 	const picked: Word[] = [];
 	const takeFrom = (list: Word[]) => {
 		for (const candidate of shuffle(list)) {
 			if (picked.length >= howMany) return;
+			// 정답과 견주는 것만으로는 모자랍니다. 이미 고른 오답끼리도 봐야 합니다 —
+			// 병음도, 한자도. 任 문제의 오답으로 背(bēi)와 背(bèi)가 같이 뽑힌 적이 있습니다.
 			if (picked.some((already) => samePinyin(already.pinyin, candidate.pinyin))) continue;
+			if (picked.some((already) => already.hanzi === candidate.hanzi)) continue;
 			picked.push(candidate);
 		}
 	};
