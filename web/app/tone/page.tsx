@@ -8,6 +8,7 @@ import { pickSpeakDeck, pickToneDeck, type Tone, type ToneQuiz } from '@/lib/qui
 import { splitPinyin, toneVariants } from '@/lib/pinyin';
 import type { SpokenTone } from '@/lib/pitch';
 import ToneSpeak from '@/components/ToneSpeak';
+import Speak from '@/components/Speak';
 import { Empty, ErrorBox, Loading } from '@/components/ui';
 
 /**
@@ -264,29 +265,39 @@ export default function TonePage() {
 				{wrong.length > 0 && (
 					<div className="flex flex-col gap-2">
 						<p className="text-sm font-semibold text-ink-2">놓친 것</p>
+						{/* ★ 스피커를 Link 안에 넣으면 안 됩니다.
+						    누르는 순간 단어 화면으로 넘어가서 소리를 못 듣습니다.
+						    학습 화면의 보기와 같은 이유로, 여기서도 형제로 둡니다. */}
 						{wrong.map((q, i) => (
-							<Link
+							<div
 								key={`${q.word.id}-${i}`}
-								href={`/words/${q.word.id}`}
-								className="flex items-center gap-3 rounded-xl border border-rule-soft bg-paper-2/60 px-3.5 py-3"
+								className="flex items-center gap-1 rounded-xl border border-rule-soft bg-paper-2/60 pr-2.5"
 							>
-								<span className="han w-16 shrink-0 text-2xl">
-									{[...q.word.hanzi].map((ch, k) => (
-										<span key={k} className={k === q.at ? 'text-warn' : undefined}>
-											{ch}
-										</span>
-									))}
-								</span>
-								<span className="min-w-0 flex-1">
-									<span className="pinyin block truncate text-[13px] text-accent">
-										{q.word.pinyin}
+								<Link
+									href={`/words/${q.word.id}`}
+									className="flex min-w-0 flex-1 items-center gap-3 rounded-xl px-3.5 py-3"
+								>
+									<span className="han w-16 shrink-0 text-2xl">
+										{[...q.word.hanzi].map((ch, k) => (
+											<span key={k} className={k === q.at ? 'text-warn' : undefined}>
+												{ch}
+											</span>
+										))}
 									</span>
-									<span className="block truncate text-sm text-ink-2">{q.word.meaning_ko}</span>
-								</span>
-								<span className="shrink-0 rounded-full bg-warn-soft px-2 py-0.5 text-[11px] font-medium text-warn">
-									{LABEL_OF(q.tone)}
-								</span>
-							</Link>
+									<span className="min-w-0 flex-1">
+										<span className="pinyin block truncate text-[13px] text-accent">
+											{q.word.pinyin}
+										</span>
+										<span className="block truncate text-sm text-ink-2">{q.word.meaning_ko}</span>
+									</span>
+									<span className="shrink-0 rounded-full bg-warn-soft px-2 py-0.5 text-[11px] font-medium text-warn">
+										{LABEL_OF(q.tone)}
+									</span>
+								</Link>
+
+								{/* 놓친 것을 한 번 더 들어보는 자리입니다. 여기는 이미 답이 다 나와 있습니다 */}
+								<Speak text={q.word.hanzi} label={`${q.word.hanzi} 듣기`} />
+							</div>
 						))}
 					</div>
 				)}
@@ -385,8 +396,17 @@ export default function TonePage() {
 				<p className="text-base text-ink-2">{q.word.meaning_ko}</p>
 				{q.word.pos && <p className="text-sm text-muted">{q.word.pos}</p>}
 
-				{/* 답을 낸 뒤에 병음을 펼칩니다 */}
-				{judged && <p className="pinyin mt-1 text-2xl text-accent">{q.word.pinyin}</p>}
+				{/* 답을 낸 뒤에 병음을 펼칩니다.
+				    ★ 소리는 **틀렸을 때만** 답니다.
+				      답을 내기 전에 붙이면 읽어주는 소리가 곧 정답입니다.
+				      맞혔을 때는 0.7초 뒤 저절로 넘어가서 누를 새가 없고,
+				      사라지는 버튼은 고장난 것처럼 보입니다. 맞힌 소리는 이미 아는 소리이기도 합니다. */}
+				{judged && (
+					<div className="mt-1 flex items-center gap-3">
+						<p className="pinyin text-2xl text-accent">{q.word.pinyin}</p>
+						{!judged.correct && <Speak text={q.word.hanzi} label={`${q.word.hanzi} 듣기`} big />}
+					</div>
+				)}
 			</div>
 
 			{/* ── 답하기 ──
