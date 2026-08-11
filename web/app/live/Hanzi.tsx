@@ -34,6 +34,8 @@ type Props = {
 	onExit: () => void;
 	onBack: () => void;
 	teams: Teams;
+	/** 놓친 단어를 마무리 화면에 모읍니다 (M) */
+	onMiss: (w: Word) => void;
 };
 
 function shuffled<T>(list: T[]): T[] {
@@ -45,7 +47,7 @@ function shuffled<T>(list: T[]): T[] {
 	return out;
 }
 
-export default function Hanzi({ words, dark, onDark, onExit, onBack, teams }: Props) {
+export default function Hanzi({ words, dark, onDark, onExit, onBack, teams, onMiss }: Props) {
 	// 씨앗은 한 글자 단어입니다. 두 글자를 주면 두 글자의 가족이 섞여서
 	// "가운데 글자 하나" 라는 규칙이 깨집니다.
 	const families = useMemo(() => {
@@ -81,9 +83,13 @@ export default function Hanzi({ words, dark, onDark, onExit, onBack, teams }: Pr
 	const pass = useCallback(() => setTurn((t) => (t === 0 ? 1 : 0)), []);
 
 	const nextFamily = useCallback(() => {
+		// 끝까지 안 열린 칸이 곧 오늘 놓친 것입니다
+		here?.family.forEach((w, i) => {
+			if (!opened.includes(i)) onMiss(w);
+		});
 		setAt((i) => i + 1);
 		setOpened([]);
-	}, []);
+	}, [here, opened, onMiss]);
 
 	const undo = useCallback(() => {
 		// 마지막으로 연 칸을 닫고 점수도 되돌립니다.

@@ -34,6 +34,8 @@ type Props = {
 	onExit: () => void;
 	onBack: () => void;
 	teams: Teams;
+	/** 놓친 단어를 마무리 화면에 모읍니다 (M) */
+	onMiss: (w: Word) => void;
 };
 
 function shuffled<T>(list: T[]): T[] {
@@ -45,7 +47,7 @@ function shuffled<T>(list: T[]): T[] {
 	return out;
 }
 
-export default function Hands({ words, names, dark, onDark, onExit, onBack, teams }: Props) {
+export default function Hands({ words, names, dark, onDark, onExit, onBack, teams, onMiss }: Props) {
 	const [deck] = useState(() => shuffled(words.filter((w) => w.meaning_ko)).slice(0, ROUND));
 
 	const [at, setAt] = useState(0);
@@ -100,6 +102,8 @@ export default function Hands({ words, names, dark, onDark, onExit, onBack, team
 		ArrowRight: next,
 		ArrowLeft: prev,
 		Enter: () => setOpen(true),
+		m: () => word && onMiss(word),
+		M: () => word && onMiss(word),
 	});
 
 	/* ── 그리기 ───────────────────────────────────────────── */

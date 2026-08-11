@@ -36,9 +36,11 @@ type Props = {
 	onExit: () => void;
 	onBack: () => void;
 	teams: Teams;
+	/** 놓친 단어를 마무리 화면에 모읍니다 (M) */
+	onMiss: (w: Word) => void;
 };
 
-export default function Relay({ words, dark, onDark, onExit, onBack, teams }: Props) {
+export default function Relay({ words, dark, onDark, onExit, onBack, teams, onMiss }: Props) {
 	// 한 글자 · 경성 아닌 것만 골라줍니다. 두 글자를 주면 어느 쪽 성조를
 	// 내야 하는지부터 헷갈리고, 재는 쪽도 뒷음절만 떼어낼 수 없습니다.
 	const [deck] = useState(() => pickSpeakDeck(words, ROUND));
@@ -61,9 +63,10 @@ export default function Relay({ words, dark, onDark, onExit, onBack, teams }: Pr
 	const judge = useCallback(
 		(ok: boolean) => {
 			if (ok) teams.add(team);
+			else if (quiz) onMiss(quiz.word);
 			next();
 		},
-		[teams, team, next],
+		[teams, team, next, quiz, onMiss],
 	);
 
 	useLiveKeys({

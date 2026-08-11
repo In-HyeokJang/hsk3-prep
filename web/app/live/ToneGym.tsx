@@ -46,9 +46,11 @@ type Props = {
 	/** 게임 고르는 화면으로 */
 	onBack: () => void;
 	teams: Teams;
+	/** 놓친 단어를 마무리 화면에 모읍니다 (M) */
+	onMiss: (w: Word) => void;
 };
 
-export default function ToneGym({ words, dark, onDark, onExit, onBack, teams }: Props) {
+export default function ToneGym({ words, dark, onDark, onExit, onBack, teams, onMiss }: Props) {
 	// 묶음은 들어올 때 한 번만 뽑습니다. 다시 그릴 때마다 뽑으면
 	// 문제가 눈앞에서 바뀝니다.
 	const [deck] = useState(() => pickToneDeck(words, ROUND, () => false));
@@ -111,6 +113,8 @@ export default function ToneGym({ words, dark, onDark, onExit, onBack, teams }: 
 		ArrowRight: advance,
 		ArrowLeft: prev,
 		Enter: showNow,
+		m: () => quiz && onMiss(quiz.word),
+		M: () => quiz && onMiss(quiz.word),
 	});
 
 	/* ── 그리기 ───────────────────────────────────────────── */

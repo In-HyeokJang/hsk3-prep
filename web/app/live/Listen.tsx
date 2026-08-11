@@ -42,6 +42,8 @@ type Props = {
 	onExit: () => void;
 	onBack: () => void;
 	teams: Teams;
+	/** 놓친 단어를 마무리 화면에 모읍니다 (M) */
+	onMiss: (w: Word) => void;
 };
 
 function shuffled<T>(list: T[]): T[] {
@@ -53,7 +55,7 @@ function shuffled<T>(list: T[]): T[] {
 	return out;
 }
 
-export default function Listen({ words, dark, onDark, onExit, onBack, teams }: Props) {
+export default function Listen({ words, dark, onDark, onExit, onBack, teams, onMiss }: Props) {
 	// 인덱스 3 이면 makeQuiz 가 '뜻 → 한자 4개' 를 내줍니다.
 	// 보기 만드는 규칙(뜻이 같은 보기·한자 겹침)을 그대로 물려받습니다.
 	const [deck] = useState<Quiz[]>(() =>
@@ -126,6 +128,8 @@ export default function Listen({ words, dark, onDark, onExit, onBack, teams }: P
 		Enter: () => setOpen(true),
 		r: again,
 		R: again,
+		m: () => quiz && onMiss(quiz.word),
+		M: () => quiz && onMiss(quiz.word),
 	});
 
 	/* ── 그리기 ───────────────────────────────────────────── */

@@ -38,6 +38,8 @@ type Props = {
 	onExit: () => void;
 	onBack: () => void;
 	teams: Teams;
+	/** 놓친 단어를 마무리 화면에 모읍니다 (M) */
+	onMiss: (w: Word) => void;
 };
 
 function shuffled<T>(list: T[]): T[] {
@@ -49,7 +51,7 @@ function shuffled<T>(list: T[]): T[] {
 	return out;
 }
 
-export default function Explain({ words, dark, onDark, onExit, onBack, teams }: Props) {
+export default function Explain({ words, dark, onDark, onExit, onBack, teams, onMiss }: Props) {
 	const [deck] = useState(() => shuffled(words.filter((w) => w.meaning_ko)));
 
 	const [phase, setPhase] = useState<Phase>('setup');
@@ -94,8 +96,10 @@ export default function Explain({ words, dark, onDark, onExit, onBack, teams }: 
 
 	const pass = useCallback(() => {
 		if (phase !== 'run') return;
+		// 못 맞혀서 넘긴 것이 곧 오늘 놓친 것입니다
+		if (word) onMiss(word);
 		setAt((i) => i + 1);
-	}, [phase]);
+	}, [phase, word, onMiss]);
 
 	useLiveKeys({
 		' ': () => (phase === 'run' ? correct() : start()),

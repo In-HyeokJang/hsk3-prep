@@ -40,6 +40,8 @@ type Props = {
 	onDark: () => void;
 	onExit: () => void;
 	onBack: () => void;
+	/** 놓친 단어를 마무리 화면에 모읍니다 (M) */
+	onMiss: (w: Word) => void;
 };
 
 /** 뒤섞기 — 한 바퀴 도는 동안 같은 사람이 다시 안 나오게 */
@@ -52,7 +54,7 @@ function shuffled<T>(list: T[]): T[] {
 	return out;
 }
 
-export default function Coop({ words, names, dark, onDark, onExit, onBack }: Props) {
+export default function Coop({ words, names, dark, onDark, onExit, onBack, onMiss }: Props) {
 	// 문제와 지목 순서는 들어올 때 한 번만 정합니다.
 	// 다시 그릴 때마다 뽑으면 눈앞에서 사람이 바뀝니다.
 	const [deck] = useState(() =>
@@ -91,10 +93,14 @@ export default function Coop({ words, names, dark, onDark, onExit, onBack }: Pro
 		(ok: boolean) => {
 			if (phase !== 'ask') return;
 			if (ok) setRight((n) => n + 1);
-			else setLives((n) => n - 1);
+			else {
+				setLives((n) => n - 1);
+				// 틀린 것은 진행자가 따로 안 눌러도 마무리 화면에 담깁니다
+				if (word) onMiss(word);
+			}
 			setPhase('judge');
 		},
-		[phase],
+		[phase, word, onMiss],
 	);
 
 	const next = useCallback(() => {

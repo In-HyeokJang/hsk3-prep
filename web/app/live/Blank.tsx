@@ -38,6 +38,8 @@ type Props = {
 	onExit: () => void;
 	onBack: () => void;
 	teams: Teams;
+	/** 놓친 단어를 마무리 화면에 모읍니다 (M) */
+	onMiss: (w: Word) => void;
 };
 
 function shuffled<T>(list: T[]): T[] {
@@ -49,7 +51,7 @@ function shuffled<T>(list: T[]): T[] {
 	return out;
 }
 
-export default function Blank({ words, dark, onDark, onExit, onBack, teams }: Props) {
+export default function Blank({ words, dark, onDark, onExit, onBack, teams, onMiss }: Props) {
 	const [deck] = useState<Quiz[]>(() =>
 		shuffled(words.filter(canBlank))
 			.map((w) => makeQuiz(w, words, 2))
@@ -107,6 +109,8 @@ export default function Blank({ words, dark, onDark, onExit, onBack, teams }: Pr
 		ArrowRight: next,
 		ArrowLeft: prev,
 		Enter: () => setOpen(true),
+		m: () => quiz && onMiss(quiz.word),
+		M: () => quiz && onMiss(quiz.word),
 	});
 
 	/* ── 그리기 ───────────────────────────────────────────── */

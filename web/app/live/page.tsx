@@ -17,7 +17,7 @@ import Hanzi from './Hanzi';
 import Listen from './Listen';
 import Relay from './Relay';
 import ToneGym from './ToneGym';
-import { BIG, Ctl, LiveFrame, useTeams } from './shell';
+import { BIG, Ctl, LiveFrame, useMissed, useTeams } from './shell';
 
 /**
  * 오프라인 모임 화면 `/live`.
@@ -92,7 +92,7 @@ function Notice({ title, body }: { title: string; body: string }) {
 
 /* ── 무엇을 할까 ─────────────────────────────────────────── */
 
-type Game = 'home' | 'cards' | 'tone' | 'coop' | 'blank' | 'listen' | 'hanzi' | 'hands' | 'explain' | 'relay';
+type Game = 'home' | 'cards' | 'tone' | 'coop' | 'blank' | 'listen' | 'hanzi' | 'hands' | 'explain' | 'relay' | 'wrap';
 
 /** `needsVoice` 인 게임은 목소리가 없는 기기에서 목록에 안 나옵니다 */
 const MENU: { id: Game; name: string; about: string; needsVoice?: true }[] = [
@@ -105,6 +105,7 @@ const MENU: { id: Game; name: string; about: string; needsVoice?: true }[] = [
 	{ id: 'hanzi', name: '⑧ 한자 가족 열기', about: '가운데 글자 하나 · 번호를 눌러 열기' },
 	{ id: 'coop', name: '⑦ 다 같이 살리기', about: '경쟁 없음. 판의 마지막에' },
 	{ id: 'cards', name: '단어 넘기기', about: '한자 → 병음 → 뜻. 게임 아님' },
+	{ id: 'wrap', name: '마무리 · 오늘 놓친 것', about: '한 화면에 모아서 · 폰으로 찍어가게' },
 ];
 
 /* ── 회차 범위 ───────────────────────────────────────────── */
@@ -203,6 +204,74 @@ function NameBox({ names, onSave }: { names: string[]; onSave: (next: string[]) 
 	);
 }
 
+/* ── 마무리 · 오늘 놓친 것 ───────────────────────────────── */
+
+/**
+ * 모임 끝에 한 화면에 모아 띄웁니다. 참여자가 **폰으로 찍어갑니다.**
+ * 다음 회 처음 10분이 여기서 시작합니다.
+ *
+ * ★ 글자 크기를 개수에 따라 줄입니다.
+ *   서른 개가 넘어가면 화면 밖으로 나가는데, 찍어가는 화면에서
+ *   잘려나간 줄은 없는 것과 같습니다.
+ */
+function Wrap({
+	missed,
+	dark,
+	onDark,
+	onExit,
+	onBack,
+}: {
+	missed: ReturnType<typeof useMissed>;
+	dark: boolean;
+	onDark: () => void;
+	onExit: () => void;
+	onBack: () => void;
+}) {
+	const n = missed.list.length;
+	const size = n > 24 ? BIG.small : n > 12 ? BIG.line : BIG.pinyin;
+
+	return (
+		<LiveFrame
+			dark={dark}
+			onDark={onDark}
+			onExit={onExit}
+			controls={
+				<>
+					<Ctl onClick={missed.clear}>지우기</Ctl>
+					<Ctl onClick={onBack}>게임 고르기</Ctl>
+				</>
+			}
+		>
+			<div className="flex w-full max-w-[92vw] flex-col items-center gap-[2vmin] text-center">
+				<h1 className="font-bold" style={{ fontSize: BIG.meaning }}>
+					오늘 놓친 것 {n > 0 && `· ${n}개`}
+				</h1>
+
+				{n === 0 ? (
+					<p className="opacity-45" style={{ fontSize: BIG.line }}>
+						아직 없습니다. 게임 중에 <b>M</b> 을 누르면 그 단어가 여기 담깁니다.
+					</p>
+				) : (
+					<>
+						<div className="flex max-h-[62vh] flex-wrap items-start justify-center gap-x-[2.5vmin] gap-y-[1.2vmin] overflow-hidden">
+							{missed.list.map((w) => (
+								<span key={w.id} className="flex items-baseline gap-[0.6vmin]" style={{ fontSize: size }}>
+									<span className="live-han">{w.hanzi}</span>
+									<span className="live-pinyin opacity-55">{w.pinyin}</span>
+									<span className="opacity-75">{w.meaning_ko}</span>
+								</span>
+							))}
+						</div>
+						<p className="opacity-35" style={{ fontSize: BIG.small }}>
+							폰으로 찍어가세요. 다음 모임 처음 10분은 여기서 시작합니다.
+						</p>
+					</>
+				)}
+			</div>
+		</LiveFrame>
+	);
+}
+
 function LiveHome() {
 	const router = useRouter();
 
@@ -216,6 +285,9 @@ function LiveHome() {
 	// 점수는 게임 하나가 아니라 **판 전체**를 따라갑니다.
 	// 게임을 옮겨도 이어지도록 여기서 들고 있습니다.
 	const teams = useTeams();
+
+	// 오늘 놓친 것. 게임들이 여기 담고, 마무리 화면이 한 번에 띄웁니다.
+	const missed = useMissed();
 
 	// ★ 목소리가 없는 기기면 듣기 게임을 목록에서 뺍니다.
 	//   소리가 안 나는 채로 시작하면 10명이 앉아서 기다리게 됩니다.
@@ -262,9 +334,22 @@ function LiveHome() {
 	// ★ 게임에는 **회차 범위만** 넘깁니다.
 	//   전체를 넘기고 게임 안에서 자르면 게임마다 자르는 규칙이 갈립니다.
 	const pool = rangeOf(words, session);
-	const shared = { words: pool, dark, onDark: toggleDark, onExit: exit };
+	const shared = { words: pool, dark, onDark: toggleDark, onExit: exit, onMiss: missed.add };
 
-	if (game === 'cards') return <Cards {...shared} />;
+	// 단어 넘기기는 게임이 아니라 놓친 것을 안 담습니다
+	if (game === 'cards')
+		return <Cards words={pool} dark={dark} onDark={toggleDark} onExit={exit} />;
+
+	if (game === 'wrap')
+		return (
+			<Wrap
+				missed={missed}
+				dark={dark}
+				onDark={toggleDark}
+				onExit={exit}
+				onBack={home}
+			/>
+		);
 	if (game === 'tone') return <ToneGym {...shared} onBack={home} teams={teams} />;
 	if (game === 'blank') return <Blank {...shared} onBack={home} teams={teams} />;
 	if (game === 'listen') return <Listen {...shared} onBack={home} teams={teams} />;
@@ -326,7 +411,7 @@ function LiveHome() {
 
 				<p className="opacity-40" style={{ fontSize: BIG.small }}>
 					진행자 키 — Space 다음 · ← 이전 · Enter 정답 · 1·2 팀 득점 · Backspace 점수 취소
-					<br />F 전체화면 · Esc 나가기
+					<br />M 놓친 것 담기 · F 전체화면 · Esc 나가기
 				</p>
 
 				{canSpeak === false && (
