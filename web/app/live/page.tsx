@@ -4,12 +4,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getWords } from '@/lib/api';
+import { useCanSpeak } from '@/lib/speak';
 import type { Word } from '@/lib/types';
 import { useAuth } from '@/lib/useAuth';
 import { ErrorBox, Loading } from '@/components/ui';
 import Blank from './Blank';
 import Cards from './Cards';
 import Coop from './Coop';
+import Listen from './Listen';
 import ToneGym from './ToneGym';
 import { BIG, Ctl, LiveFrame, useTeams } from './shell';
 
@@ -86,11 +88,13 @@ function Notice({ title, body }: { title: string; body: string }) {
 
 /* ── 무엇을 할까 ─────────────────────────────────────────── */
 
-type Game = 'home' | 'cards' | 'tone' | 'coop' | 'blank';
+type Game = 'home' | 'cards' | 'tone' | 'coop' | 'blank' | 'listen';
 
-const MENU: { id: Game; name: string; about: string }[] = [
+/** `needsVoice` 인 게임은 목소리가 없는 기기에서 목록에 안 나옵니다 */
+const MENU: { id: Game; name: string; about: string; needsVoice?: true }[] = [
 	{ id: 'tone', name: '① 성조 체조', about: '몇 성인지 몸으로. 전원 동시' },
 	{ id: 'blank', name: '② 빈칸 채우기', about: '가린 예문 · 카드 4개 중 동시에' },
+	{ id: 'listen', name: '③ 귀로 잡기', about: '소리만 두 번 · 한자 4개 중', needsVoice: true },
 	{ id: 'coop', name: '⑦ 다 같이 살리기', about: '경쟁 없음. 판의 마지막에' },
 	{ id: 'cards', name: '단어 넘기기', about: '한자 → 병음 → 뜻. 게임 아님' },
 ];
@@ -184,6 +188,12 @@ function LiveHome() {
 	// 게임을 옮겨도 이어지도록 여기서 들고 있습니다.
 	const teams = useTeams();
 
+	// ★ 목소리가 없는 기기면 듣기 게임을 목록에서 뺍니다.
+	//   소리가 안 나는 채로 시작하면 10명이 앉아서 기다리게 됩니다.
+	//   null 은 "아직 확인 중" 이라 그때는 보여둡니다 — 처음 값만 보고
+	//   없다고 하면 되는 기기에서도 게임이 사라집니다.
+	const canSpeak = useCanSpeak();
+
 	// 참여자 이름. 무작위 지목(⑦)과 쉬는 사람 표시(⑤)가 씁니다.
 	// 서버에 안 보냅니다 — 모임 진행용이고, 남의 이름을 저장할 이유가 없습니다.
 	const [names, setNames] = useState<string[]>([]);
@@ -225,6 +235,7 @@ function LiveHome() {
 	if (game === 'cards') return <Cards {...shared} />;
 	if (game === 'tone') return <ToneGym {...shared} onBack={home} teams={teams} />;
 	if (game === 'blank') return <Blank {...shared} onBack={home} teams={teams} />;
+	if (game === 'listen') return <Listen {...shared} onBack={home} teams={teams} />;
 	// ⑦ 은 협동입니다. 팀 점수판을 일부러 안 넘깁니다
 	if (game === 'coop') return <Coop {...shared} onBack={home} names={names} />;
 
@@ -242,7 +253,7 @@ function LiveHome() {
 				</h1>
 
 				<div className="flex flex-wrap items-stretch justify-center gap-[2vmin]">
-					{MENU.map((m) => (
+					{MENU.filter((m) => !m.needsVoice || canSpeak !== false).map((m) => (
 						<button
 							key={m.id}
 							onClick={() => setGame(m.id)}
@@ -262,6 +273,12 @@ function LiveHome() {
 					진행자 키 — Space 다음 · ← 이전 · Enter 정답 · 1·2 팀 득점 · Backspace 점수 취소
 					<br />F 전체화면 · Esc 나가기
 				</p>
+
+				{canSpeak === false && (
+					<p className="opacity-40" style={{ fontSize: BIG.small }}>
+						이 기기에는 중국어 목소리가 없어서 소리를 쓰는 게임은 뺐습니다.
+					</p>
+				)}
 
 				<NameBox names={names} onSave={saveNames} />
 

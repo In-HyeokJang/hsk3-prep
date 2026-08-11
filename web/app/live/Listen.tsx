@@ -1,0 +1,231 @@
+'use client';
+
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { makeQuiz, type Quiz } from '@/lib/quiz';
+import { speak } from '@/lib/speak';
+import type { Word } from '@/lib/types';
+import { BIG, Ctl, LiveFrame, Speaker, useLiveKeys, type Teams } from './shell';
+
+/*
+  ③ 귀로 잡기 (听写).
+
+  한자를 감춘 채 소리만 두 번 들려줍니다.
+
+  ★ 보기는 **한자 4개** 입니다.
+    병음을 보기로 내면 소리가 곧 답입니다. 들은 것을 그대로 눈으로
+    찾는 일이 되어서 듣기 연습이 아니게 됩니다.
+
+  ★ 상급은 보기를 아예 감춥니다.
+    종이에 병음을 받아쓰고 옆 팀과 바꿔 채점합니다. 듣기와 쓰기를
+    동시에 칩니다.
+
+  ★ 목소리가 없는 기기면 이 게임을 아예 목록에서 뺍니다 (page.tsx).
+    소리가 안 나는 채로 시작하면 10명이 앉아서 기다리게 됩니다.
+*/
+
+const ROUND = 8;
+
+/** 처음에 몇 번 들려주나 */
+const PLAYS = 2;
+/** 그 뒤에 다시 들을 수 있는 횟수 */
+const REPLAYS = 1;
+
+/** 두 번째 재생까지 기다리는 시간. speak() 은 앞의 소리를 끊습니다 */
+const GAP_MS = 2000;
+
+const LABELS = ['A', 'B', 'C', 'D'] as const;
+
+type Props = {
+	words: Word[];
+	dark: boolean;
+	onDark: () => void;
+	onExit: () => void;
+	onBack: () => void;
+	teams: Teams;
+};
+
+function shuffled<T>(list: T[]): T[] {
+	const out = [...list];
+	for (let i = out.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[out[i], out[j]] = [out[j], out[i]];
+	}
+	return out;
+}
+
+export default function Listen({ words, dark, onDark, onExit, onBack, teams }: Props) {
+	// 인덱스 3 이면 makeQuiz 가 '뜻 → 한자 4개' 를 내줍니다.
+	// 보기 만드는 규칙(뜻이 같은 보기·한자 겹침)을 그대로 물려받습니다.
+	const [deck] = useState<Quiz[]>(() =>
+		shuffled(words)
+			.map((w) => makeQuiz(w, words, 3))
+			.filter((q) => q.kind === 'pick-zh')
+			.slice(0, ROUND),
+	);
+
+	const [at, setAt] = useState(0);
+	const [open, setOpen] = useState(false);
+	const [hard, setHard] = useState(false); // 상급 — 보기를 감춥니다
+	const [replays, setReplays] = useState(REPLAYS);
+
+	const quiz = deck[at];
+
+	/* ── 문제가 바뀌면 두 번 들려줍니다 ───────────────────── */
+
+	const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+	const play = useCallback((text: string, times: number) => {
+		timers.current.forEach(clearTimeout);
+		timers.current = [];
+		for (let i = 0; i < times; i++) {
+			if (i === 0) speak(text);
+			else timers.current.push(setTimeout(() => speak(text), GAP_MS * i));
+		}
+	}, []);
+
+	useEffect(() => {
+		if (!quiz || open) return;
+		play(quiz.word.hanzi, PLAYS);
+	}, [quiz, open, play]);
+
+	// 화면을 벗어날 때 예약된 소리를 지웁니다. 안 지우면 게임을 나가도 떠듭니다.
+	useEffect(() => {
+		const list = timers;
+		return () => list.current.forEach(clearTimeout);
+	}, []);
+
+	/* ── 넘기기 ───────────────────────────────────────────── */
+
+	const next = useCallback(() => {
+		if (!open) {
+			setOpen(true);
+			return;
+		}
+		setAt((i) => i + 1);
+		setOpen(false);
+		setReplays(REPLAYS);
+	}, [open]);
+
+	const prev = useCallback(() => {
+		setAt((i) => Math.max(0, i - 1));
+		setOpen(true);
+	}, []);
+
+	const again = useCallback(() => {
+		if (!quiz) return;
+		if (open) return void speak(quiz.word.hanzi); // 공개 뒤에는 마음껏
+		if (replays <= 0) return;
+		setReplays((n) => n - 1);
+		play(quiz.word.hanzi, 1);
+	}, [quiz, open, replays, play]);
+
+	useLiveKeys({
+		' ': next,
+		ArrowRight: next,
+		ArrowLeft: prev,
+		Enter: () => setOpen(true),
+		r: again,
+		R: again,
+	});
+
+	/* ── 그리기 ───────────────────────────────────────────── */
+
+	const frame = { dark, onDark, onExit };
+
+	if (deck.length === 0) {
+		return (
+			<LiveFrame {...frame} controls={<Ctl onClick={onBack}>게임 고르기</Ctl>}>
+				<p style={{ fontSize: BIG.meaning }}>낼 수 있는 문제가 없습니다.</p>
+			</LiveFrame>
+		);
+	}
+
+	if (at >= deck.length) {
+		return (
+			<LiveFrame {...frame} teams={teams} controls={<Ctl onClick={onBack}>게임 고르기</Ctl>}>
+				<p className="font-bold" style={{ fontSize: BIG.meaning }}>
+					한 라운드 끝 · {deck.length}문제
+				</p>
+			</LiveFrame>
+		);
+	}
+
+	return (
+		<LiveFrame
+			{...frame}
+			teams={teams}
+			badge={`${at + 1} / ${deck.length}`}
+			controls={
+				<>
+					<Ctl onClick={prev}>← 이전</Ctl>
+					<Ctl onClick={again}>{open ? '다시 듣기' : `다시 듣기 (${replays})`}</Ctl>
+					<Ctl onClick={next} wide>
+						{open ? '다음 →' : '정답'}
+					</Ctl>
+					<Ctl onClick={() => setHard((h) => !h)}>{hard ? '보기 켜기' : '상급 (보기 없이)'}</Ctl>
+					<Ctl onClick={onBack}>게임 고르기</Ctl>
+				</>
+			}
+		>
+			<div className="flex w-full max-w-[92vw] flex-col items-center gap-[2.5vmin] text-center">
+				{!open ? (
+					<>
+						{/* 소리가 문제입니다. 한자는 아직 안 보여줍니다 */}
+						<button
+							onClick={again}
+							aria-label="다시 듣기"
+							className="rounded-full border border-current/25 p-[3vmin] opacity-70 transition-opacity hover:opacity-100"
+						>
+							<Speaker />
+						</button>
+
+						{hard ? (
+							<p className="opacity-55" style={{ fontSize: BIG.line }}>
+								종이에 병음을 받아쓰세요. 옆 팀과 바꿔서 채점합니다.
+							</p>
+						) : (
+							<div className="flex flex-wrap items-stretch justify-center gap-[2vmin]">
+								{quiz.choices.map((c, i) => (
+									<div
+										key={c.id}
+										className="flex min-w-[18vmin] flex-col items-center gap-[0.5vmin] rounded-2xl border border-current/20 px-[2.5vmin] py-[1.5vmin]"
+									>
+										<span className="opacity-40" style={{ fontSize: BIG.small }}>
+											{LABELS[i]}
+										</span>
+										{/* 보기는 한자만. 병음을 붙이면 소리가 곧 답이 됩니다 */}
+										<span className="live-han" style={{ fontSize: BIG.pinyin }}>
+											{c.hanzi}
+										</span>
+									</div>
+								))}
+							</div>
+						)}
+					</>
+				) : (
+					<>
+						<div className="live-han" style={{ fontSize: BIG.hanzi }}>
+							{quiz.word.hanzi}
+						</div>
+						<div className="flex items-center gap-[2vmin]">
+							<span className="live-pinyin opacity-80" style={{ fontSize: BIG.pinyin }}>
+								{quiz.word.pinyin}
+							</span>
+							{/* 감싸는 것이 버튼이 아니라 형제로 둡니다 */}
+							<button
+								onClick={again}
+								aria-label="소리 듣기"
+								className="shrink-0 rounded-full border border-current/25 p-[1.4vmin] opacity-50 transition-opacity hover:opacity-100"
+							>
+								<Speaker />
+							</button>
+						</div>
+						<div className="font-semibold" style={{ fontSize: BIG.meaning }}>
+							{quiz.word.meaning_ko}
+						</div>
+					</>
+				)}
+			</div>
+		</LiveFrame>
+	);
+}
