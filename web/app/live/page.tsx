@@ -8,6 +8,7 @@ import type { Word } from '@/lib/types';
 import { useAuth } from '@/lib/useAuth';
 import { ErrorBox, Loading } from '@/components/ui';
 import Cards from './Cards';
+import Coop from './Coop';
 import ToneGym from './ToneGym';
 import { BIG, Ctl, LiveFrame, useTeams } from './shell';
 
@@ -84,12 +85,90 @@ function Notice({ title, body }: { title: string; body: string }) {
 
 /* ── 무엇을 할까 ─────────────────────────────────────────── */
 
-type Game = 'home' | 'cards' | 'tone';
+type Game = 'home' | 'cards' | 'tone' | 'coop';
 
 const MENU: { id: Game; name: string; about: string }[] = [
 	{ id: 'tone', name: '① 성조 체조', about: '몇 성인지 몸으로. 전원 동시' },
+	{ id: 'coop', name: '⑦ 다 같이 살리기', about: '경쟁 없음. 판의 마지막에' },
 	{ id: 'cards', name: '단어 넘기기', about: '한자 → 병음 → 뜻. 게임 아님' },
 ];
+
+/* ── 참여자 이름 ─────────────────────────────────────────── */
+
+const NAMES_KEY = 'hsk3.live.names';
+/** 6~10명을 봅니다. 넉넉히 잡되 끝은 둡니다 */
+const MAX_NAMES = 20;
+const MAX_LEN = 12;
+
+/**
+ * 저장해둔 이름을 읽습니다.
+ *
+ * ★ 저장소 값을 그대로 믿지 않습니다.
+ *   손으로 고칠 수 있는 자리라, 길이와 개수를 여기서 다시 자릅니다.
+ */
+function readNames(): string[] {
+	try {
+		const raw = JSON.parse(localStorage.getItem(NAMES_KEY) ?? '[]');
+		if (!Array.isArray(raw)) return [];
+		return raw
+			.filter((n): n is string => typeof n === 'string')
+			.map((n) => n.trim().slice(0, MAX_LEN))
+			.filter(Boolean)
+			.slice(0, MAX_NAMES);
+	} catch {
+		return [];
+	}
+}
+
+function NameBox({ names, onSave }: { names: string[]; onSave: (next: string[]) => void }) {
+	const [open, setOpen] = useState(false);
+	const [text, setText] = useState(names.join('\n'));
+
+	if (!open) {
+		return (
+			<button
+				onClick={() => {
+					setText(names.join('\n'));
+					setOpen(true);
+				}}
+				className="opacity-45 underline-offset-4 hover:underline"
+				style={{ fontSize: BIG.small }}
+			>
+				참여자 {names.length ? `${names.length}명` : '이름 적기'}
+			</button>
+		);
+	}
+
+	return (
+		<div className="flex flex-col items-center gap-[1.5vmin]">
+			<textarea
+				value={text}
+				onChange={(e) => setText(e.target.value)}
+				rows={6}
+				placeholder={'한 줄에 한 명\n민수\n지영'}
+				className="w-[40vmin] rounded-xl border border-current/25 bg-transparent p-[1.5vmin] text-center"
+				style={{ fontSize: BIG.small }}
+			/>
+			<div className="flex gap-[1.5vmin]">
+				<Ctl
+					onClick={() => {
+						onSave(
+							text
+								.split('\n')
+								.map((n) => n.trim().slice(0, MAX_LEN))
+								.filter(Boolean)
+								.slice(0, MAX_NAMES),
+						);
+						setOpen(false);
+					}}
+				>
+					저장
+				</Ctl>
+				<Ctl onClick={() => setOpen(false)}>취소</Ctl>
+			</div>
+		</div>
+	);
+}
 
 function LiveHome() {
 	const router = useRouter();
@@ -102,6 +181,20 @@ function LiveHome() {
 	// 점수는 게임 하나가 아니라 **판 전체**를 따라갑니다.
 	// 게임을 옮겨도 이어지도록 여기서 들고 있습니다.
 	const teams = useTeams();
+
+	// 참여자 이름. 무작위 지목(⑦)과 쉬는 사람 표시(⑤)가 씁니다.
+	// 서버에 안 보냅니다 — 모임 진행용이고, 남의 이름을 저장할 이유가 없습니다.
+	const [names, setNames] = useState<string[]>([]);
+	useEffect(() => setNames(readNames()), []);
+
+	const saveNames = useCallback((next: string[]) => {
+		setNames(next);
+		try {
+			localStorage.setItem(NAMES_KEY, JSON.stringify(next));
+		} catch {
+			// 저장이 안 돼도 이번 모임은 굴러갑니다
+		}
+	}, []);
 
 	// ★ 시작할 때 딱 한 번만 서버를 부릅니다.
 	//   useStore 를 쓰면 단어·진도·요약을 Promise.all 로 묶어서 하나만
@@ -129,6 +222,8 @@ function LiveHome() {
 
 	if (game === 'cards') return <Cards {...shared} />;
 	if (game === 'tone') return <ToneGym {...shared} onBack={home} teams={teams} />;
+	// ⑦ 은 협동입니다. 팀 점수판을 일부러 안 넘깁니다
+	if (game === 'coop') return <Coop {...shared} onBack={home} names={names} />;
 
 	return (
 		<LiveFrame
@@ -164,6 +259,8 @@ function LiveHome() {
 					진행자 키 — Space 다음 · ← 이전 · Enter 정답 · 1·2 팀 득점 · Backspace 점수 취소
 					<br />F 전체화면 · Esc 나가기
 				</p>
+
+				<NameBox names={names} onSave={saveNames} />
 
 				<p className="opacity-30" style={{ fontSize: BIG.small }}>
 					점수는 <b>맞힌 사람 수</b>입니다. 넷이 맞히면 4점 — 옆 사람을 가르치는 게 이득입니다.
