@@ -31,6 +31,13 @@ export type Profile = {
 	phone: string | null;
 	is_active: boolean;
 	deleted_at: string | null;
+	/**
+	 * 관리자인가. `/live`(오프라인 모임 화면)를 여기서만 엽니다.
+	 *
+	 * ★ 코드에 아이디를 박지 않습니다. DB에서 켜고 끕니다 (마이그레이션 23).
+	 *   관리자를 바꿔도 다시 배포하지 않아도 됩니다.
+	 */
+	is_admin: boolean;
 };
 
 /**
@@ -108,6 +115,15 @@ export function useAuth() {
 		userId,
 		username: profile?.username ?? null,
 		profile,
+		/**
+		 * 관리자인가.
+		 *
+		 * ★ 신호가 끊겨 프로필을 못 받아와도 이 값은 안 뒤집힙니다.
+		 *   위 loadProfile 이 실패했을 때 이전 값을 그대로 두거든요.
+		 *   모임 도중에 지하 회의실에서 신호가 한 번 끊겼다고 화면이
+		 *   닫혀버리면, 진행하던 사람은 손쓸 방법이 없습니다.
+		 */
+		isAdmin: profile?.is_admin ?? false,
 		/** 프로필을 못 받아왔나. 되돌릴 수 없는 일은 이게 true 면 막아야 합니다 */
 		profileFailed,
 		ready,

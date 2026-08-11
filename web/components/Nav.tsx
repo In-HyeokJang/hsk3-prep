@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@/lib/useAuth';
 
 // 폰과 데스크톱에서 메뉴 위치가 다릅니다.
 //   폰      → 화면 아래. 한 손으로 엄지가 닿는 자리입니다.
@@ -15,10 +16,21 @@ const ITEMS = [
 	{ href: '/words', label: '단어장', icon: List },
 ] as const;
 
+/**
+ * 관리자에게만 보이는 메뉴.
+ *
+ * 회원 화면에는 나오지 않습니다. 모임을 진행하는 사람만 씁니다.
+ */
+const ADMIN_ITEMS = [{ href: '/live', label: '모임', icon: Screen }] as const;
+
 export default function Nav() {
 	const pathname = usePathname();
+	const { isAdmin } = useAuth();
 	const isActive = (href: string) =>
 		href === '/' ? pathname === '/' : pathname.startsWith(href);
+
+	// 관리자가 아니면 앞의 다섯 개 그대로입니다.
+	const items = isAdmin ? [...ITEMS, ...ADMIN_ITEMS] : ITEMS;
 
 	return (
 		<>
@@ -31,7 +43,7 @@ export default function Nav() {
 					</Link>
 
 					<nav className="flex gap-1">
-						{ITEMS.map(({ href, label }) => (
+						{items.map(({ href, label }) => (
 							<Link
 								key={href}
 								href={href}
@@ -61,7 +73,7 @@ export default function Nav() {
 				style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
 			>
 				<div className="mx-auto flex max-w-md">
-					{ITEMS.map(({ href, label, icon: Icon }) => {
+					{items.map(({ href, label, icon: Icon }) => {
 						const active = isActive(href);
 						return (
 							<Link
@@ -126,6 +138,16 @@ function Flag({ active }: IconProps) {
 				fill={active ? 'currentColor' : 'none'}
 				fillOpacity="0.12"
 			/>
+		</svg>
+	);
+}
+
+/** 오프라인 모임. TV에 띄우는 화면이라 모니터 모양입니다 */
+function Screen({ active }: IconProps) {
+	return (
+		<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" {...stroke}>
+			<rect x="3" y="4.5" width="18" height="12" rx="2.5" fill={active ? 'currentColor' : 'none'} fillOpacity="0.12" />
+			<path d="M9 20h6M12 16.5V20" />
 		</svg>
 	);
 }
