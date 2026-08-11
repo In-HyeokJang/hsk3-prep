@@ -106,6 +106,35 @@
 		line-height: 1.6;
 	}
 
+	/* ── 오프라인 모임 화면(/live) 전용 ─────────────────────
+	   TV·프로젝터에 띄우고 5m 떨어진 자리에서 봅니다.
+	   여기서 제일 먼저 안 보이는 것이 병음의 성조 기호입니다.
+	   ā 와 á 를 못 가리면 성조 게임이 아예 성립하지 않습니다.
+
+	   ⚠ @theme 을 새로 쓰지 않습니다. Tailwind v4 의 @theme 은 미디어 쿼리
+	   안에 있어도 통째로 끌어올려져서, 낮에도 밤에도 어두운 화면이 됩니다.
+	   여기는 그냥 평범한 유틸리티입니다. */
+
+	.live-pinyin {
+		font-family: var(--font-mono);
+		/* 음절이 붙어 있으면 멀리서 한 덩어리로 뭉쳐 보입니다 */
+		letter-spacing: 0.08em;
+		/* 성조 기호는 글자 위로 튀어나옵니다. 줄 높이가 좁으면 잘립니다 */
+		line-height: 1.5;
+		font-weight: 500;
+	}
+
+	/* 큰 한자.
+	   ★ 굵기는 700 까지만 씁니다. 900 을 주면 글꼴에 그 굵기가 없어서
+	   브라우저가 획을 부풀려 가짜로 만듭니다. 작을 때는 티가 안 나지만
+	   TV 크기에서는 획 사이가 메워져 다른 글자처럼 보입니다. */
+	.live-han {
+		font-family: var(--font-han);
+		letter-spacing: 0.02em;
+		font-weight: 700;
+		line-height: 1;
+	}
+
 	.hide-scrollbar::-webkit-scrollbar {
 		display: none;
 	}

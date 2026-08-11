@@ -244,10 +244,7 @@ function LiveScreen() {
 			) : (
 				<div className="flex w-full max-w-[92vw] flex-col items-center gap-[2vmin] text-center">
 					{/* ① 한자 — 늘 보입니다 */}
-					<div
-						className="han font-bold leading-none"
-						style={{ fontSize: 'clamp(120px, 22vmin, 420px)' }}
-					>
+					<div className="live-han" style={{ fontSize: 'clamp(120px, 22vmin, 420px)' }}>
 						{word.hanzi}
 					</div>
 
@@ -255,7 +252,7 @@ function LiveScreen() {
 					{step >= 1 && (
 						<div className="flex items-center gap-[2vmin]">
 							<span
-								className="font-medium tracking-wide opacity-80"
+								className="live-pinyin opacity-80"
 								style={{ fontSize: 'clamp(32px, 6vmin, 110px)' }}
 							>
 								{word.pinyin}
