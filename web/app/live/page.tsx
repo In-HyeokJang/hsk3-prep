@@ -7,6 +7,7 @@ import { getWords } from '@/lib/api';
 import type { Word } from '@/lib/types';
 import { useAuth } from '@/lib/useAuth';
 import { ErrorBox, Loading } from '@/components/ui';
+import Blank from './Blank';
 import Cards from './Cards';
 import Coop from './Coop';
 import ToneGym from './ToneGym';
@@ -85,10 +86,11 @@ function Notice({ title, body }: { title: string; body: string }) {
 
 /* ── 무엇을 할까 ─────────────────────────────────────────── */
 
-type Game = 'home' | 'cards' | 'tone' | 'coop';
+type Game = 'home' | 'cards' | 'tone' | 'coop' | 'blank';
 
 const MENU: { id: Game; name: string; about: string }[] = [
 	{ id: 'tone', name: '① 성조 체조', about: '몇 성인지 몸으로. 전원 동시' },
+	{ id: 'blank', name: '② 빈칸 채우기', about: '가린 예문 · 카드 4개 중 동시에' },
 	{ id: 'coop', name: '⑦ 다 같이 살리기', about: '경쟁 없음. 판의 마지막에' },
 	{ id: 'cards', name: '단어 넘기기', about: '한자 → 병음 → 뜻. 게임 아님' },
 ];
@@ -222,6 +224,7 @@ function LiveHome() {
 
 	if (game === 'cards') return <Cards {...shared} />;
 	if (game === 'tone') return <ToneGym {...shared} onBack={home} teams={teams} />;
+	if (game === 'blank') return <Blank {...shared} onBack={home} teams={teams} />;
 	// ⑦ 은 협동입니다. 팀 점수판을 일부러 안 넘깁니다
 	if (game === 'coop') return <Coop {...shared} onBack={home} names={names} />;
 
