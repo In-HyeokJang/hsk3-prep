@@ -30,7 +30,21 @@ import { ErrorBox, Loading } from '@/components/ui';
 export default function LivePage() {
 	const { isAdmin, profileFailed, ready } = useAuth();
 
+	/**
+	 * 한 번 들여보냈으면 모임이 끝날 때까지 안 내보냅니다.
+	 *
+	 * AuthGate 만 고치면 반쪽입니다. 토큰이 만료되면 프로필도 같이 비고,
+	 * 그러면 여기가 "관리자가 아닙니다" 로 바뀌어 결국 모임이 끊깁니다.
+	 * 들어올 때 관리자인 것을 이미 확인했으니, 그 뒤에 신호가 끊긴 것은
+	 * 권한이 없어진 것이 아닙니다.
+	 */
+	const admitted = useRef(false);
+	useEffect(() => {
+		if (isAdmin) admitted.current = true;
+	}, [isAdmin]);
+
 	if (!ready) return <Loading text="확인하는 중..." />;
+	if (admitted.current) return <LiveScreen />;
 
 	// ★ 못 받아온 것과 "관리자가 아니다" 는 다릅니다.
 	//   신호가 끊겨 프로필을 못 받았는데 "권한 없음" 이라고 말해버리면,

@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 import { checkSignUp, signIn, signUp, useAuth } from '@/lib/useAuth';
 import { EmailField, PhoneField } from '@/components/ContactFields';
 import FindId from '@/components/FindId';
@@ -15,6 +16,23 @@ import { Loading } from '@/components/ui';
  */
 export default function AuthGate({ children }: { children: React.ReactNode }) {
 	const { userId, ready } = useAuth();
+	const pathname = usePathname();
+
+	/**
+	 * 한 번이라도 들어온 적이 있나.
+	 *
+	 * 오프라인 모임 화면(`/live`)을 위해 둡니다. 로그인 토큰은 1시간이면
+	 * 만료되고 갱신에 인터넷이 필요한데, 모임은 2시간이라 **반드시** 그
+	 * 구간에 들어갑니다. 그때 로그인 화면으로 바꿔버리면 10명 앞에서
+	 * 모임이 끊깁니다.
+	 *
+	 * 들어올 때는 그대로 로그인을 받습니다(관리자인지 알아야 하니까).
+	 * 들어온 뒤에만 안 쫓아내는 것입니다.
+	 */
+	const cameInBefore = useRef(false);
+	useEffect(() => {
+		if (userId) cameInBefore.current = true;
+	}, [userId]);
 
 	const [mode, setMode] = useState<'in' | 'up' | 'find'>('in');
 	const [username, setUsername] = useState('');
@@ -47,6 +65,11 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
 
 	if (!ready) return <Loading text="확인하는 중..." />;
 	if (userId) return <>{children}</>;
+
+	// 모임 중에는 안 쫓아냅니다. 화면을 그대로 둡니다.
+	// `/live` 는 시작할 때 단어를 통째로 받아두고 그 뒤로 서버를 한 번도
+	// 안 부르기 때문에, 세션이 끊겨도 모임은 끝까지 굴러갑니다.
+	if (cameInBefore.current && pathname.startsWith('/live')) return <>{children}</>;
 	if (mode === 'find') return <FindId onBack={() => setMode('in')} />;
 
 	async function submit(e: React.FormEvent) {
