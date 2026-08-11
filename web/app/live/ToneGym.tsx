@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { pickToneDeck, type Tone } from '@/lib/quiz';
 import { speak } from '@/lib/speak';
 import type { Word } from '@/lib/types';
-import { BIG, Ctl, LiveFrame, Speaker, useLiveKeys } from './shell';
+import { BIG, Ctl, LiveFrame, Speaker, useLiveKeys, type Teams } from './shell';
 
 /*
   ① 성조 체조 — 첫 게임.
@@ -45,9 +45,10 @@ type Props = {
 	onExit: () => void;
 	/** 게임 고르는 화면으로 */
 	onBack: () => void;
+	teams: Teams;
 };
 
-export default function ToneGym({ words, dark, onDark, onExit, onBack }: Props) {
+export default function ToneGym({ words, dark, onDark, onExit, onBack, teams }: Props) {
 	// 묶음은 들어올 때 한 번만 뽑습니다. 다시 그릴 때마다 뽑으면
 	// 문제가 눈앞에서 바뀝니다.
 	const [deck] = useState(() => pickToneDeck(words, ROUND, () => false));
@@ -103,16 +104,14 @@ export default function ToneGym({ words, dark, onDark, onExit, onBack }: Props) 
 
 	const showNow = useCallback(() => setPhase('answer'), []);
 
-	useLiveKeys(
-		{
-			' ': advance,
-			ArrowRight: advance,
-			ArrowLeft: prev,
-			Enter: showNow,
-			Backspace: onBack,
-		},
-		['Backspace'],
-	);
+	// Backspace 는 점수 취소가 씁니다 (shell.tsx). 여기서 겹치게 두면
+	// 잘못 센 점수를 지우려다 게임에서 빠져나갑니다.
+	useLiveKeys({
+		' ': advance,
+		ArrowRight: advance,
+		ArrowLeft: prev,
+		Enter: showNow,
+	});
 
 	/* ── 그리기 ───────────────────────────────────────────── */
 
@@ -130,6 +129,7 @@ export default function ToneGym({ words, dark, onDark, onExit, onBack }: Props) 
 				dark={dark}
 				onDark={onDark}
 				onExit={onExit}
+				teams={teams}
 				controls={<Ctl onClick={onBack}>게임 고르기</Ctl>}
 			>
 				<div className="flex flex-col items-center gap-6 text-center">
@@ -153,6 +153,7 @@ export default function ToneGym({ words, dark, onDark, onExit, onBack }: Props) 
 			onDark={onDark}
 			onExit={onExit}
 			badge={`${at + 1} / ${deck.length}`}
+			teams={teams}
 			controls={
 				<>
 					<Ctl onClick={prev}>← 이전</Ctl>

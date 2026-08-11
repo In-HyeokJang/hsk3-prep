@@ -9,7 +9,7 @@ import { useAuth } from '@/lib/useAuth';
 import { ErrorBox, Loading } from '@/components/ui';
 import Cards from './Cards';
 import ToneGym from './ToneGym';
-import { BIG, LiveFrame } from './shell';
+import { BIG, Ctl, LiveFrame, useTeams } from './shell';
 
 /**
  * 오프라인 모임 화면 `/live`.
@@ -99,6 +99,10 @@ function LiveHome() {
 	const [game, setGame] = useState<Game>('home');
 	const [dark, setDark] = useState(false); // 프로젝터는 검정을 못 만듭니다
 
+	// 점수는 게임 하나가 아니라 **판 전체**를 따라갑니다.
+	// 게임을 옮겨도 이어지도록 여기서 들고 있습니다.
+	const teams = useTeams();
+
 	// ★ 시작할 때 딱 한 번만 서버를 부릅니다.
 	//   useStore 를 쓰면 단어·진도·요약을 Promise.all 로 묶어서 하나만
 	//   실패해도 셋 다 실패합니다. 여기는 진도가 아예 필요 없습니다.
@@ -124,10 +128,16 @@ function LiveHome() {
 	const shared = { words, dark, onDark: toggleDark, onExit: exit };
 
 	if (game === 'cards') return <Cards {...shared} />;
-	if (game === 'tone') return <ToneGym {...shared} onBack={home} />;
+	if (game === 'tone') return <ToneGym {...shared} onBack={home} teams={teams} />;
 
 	return (
-		<LiveFrame dark={dark} onDark={toggleDark} onExit={exit}>
+		<LiveFrame
+			dark={dark}
+			onDark={toggleDark}
+			onExit={exit}
+			teams={teams}
+			controls={<Ctl onClick={teams.reset}>점수 0으로</Ctl>}
+		>
 			<div className="flex w-full max-w-[92vw] flex-col items-center gap-[4vmin]">
 				<h1 className="live-han font-bold" style={{ fontSize: BIG.meaning }}>
 					오늘 뭐 할까요
@@ -151,7 +161,12 @@ function LiveHome() {
 				</div>
 
 				<p className="opacity-40" style={{ fontSize: BIG.small }}>
-					진행자 키 — Space 다음 · ← 이전 · Enter 정답 · F 전체화면 · Esc 나가기
+					진행자 키 — Space 다음 · ← 이전 · Enter 정답 · 1·2 팀 득점 · Backspace 점수 취소
+					<br />F 전체화면 · Esc 나가기
+				</p>
+
+				<p className="opacity-30" style={{ fontSize: BIG.small }}>
+					점수는 <b>맞힌 사람 수</b>입니다. 넷이 맞히면 4점 — 옆 사람을 가르치는 게 이득입니다.
 				</p>
 			</div>
 		</LiveFrame>
