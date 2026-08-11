@@ -107,6 +107,25 @@ const MENU: { id: Game; name: string; about: string; needsVoice?: true }[] = [
 	{ id: 'cards', name: '단어 넘기기', about: '한자 → 병음 → 뜻. 게임 아님' },
 ];
 
+/* ── 회차 범위 ───────────────────────────────────────────── */
+
+/** 973단어를 빈도로 여섯 등분합니다. 회차당 약 162개 */
+const SESSIONS = 6;
+
+/**
+ * 그 회차가 쓸 단어.
+ *
+ * `getWords()` 가 이미 **빈도순**으로 주기 때문에 그냥 잘라 쓰면 됩니다.
+ * 1회차가 제일 자주 쓰는 말이고, 뒤로 갈수록 드문 말입니다.
+ *
+ * `null` 이면 973개 전부입니다.
+ */
+function rangeOf(words: Word[], session: number | null): Word[] {
+	if (session === null) return words;
+	const size = Math.ceil(words.length / SESSIONS);
+	return words.slice((session - 1) * size, session * size);
+}
+
 /* ── 참여자 이름 ─────────────────────────────────────────── */
 
 const NAMES_KEY = 'hsk3.live.names';
@@ -190,6 +209,8 @@ function LiveHome() {
 	const [words, setWords] = useState<Word[] | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [game, setGame] = useState<Game>('home');
+	// 몇 회차 범위로 할까. null 이면 973개 전부입니다
+	const [session, setSession] = useState<number | null>(null);
 	const [dark, setDark] = useState(false); // 프로젝터는 검정을 못 만듭니다
 
 	// 점수는 게임 하나가 아니라 **판 전체**를 따라갑니다.
@@ -238,7 +259,10 @@ function LiveHome() {
 	if (!words) return <Loading text="단어를 받는 중..." />;
 	if (words.length === 0) return <Notice title="단어가 없습니다" body="자료를 먼저 넣어주세요." />;
 
-	const shared = { words, dark, onDark: toggleDark, onExit: exit };
+	// ★ 게임에는 **회차 범위만** 넘깁니다.
+	//   전체를 넘기고 게임 안에서 자르면 게임마다 자르는 규칙이 갈립니다.
+	const pool = rangeOf(words, session);
+	const shared = { words: pool, dark, onDark: toggleDark, onExit: exit };
 
 	if (game === 'cards') return <Cards {...shared} />;
 	if (game === 'tone') return <ToneGym {...shared} onBack={home} teams={teams} />;
@@ -263,6 +287,25 @@ function LiveHome() {
 				<h1 className="live-han font-bold" style={{ fontSize: BIG.meaning }}>
 					오늘 뭐 할까요
 				</h1>
+
+				{/* 회차 — 게임보다 먼저 정합니다 */}
+				<div className="flex flex-wrap items-center justify-center gap-[1vmin]">
+					{([null, 1, 2, 3, 4, 5, 6] as const).map((n) => (
+						<button
+							key={String(n)}
+							onClick={() => setSession(n)}
+							className={`rounded-xl border px-[2vmin] py-[0.9vmin] transition-colors ${
+								session === n ? 'border-current/60 bg-current/10' : 'border-current/20 opacity-45'
+							}`}
+							style={{ fontSize: BIG.small }}
+						>
+							{n === null ? '전체' : `${n}회차`}
+						</button>
+					))}
+					<span className="opacity-35" style={{ fontSize: BIG.small }}>
+						{pool.length}단어
+					</span>
+				</div>
 
 				<div className="flex flex-wrap items-stretch justify-center gap-[2vmin]">
 					{MENU.filter((m) => !m.needsVoice || canSpeak !== false).map((m) => (
