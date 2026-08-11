@@ -11,6 +11,7 @@ import { ErrorBox, Loading } from '@/components/ui';
 import Blank from './Blank';
 import Cards from './Cards';
 import Coop from './Coop';
+import Explain from './Explain';
 import Hands from './Hands';
 import Hanzi from './Hanzi';
 import Listen from './Listen';
@@ -90,13 +91,14 @@ function Notice({ title, body }: { title: string; body: string }) {
 
 /* ── 무엇을 할까 ─────────────────────────────────────────── */
 
-type Game = 'home' | 'cards' | 'tone' | 'coop' | 'blank' | 'listen' | 'hanzi' | 'hands';
+type Game = 'home' | 'cards' | 'tone' | 'coop' | 'blank' | 'listen' | 'hanzi' | 'hands' | 'explain';
 
 /** `needsVoice` 인 게임은 목소리가 없는 기기에서 목록에 안 나옵니다 */
 const MENU: { id: Game; name: string; about: string; needsVoice?: true }[] = [
 	{ id: 'tone', name: '① 성조 체조', about: '몇 성인지 몸으로. 전원 동시' },
 	{ id: 'blank', name: '② 빈칸 채우기', about: '가린 예문 · 카드 4개 중 동시에' },
 	{ id: 'listen', name: '③ 귀로 잡기', about: '소리만 두 번 · 한자 4개 중', needsVoice: true },
+	{ id: 'explain', name: '④ 설명해서 맞히기', about: '등 지고 앉기 · 한국어로 설명 · 60초' },
 	{ id: 'hands', name: '⑤ 빨리 손들기', about: '한자만 크게 · 맞히면 다음 문제 쉼' },
 	{ id: 'hanzi', name: '⑧ 한자 가족 열기', about: '가운데 글자 하나 · 번호를 눌러 열기' },
 	{ id: 'coop', name: '⑦ 다 같이 살리기', about: '경쟁 없음. 판의 마지막에' },
@@ -242,6 +244,7 @@ function LiveHome() {
 	if (game === 'listen') return <Listen {...shared} onBack={home} teams={teams} />;
 	if (game === 'hanzi') return <Hanzi {...shared} onBack={home} teams={teams} />;
 	if (game === 'hands') return <Hands {...shared} onBack={home} teams={teams} names={names} />;
+	if (game === 'explain') return <Explain {...shared} onBack={home} teams={teams} />;
 	// ⑦ 은 협동입니다. 팀 점수판을 일부러 안 넘깁니다
 	if (game === 'coop') return <Coop {...shared} onBack={home} names={names} />;
 
