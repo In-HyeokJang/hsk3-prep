@@ -424,3 +424,44 @@ export function makeQuiz(word: Word, pool: Word[], index: number): Quiz {
 		choices: shuffle([word, ...wrong]),
 	};
 }
+
+/* ── ③ 귀로 잡기 전용 ──────────────────────────────────────
+   듣기 게임은 `makeQuiz` 를 그대로 쓸 수가 없습니다.
+
+   `makeQuiz` 는 **뜻이 짧고 하나인 단어를 입력 문제로 먼저 낚아챕니다**
+   (isTypable). 그런데 그게 곧 **제일 쉬운 단어**입니다. 듣기 게임은
+   '뜻 → 한자 4개' 만 주워 담으므로, 쉬운 것이 전부 빠져나가고
+   어려운 것만 남았습니다.
+
+   973단어로 세어보니 **393개(40.4%)가 그렇게 버려지고, 남은 문제 중
+   쉬운 단어는 0개**였습니다. 城市(도시) · 报(신문) · 步(걸음) 처럼
+   초급 모임에서 제일 먼저 들려줘야 할 것들이 통째로 사라졌습니다.
+
+   ★ 오답 고르는 규칙은 그대로 물려받습니다.
+     `pickWrong` 을 부르므로 한자 겹침 · 뜻 겹침(정답이 둘) 방어가
+     `/study` 와 똑같이 걸립니다. 4지선다를 새로 짜지 않습니다. */
+
+/**
+ * 소리로 낼 수 있는 단어인지.
+ *
+ * 한자만으로 된 것만 씁니다. 공식 목록에는 접사가 여섯 개 섞여 있는데
+ * (`初（初一）` · `…极了` · `者（志愿者）` …), 이걸 그대로 읽어주면
+ * **괄호 안의 예시까지 같이 읽어서 답을 두 번 말해줍니다.**
+ * `…极了` 처럼 말줄임표가 앞에 붙은 것은 아예 말이 안 됩니다.
+ */
+export function canListen(word: Word): boolean {
+	return ONLY_HANZI.test(word.hanzi) && !!word.meaning_ko;
+}
+
+/**
+ * 뜻을 보여주고 한자 4개 중 고르는 문제를 만듭니다.
+ * 오답 3개를 못 채우면 null 입니다.
+ *
+ * `makeQuiz` 와 달리 **다른 형식으로 내려가지 않습니다.**
+ * 부르는 쪽이 이 형식만 필요할 때 씁니다.
+ */
+export function makePickZh(word: Word, pool: Word[]): Quiz | null {
+	const wrong = pickWrong(word, pool, 3);
+	if (wrong.length < 3) return null;
+	return { kind: 'pick-zh', word, choices: shuffle([word, ...wrong]) };
+}

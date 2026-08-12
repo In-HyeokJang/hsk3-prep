@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { makeQuiz, type Quiz } from '@/lib/quiz';
+import { canListen, makePickZh, type Quiz } from '@/lib/quiz';
 import { speak } from '@/lib/speak';
 import type { Word } from '@/lib/types';
 import { BIG, Ctl, LiveFrame, Speaker, useLiveKeys, type Teams } from './shell';
@@ -61,15 +61,23 @@ function shuffled<T>(list: T[]): T[] {
 }
 
 export default function Listen({ words, dark, onDark, onExit, onBack, teams, onMiss }: Props) {
-	// 인덱스 3 이면 makeQuiz 가 '뜻 → 한자 4개' 를 내줍니다.
-	// 보기 만드는 규칙(뜻이 같은 보기·한자 겹침)을 그대로 물려받습니다.
+	// `makePickZh` 가 '뜻 → 한자 4개' 를 내줍니다.
+	// 보기 만드는 규칙(뜻이 같은 보기·한자 겹침)은 그대로 물려받습니다.
+	//
+	// ★ 전에는 `makeQuiz(w, words, 3)` 을 부르고 'pick-zh' 만 주워 담았습니다.
+	//   그런데 makeQuiz 는 **쉬운 단어를 입력 문제로 먼저 낚아채서**,
+	//   城市(도시)·报(신문)·步(걸음) 같은 것이 전부 빠져나가고
+	//   어려운 단어만 남았습니다 (973개 중 393개가 사라짐). quiz.ts 주석 참고.
+	//
 	// ★ 필요한 만큼만 만듭니다 (Blank.tsx 와 같은 이유 — 전체 범위에서 화면이 멎습니다)
 	const [deck] = useState<Quiz[]>(() => {
 		const out: Quiz[] = [];
 		for (const w of shuffled(words)) {
 			if (out.length >= ROUND) break;
-			const q = makeQuiz(w, words, 3);
-			if (q.kind === 'pick-zh') out.push(q);
+			// 괄호가 든 접사는 뺍니다 — 읽어주면 답을 두 번 말합니다
+			if (!canListen(w)) continue;
+			const q = makePickZh(w, words);
+			if (q) out.push(q);
 		}
 		return out;
 	});
