@@ -300,12 +300,21 @@ export default function Blank({ words, dark, onDark, onExit, onBack, teams, onMi
 					</>
 				) : (
 					<div className="flex flex-col items-center gap-[1.2vmin]">
-						{/* 골라서 확정했으면 맞았는지 알려줍니다 */}
-						{picked !== null && (
-							<div className="font-bold" style={{ fontSize: BIG.line }}>
-								{picked === answerAt
-									? `맞았습니다 · ${LABELS[picked]}`
-									: `${LABELS[picked]} 를 골랐고, 답은 ${LABELS[answerAt]} 입니다`}
+						{/* 틀렸을 때만 알려줍니다.
+						    ★ 맞았으면 아무 말도 안 합니다. 아래에 정답이 그대로 떠 있어서
+						      '맞았습니다' 는 한 줄을 더 읽게 할 뿐입니다.
+						    ★ A·B 가 아니라 한자로 적습니다. 다섯 걸음 뒤에서 보는 사람에게
+						      'B가 답인데 A를 골랐다' 는 아무것도 아닙니다 — 어느 글자였는지가
+						      머리에 남아야 합니다. 보기 순서는 다음 문제면 사라집니다. */}
+						{picked !== null && picked !== answerAt && (
+							<div
+								className="flex flex-wrap items-baseline justify-center gap-[1vmin]"
+								style={{ fontSize: BIG.line }}
+							>
+								<span className="live-han opacity-50">{quiz.choices[picked].hanzi}</span>
+								<span className="opacity-50">를 골랐고, 답은</span>
+								<span className="live-han font-bold">{quiz.choices[answerAt].hanzi}</span>
+								<span className="opacity-50">입니다</span>
 							</div>
 						)}
 
