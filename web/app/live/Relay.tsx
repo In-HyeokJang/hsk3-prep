@@ -8,7 +8,7 @@ import ToneSpeak from '@/components/ToneSpeak';
 import { BIG, Ctl, LiveFrame, useLiveKeys, type Teams } from './shell';
 
 /*
-  ⑥ 성조 릴레이 (마이크).
+  ⑥ 마이크 타임 (옛 이름: 성조 릴레이).
 
   한 명씩 나와 한 글자를 발음합니다. 마이크가 높낮이를 재서 몇 성인지
   가려냅니다. 통과한 사람 수가 팀 점수입니다.
@@ -90,7 +90,7 @@ export default function Relay({ words, dark, onDark, onExit, onBack, teams, onMi
 						이 회차에는 말해볼 글자가 {deck.length}개뿐입니다
 					</p>
 					<p className="opacity-55" style={{ fontSize: BIG.small }}>
-						성조 릴레이는 <b>한 글자 단어</b>만 씁니다. 두 글자를 주면 어느 쪽 성조를
+						마이크 타임은 <b>한 글자 단어</b>만 씁니다. 두 글자를 주면 어느 쪽 성조를
 						내야 하는지부터 헷갈리고, 마이크도 뒷음절만 떼어낼 수 없습니다.
 						<br />
 						시작 화면에서 범위를 <b>전체</b>로 바꾸면 넉넉해집니다.

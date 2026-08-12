@@ -6,7 +6,7 @@ import type { Word } from '@/lib/types';
 import { BIG, Ctl, LiveFrame, Speaker, useLiveKeys } from './shell';
 
 /*
-  ⑦ 다 같이 살리기 — 협동.
+  ⑦ 다 같이 클리어 (옛 이름: 다 같이 살리기) — 협동.
 
   **모든 판의 마지막**입니다. 진 팀도 같은 편으로 끝내고 쉬는 시간에
   들어갑니다. 이게 이 게임이 있는 이유의 전부입니다.

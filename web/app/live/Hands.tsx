@@ -6,7 +6,7 @@ import type { Word } from '@/lib/types';
 import { BIG, Ctl, LiveFrame, Speaker, useLiveKeys, type Teams } from './shell';
 
 /*
-  ⑤ 빨리 손들기.
+  ⑤ 선착순 1명 (옛 이름: 빨리 손들기).
 
   한자만 크게 띄웁니다. 먼저 손 든 사람이 뜻을 말로 답합니다.
 

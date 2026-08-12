@@ -7,7 +7,7 @@ import type { Word } from '@/lib/types';
 import { BIG, Ctl, LiveFrame, useLiveKeys, type Teams } from './shell';
 
 /*
-  ④ 설명해서 맞히기.
+  ④ 스피드 퀴즈 (옛 이름: 설명해서 맞히기).
 
   한 명이 **화면에 등을 지고** 앉습니다. 나머지가 **한국어로** 설명해서
   그 단어를 맞히게 합니다. 60초 동안 몇 개나.
@@ -154,7 +154,7 @@ export default function Explain({ words, dark, onDark, onExit, onBack, teams, on
 					) : (
 						<>
 							<p className="font-bold" style={{ fontSize: BIG.meaning }}>
-								설명해서 맞히기
+								스피드 퀴즈
 							</p>
 							<p className="opacity-55" style={{ fontSize: BIG.line }}>
 								한 명이 화면에 등을 지고 앉습니다. 나머지가 한국어로 설명합니다.

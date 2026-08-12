@@ -7,7 +7,7 @@ import type { Word } from '@/lib/types';
 import { BIG, Ctl, LiveFrame, Speaker, useLiveKeys, type Teams } from './shell';
 
 /*
-  ② 한 글자 빈칸.
+  ② 빈칸 스피드 (옛 이름: 빈칸 채우기 · 한 글자 빈칸).
 
   단어를 가린 예문을 크게 띄우고, 보기 4개(한자+병음)에 A~D 를 붙입니다.
 

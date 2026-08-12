@@ -7,7 +7,7 @@ import type { Word } from '@/lib/types';
 import { BIG, Ctl, LiveFrame, Speaker, useLiveKeys, type Teams } from './shell';
 
 /*
-  ① 성조 체조 — 첫 게임.
+  ① 성조 챌린지 (옛 이름: 성조 체조) — 첫 게임.
 
   단어와 뜻을 크게 띄우고, 짚은 글자가 몇 성인지 **몸으로** 답합니다.
   "하나 둘 셋" 에 전원 동시.

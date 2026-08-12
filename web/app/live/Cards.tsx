@@ -6,7 +6,7 @@ import type { Word } from '@/lib/types';
 import { BIG, Ctl, LiveFrame, Speaker, useLiveKeys } from './shell';
 
 /*
-  단어 넘기기 — 게임이 아니라 화면 뼈대입니다.
+  단어 훑기 (옛 이름: 단어 넘기기) — 게임이 아니라 화면 뼈대입니다.
 
   단어 하나를 세 단계로 공개합니다.
     ① 한자만 → ② +병음(+소리) → ③ +뜻·예문

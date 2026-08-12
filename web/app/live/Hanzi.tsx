@@ -7,7 +7,7 @@ import type { Word } from '@/lib/types';
 import { BIG, Ctl, LiveFrame, useLiveKeys, type Teams } from './shell';
 
 /*
-  ⑧ 한자 가족 열기.
+  ⑧ 한자 족보 (옛 이름: 한자 가족 열기).
 
   가운데 글자 하나(`学`)를 크게 띄우고, 그 글자가 든 단어 여덟 개를
   가려둡니다. 팀이 번갈아 대면 한 칸씩 열립니다.

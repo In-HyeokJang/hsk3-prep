@@ -7,7 +7,7 @@ import type { Word } from '@/lib/types';
 import { BIG, Ctl, LiveFrame, Speaker, useLiveKeys, type Teams } from './shell';
 
 /*
-  ③ 귀로 잡기 (听写).
+  ③ 받아쓰기 타임 (옛 이름: 귀로 잡기 · 听写).
 
   한자를 감춘 채 소리만 두 번 들려줍니다.
 
