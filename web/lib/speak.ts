@@ -25,15 +25,35 @@ function hasApi(): boolean {
  * 본토 표준어(zh-CN)를 먼저 찾습니다. 이 사이트는 간체자만 다루니까요.
  * 없으면 다른 중국어 목소리라도 씁니다 — 대만·홍콩 목소리도 보통화를 읽습니다.
  * 한국어나 영어 목소리로 한자를 읽히면 안 됩니다. 아예 다른 소리가 납니다.
+ *
+ * ★ 기기 안에 있는 목소리를 먼저 씁니다 (`localService`).
+ *   크롬·엣지의 중국어 목소리 상당수는 **클라우드**입니다. 이름만 봐서는
+ *   구별이 안 되는데, 인터넷이 느리면 소리가 늦게 나거나 아예 안 납니다.
+ *
+ *   혼자 쓸 때는 한 번 끊겨도 다시 누르면 그만입니다. 그런데 오프라인
+ *   모임(`/live`)에서는 열 명이 화면을 보고 있고, 듣기 게임은 소리가 곧
+ *   문제입니다. 회의실 와이파이는 대개 느립니다.
+ *
+ *   그래서 품질이 조금 떨어져도 **끊기지 않는 쪽**을 고릅니다.
+ *   기기 안에 중국어 목소리가 하나도 없으면 그때는 클라우드라도 씁니다.
  */
 export function chineseVoice(): SpeechSynthesisVoice | null {
 	if (!hasApi()) return null;
 
-	const all = window.speechSynthesis.getVoices();
-	const zh = all.filter((v) => v.lang.toLowerCase().startsWith('zh'));
+	const zh = window.speechSynthesis
+		.getVoices()
+		.filter((v) => v.lang.toLowerCase().startsWith('zh'));
 	if (zh.length === 0) return null;
 
-	return zh.find((v) => v.lang.toLowerCase().replace('_', '-') === 'zh-cn') ?? zh[0];
+	const isCN = (v: SpeechSynthesisVoice) => v.lang.toLowerCase().replace('_', '-') === 'zh-cn';
+
+	// 좋은 순서대로: 기기 안 zh-CN → 기기 안 아무 중국어 → 클라우드 zh-CN → 나머지
+	return (
+		zh.find((v) => v.localService && isCN(v)) ??
+		zh.find((v) => v.localService) ??
+		zh.find(isCN) ??
+		zh[0]
+	);
 }
 
 /**
