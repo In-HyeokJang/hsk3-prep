@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { canListen, makePickZh, type Quiz } from '@/lib/quiz';
-import { speak } from '@/lib/speak';
+import { speak, speakTimes } from '@/lib/speak';
 import type { Word } from '@/lib/types';
 import { BIG, Ctl, LiveFrame, Speaker, useLiveKeys, type Teams } from './shell';
 
@@ -35,8 +35,26 @@ const PLAYS = 2;
  */
 const REPLAYS = 2;
 
-/** 두 번째 재생까지 기다리는 시간. speak() 은 앞의 소리를 끊습니다 */
-const GAP_MS = 2000;
+/**
+ * 두 번 들려줄 때 **다 읽고 나서** 쉬는 시간.
+ *
+ * ★ 전에는 "첫 소리로부터 2초" 였습니다. `speak()` 은 읽던 것을 끊기 때문에,
+ *   `不好意思`(bù hǎo yìsi) 처럼 긴 단어는 2초 안에 다 못 읽고 **첫 번째가
+ *   중간에 잘렸습니다.** 듣기 게임에서 문제가 잘리면 그 문제는 못 냅니다.
+ *
+ *   이제는 시계로 짐작하지 않고 `speak()` 이 알려주는 **끝난 시점**을 씁니다.
+ *   짧은 단어는 빨리, 긴 단어는 늦게 두 번째가 나갑니다.
+ */
+const GAP_MS = 1000;
+
+/**
+ * "다 읽었다" 는 신호가 **아예 안 오는 기기**를 위한 예비 시계.
+ *
+ * 브라우저마다 갈리는 부분이라 확인할 방법이 없습니다. 신호를 못 받으면
+ * 두 번째 소리가 영영 안 나오는데, 열 명이 그걸 앉아서 기다리게 됩니다.
+ * 이 시간이 지나면 신호가 왔다 치고 그냥 넘어갑니다.
+ */
+const END_WAIT_MS = 6000;
 
 const LABELS = ['A', 'B', 'C', 'D'] as const;
 
@@ -91,15 +109,18 @@ export default function Listen({ words, dark, onDark, onExit, onBack, teams, onM
 
 	/* ── 문제가 바뀌면 두 번 들려줍니다 ───────────────────── */
 
-	const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+	/**
+	 * 지금 나가고 있는 소리를 그만두게 하는 함수.
+	 *
+	 * ★ 새 소리를 걸기 전에 반드시 먼저 부릅니다. 안 부르면 **앞 문제의
+	 *   '다 읽었다' 신호가 뒤늦게 도착해** 새 문제 위에서 앞 단어가 울립니다.
+	 *   (넘어가면서 끊기는 것도 '끝' 이라 신호가 옵니다.)
+	 */
+	const stopSound = useRef<(() => void) | null>(null);
 
 	const play = useCallback((text: string, times: number) => {
-		timers.current.forEach(clearTimeout);
-		timers.current = [];
-		for (let i = 0; i < times; i++) {
-			if (i === 0) speak(text);
-			else timers.current.push(setTimeout(() => speak(text), GAP_MS * i));
-		}
+		stopSound.current?.();
+		stopSound.current = speakTimes(text, times, GAP_MS, END_WAIT_MS);
 	}, []);
 
 	useEffect(() => {
@@ -109,8 +130,8 @@ export default function Listen({ words, dark, onDark, onExit, onBack, teams, onM
 
 	// 화면을 벗어날 때 예약된 소리를 지웁니다. 안 지우면 게임을 나가도 떠듭니다.
 	useEffect(() => {
-		const list = timers;
-		return () => list.current.forEach(clearTimeout);
+		const s = stopSound;
+		return () => s.current?.();
 	}, []);
 
 	/* ── 넘기기 ───────────────────────────────────────────── */

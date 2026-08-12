@@ -13,7 +13,9 @@
 
 // 화면을 고칠 때마다 올립니다. 안 올리면 배포해도 옛 화면이 그대로 뜹니다.
 //   v2 (2026-08-11) — 오프라인 모임 화면 /live 추가
-const VERSION = 'v2';
+//   v3 (2026-08-12) — 45분 판 재편(L20) · 빈칸 손보기(L21) ·
+//                     귀로 잡기 문제 뽑기(L22) · 소리 두 번 재생(L23)
+const VERSION = 'v3';
 const SHELL = `hsk3-shell-${VERSION}`;
 const DATA = `hsk3-data-${VERSION}`;
 
