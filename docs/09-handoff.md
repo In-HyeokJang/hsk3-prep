@@ -359,6 +359,7 @@ update public.words   set verified = true, verified_at = now() where id = 'L3-00
 | **같은 성질의 Tailwind 클래스를 둘 붙이기** | `opacity-40` 과 `opacity-0` 을 같이 쓰면 **뒤에 쓴 것이 안 이깁니다.** 만들어진 CSS 차례로 이겨서 늘 40이 남습니다 | 삼항으로 **하나만** 내보내기 |
 | **키를 `window` 에서 받고 `preventDefault`** | 입력 칸에서 `Backspace` 가 안 지워지고 숫자 키가 다른 일을 합니다 | `INPUT`·`TEXTAREA`·`contenteditable` 에서 온 키는 흘려보내기 |
 | **가운데 정렬한 칸에 `overflow-y-auto` 를 같이 걸기** | 내용이 칸보다 커지면 **위쪽이 잘려나가고 그 위로는 스크롤이 안 올라갑니다.** 아래로만 굴러가서, 머리줄 밑으로 파고든 것처럼 보입니다 | 굴리는 칸과 가운데 맞추는 칸을 **나눕니다**. 바깥에 `overflow-y-auto`, 안쪽에 `min-h-full flex items-center` |
+| **배열을 문자열로 이어붙여 useEffect 의존성으로 쓰기** | 이음쇠로 쓴 공백이 파일 안에서 **NUL 바이트로 깨졌습니다.** 동작은 멀쩡한데 **git 이 그 파일을 바이너리로 봐서 변경 내역이 안 보입니다** | 이어붙이지 말고 **ref 에 같이 담기**. `git show --stat` 에 `Bin ... bytes` 가 보이면 이걸 의심 |
 | **고른 표시를 보기 *안에* 넣기** | 그 보기가 높아지며 **아래 보기들이 밀립니다.** 두 번째 탭이 엉뚱한 데 떨어져 오탭 방지가 오탭을 만듭니다 | 목록 **바깥**에 고정 높이로 |
 
 ---
