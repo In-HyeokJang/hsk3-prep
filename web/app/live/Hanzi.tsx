@@ -29,6 +29,19 @@ const MIN_TILES = 5;
 
 type Props = {
 	words: Word[];
+	/**
+	 * 973단어 전부.
+	 *
+	 * ★ 가족은 **회차 범위가 아니라 전체**에서 찾습니다.
+	 *   범위 안에서만 찾으면 여섯 회차 **전부 0개**가 나옵니다 — 973개를
+	 *   빈도로 6등분하면 学 이 1회차에 있어도 学校·同学 는 다른 토막에
+	 *   흩어지기 때문입니다. 실제로 세어보니 다섯 칸을 채우는 글자가
+	 *   회차마다 하나도 없었습니다. 화면에는 "가족을 만들 글자가 없습니다"
+	 *   만 떴고요.
+	 *
+	 *   가운데 글자는 그대로 오늘 범위에서 고르고, 가족만 전체에서 찾습니다.
+	 */
+	all: Word[];
 	dark: boolean;
 	onDark: () => void;
 	onExit: () => void;
@@ -47,15 +60,24 @@ function shuffled<T>(list: T[]): T[] {
 	return out;
 }
 
-export default function Hanzi({ words, dark, onDark, onExit, onBack, teams, onMiss }: Props) {
+export default function Hanzi({ words, all, dark, onDark, onExit, onBack, teams, onMiss }: Props) {
 	// 씨앗은 한 글자 단어입니다. 두 글자를 주면 두 글자의 가족이 섞여서
 	// "가운데 글자 하나" 라는 규칙이 깨집니다.
 	const families = useMemo(() => {
-		const seeds = words.filter((w) => [...w.hanzi].length === 1 && /^[一-鿿]$/.test(w.hanzi));
-		return shuffled(seeds)
-			.map((seed) => ({ seed, family: sharingHanzi(seed, words, TILES) }))
-			.filter((f) => f.family.length >= MIN_TILES);
-	}, [words]);
+		const single = (list: Word[]) =>
+			list.filter((w) => [...w.hanzi].length === 1 && /^[一-鿿]$/.test(w.hanzi));
+
+		// 가운데 글자는 오늘 범위에서, 가족은 전체에서
+		const build = (seeds: Word[]) =>
+			shuffled(seeds)
+				.map((seed) => ({ seed, family: sharingHanzi(seed, all, TILES) }))
+				.filter((f) => f.family.length >= MIN_TILES);
+
+		const here = build(single(words));
+		// 오늘 범위에 한 글자 단어가 아예 없는 회차도 있습니다(5·6회차).
+		// 그때는 전체에서 고릅니다 — 빈 화면보다는 낫습니다.
+		return here.length > 0 ? here : build(single(all));
+	}, [words, all]);
 
 	const [at, setAt] = useState(0);
 	const [opened, setOpened] = useState<number[]>([]);

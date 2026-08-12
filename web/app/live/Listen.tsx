@@ -27,8 +27,13 @@ const ROUND = 8;
 
 /** 처음에 몇 번 들려주나 */
 const PLAYS = 2;
-/** 그 뒤에 다시 들을 수 있는 횟수 */
-const REPLAYS = 1;
+/**
+ * 그 뒤에 다시 들을 수 있는 횟수.
+ *
+ * 듣기는 **재생 횟수가 곧 난이도 손잡이**입니다. 초급 모임에서는
+ * 한 번으로는 모자라서, 아무도 답을 못 내고 조용해집니다.
+ */
+const REPLAYS = 2;
 
 /** 두 번째 재생까지 기다리는 시간. speak() 은 앞의 소리를 끊습니다 */
 const GAP_MS = 2000;
@@ -58,12 +63,16 @@ function shuffled<T>(list: T[]): T[] {
 export default function Listen({ words, dark, onDark, onExit, onBack, teams, onMiss }: Props) {
 	// 인덱스 3 이면 makeQuiz 가 '뜻 → 한자 4개' 를 내줍니다.
 	// 보기 만드는 규칙(뜻이 같은 보기·한자 겹침)을 그대로 물려받습니다.
-	const [deck] = useState<Quiz[]>(() =>
-		shuffled(words)
-			.map((w) => makeQuiz(w, words, 3))
-			.filter((q) => q.kind === 'pick-zh')
-			.slice(0, ROUND),
-	);
+	// ★ 필요한 만큼만 만듭니다 (Blank.tsx 와 같은 이유 — 전체 범위에서 화면이 멎습니다)
+	const [deck] = useState<Quiz[]>(() => {
+		const out: Quiz[] = [];
+		for (const w of shuffled(words)) {
+			if (out.length >= ROUND) break;
+			const q = makeQuiz(w, words, 3);
+			if (q.kind === 'pick-zh') out.push(q);
+		}
+		return out;
+	});
 
 	const [at, setAt] = useState(0);
 	const [open, setOpen] = useState(false);

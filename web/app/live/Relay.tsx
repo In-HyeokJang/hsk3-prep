@@ -79,10 +79,23 @@ export default function Relay({ words, dark, onDark, onExit, onBack, teams, onMi
 
 	const frame = { dark, onDark, onExit, teams };
 
-	if (deck.length === 0) {
+	// ★ 회차 범위에 한 글자 단어가 거의 없습니다.
+	//   5회차는 2개, 6회차는 1개뿐이라 시작하자마자 끝납니다.
+	//   왜 그런지 말해주지 않으면 고장난 줄 압니다.
+	if (deck.length < 3) {
 		return (
 			<LiveFrame {...frame} controls={<Ctl onClick={onBack}>게임 고르기</Ctl>}>
-				<p style={{ fontSize: BIG.meaning }}>말해볼 수 있는 한 글자 단어가 없습니다.</p>
+				<div className="flex max-w-2xl flex-col items-center gap-3 text-center">
+					<p style={{ fontSize: BIG.meaning }}>
+						이 회차에는 말해볼 글자가 {deck.length}개뿐입니다
+					</p>
+					<p className="opacity-55" style={{ fontSize: BIG.small }}>
+						성조 릴레이는 <b>한 글자 단어</b>만 씁니다. 두 글자를 주면 어느 쪽 성조를
+						내야 하는지부터 헷갈리고, 마이크도 뒷음절만 떼어낼 수 없습니다.
+						<br />
+						시작 화면에서 범위를 <b>전체</b>로 바꾸면 넉넉해집니다.
+					</p>
+				</div>
 			</LiveFrame>
 		);
 	}

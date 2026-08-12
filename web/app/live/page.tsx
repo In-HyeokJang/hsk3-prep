@@ -131,27 +131,27 @@ const RULES: Partial<Record<Game, Rule>> = {
 			'1성 팔 옆으로 · 2성 아래→위 · 3성 내렸다 올림 · 4성 위→아래 · 경성 어깨 으쓱',
 			'맞힌 사람 수만큼 팀 점수를 누릅니다',
 		],
-		keys: 'Space 세기 · H 힌트(둘로 좁히기) · ← 이전 · 1·2 득점',
+		keys: 'Space 세기 · H 힌트(둘로 좁히기) · ← 이전 · 1·2 득점 · M 놓침',
 	},
 	blank: {
 		one: '단어를 가린 예문을 보고, 보기 4개 중 카드로 답합니다.',
 		steps: [
 			'가려진 예문이 뜹니다. 보기는 A~D',
-			'10초 안에 카드를 동시에 듭니다',
-			'2초 남으면 뜻이 힌트로 켜집니다',
+			'15초 안에 카드(또는 손가락 1~4)를 동시에 듭니다',
+			'5초 남으면 뜻이 힌트로 켜집니다',
 			'맞힌 사람 수만큼 팀 점수를 누릅니다',
 		],
-		keys: 'Space 정답 · ← 이전 · 1·2 득점',
+		keys: 'Space 정답 · ← 이전 · 1·2 득점 · M 놓침',
 	},
 	listen: {
 		one: '소리만 두 번 듣고 한자 4개 중 고릅니다.',
 		steps: [
 			'한자를 감춘 채 소리가 두 번 납니다',
 			'보기 한자 4개 중 카드로 답합니다',
-			'다시 듣기는 한 번만 (R)',
+			'다시 듣기는 두 번까지 (R)',
 			'상급을 켜면 보기 없이 종이에 병음을 받아쓰고 옆 팀과 바꿔 채점합니다',
 		],
-		keys: 'Space 정답 · R 다시 듣기 · 1·2 득점',
+		keys: 'Space 정답 · R 다시 듣기 · 1·2 득점 · M 놓침',
 	},
 	explain: {
 		one: '한 명이 등을 지고 앉고, 나머지가 한국어로 설명합니다. 60초.',
@@ -171,7 +171,7 @@ const RULES: Partial<Record<Game, Rule>> = {
 			'맞힌 사람 이름을 누르면 그 사람은 다음 두세 문제를 쉽니다',
 			'한 사람이 다 가져가지 않게 하려는 규칙입니다',
 		],
-		keys: 'Space 정답 · ← 이전 · 1·2 득점',
+		keys: 'Space 정답 · ← 이전 · 1·2 득점 · M 놓침',
 	},
 	relay: {
 		one: '한 명씩 나와 한 글자를 발음합니다. 자원자만.',
@@ -199,7 +199,7 @@ const RULES: Partial<Record<Game, Rule>> = {
 			'화면이 답할 사람을 무작위로 지목합니다',
 			'팀 전체가 15초 상의합니다',
 			'마지막 말은 지목된 사람이 합니다',
-			'8문제 중 6개면 통과. 목숨은 3개',
+			'8문제 중 4개면 다 같이 통과. 목숨은 없습니다',
 		],
 		keys: 'O 맞음 · X 틀림 · Space 다음',
 	},
@@ -271,28 +271,43 @@ function RulesScreen({
  *
  * ★ 매주 같은 게임을 하는 것이 아닙니다.
  *   앞 회차는 **성조 감각**, 뒤로 갈수록 **듣기와 문장**으로 옮겨갑니다.
- *   여섯 주가 지루해지지 않는 이유가 여기 있습니다.
  *
- * ★ 모든 판의 마지막은 ⑦ 다 같이 살리기입니다.
+ * ★ 45분에는 **게임 두 개 + 마무리 하나**가 상한입니다.
+ *   기획서는 120분(판 25분 × 3)을 전제로 게임 하나를 6분으로 잡았는데,
+ *   그건 게임 로직만 센 값입니다. 실제로는 하나당 10~12분이 듭니다 —
+ *   규칙 읽어주기 1.5분 + 응답 방식 전환 2분 + **형식 적응 손실**
+ *   (새 방식의 첫 두세 문제는 내용이 아니라 "답하는 법"에 머리를 씁니다).
+ *
+ * ★ 응답 방식이 같으면 전환이 거의 공짜입니다.
+ *   ②와 ③은 둘 다 손가락/카드로 답해서 이어 붙이기 좋습니다.
+ *   몸으로 하는 ①과 섞는 회차는 두 개가 상한입니다.
+ *
+ * ★ 마지막은 늘 ⑦ 다 같이 살리기입니다.
  *   진 팀도 같은 편으로 끝내고 쉬는 시간에 들어갑니다.
  *
- * ★ ⑥ 성조 릴레이는 매회 맨 뒤 13분 고정입니다.
+ * ★ ④ 설명하기 · ⑥ 릴레이 · ⑧ 한자 가족은 판에서 뺐습니다.
+ *   초급에게 **보기 없이 스스로 떠올리기**를 요구하는 것들이고,
+ *   ④는 1회차 범위의 36%가 `了 把 被` 같은 어법어라 한국어로
+ *   설명할 방법이 없습니다. 목록에서 직접 고를 수는 있습니다.
  */
 type Plan = { focus: string; games: Game[] };
 
 const PLANS: Record<number, Plan> = {
-	1: { focus: '성조 4개 감각 잡기 · 모임 규칙 익히기', games: ['tone', 'tone', 'hanzi'] },
-	2: { focus: '두 글자 단어의 성조 짝', games: ['tone', 'hands', 'hanzi'] },
-	3: { focus: '듣기 시작', games: ['listen', 'tone', 'blank'] },
-	4: { focus: '헷갈리는 발음 짝 (sh/s · ü/u · -n/-ng)', games: ['listen', 'explain', 'tone'] },
-	5: { focus: '문장 단위', games: ['blank', 'listen', 'explain'] },
-	6: { focus: '종합 · 여섯 회 통째로', games: ['listen', 'blank', 'hands'] },
+	1: { focus: '성조 4개 감각 잡기 · 모임 규칙 익히기', games: ['tone', 'blank'] },
+	2: { focus: '두 글자 단어의 성조 짝', games: ['tone', 'listen'] },
+	3: { focus: '듣기 시작', games: ['listen', 'tone'] },
+	4: { focus: '헷갈리는 발음 짝 (sh/s · ü/u · -n/-ng)', games: ['listen', 'blank'] },
+	5: { focus: '문장 단위', games: ['blank', 'hands'] },
+	6: { focus: '종합 · 여섯 회 통째로', games: ['listen', 'hands'] },
 };
 
 /** 판마다 맨 끝에 붙는 것 */
 const CLOSER: Game = 'coop';
-/** 매회 맨 뒤 13분 */
-const LAST: Game = 'relay';
+
+/** 판 이름은 게임 수에서 만듭니다. 문자열로 박아두면 개수를 바꿀 때 어긋납니다 */
+function planLabels(count: number): string[] {
+	return [...Array.from({ length: count - 1 }, (_, i) => `판 ${i + 1}`), '마무리'];
+}
 
 /* ── 회차 범위 ───────────────────────────────────────────── */
 
@@ -571,11 +586,12 @@ function LiveHome() {
 
 	// 오늘 판 — 경쟁 셋 + 협동 마무리 + 맨 뒤 마이크
 	const base = session ? PLANS[session] : undefined;
-	const plan = base && {
-		focus: base.focus,
-		order: [...base.games, CLOSER, LAST] as Game[],
-		labels: ['판 1', '판 2', '판 3', '마무리', '맨 뒤'],
-	};
+	const plan =
+		base &&
+		(() => {
+			const order = [...base.games, CLOSER] as Game[];
+			return { focus: base.focus, order, labels: planLabels(order.length) };
+		})();
 
 	// ★ 게임에는 **회차 범위만** 넘깁니다.
 	//   전체를 넘기고 게임 안에서 자르면 게임마다 자르는 규칙이 갈립니다.
@@ -618,7 +634,7 @@ function LiveHome() {
 	if (game === 'tone') return <ToneGym {...shared} onBack={home} teams={teams} />;
 	if (game === 'blank') return <Blank {...shared} onBack={home} teams={teams} />;
 	if (game === 'listen') return <Listen {...shared} onBack={home} teams={teams} />;
-	if (game === 'hanzi') return <Hanzi {...shared} onBack={home} teams={teams} />;
+	if (game === 'hanzi') return <Hanzi {...shared} all={words} onBack={home} teams={teams} />;
 	if (game === 'hands') return <Hands {...shared} onBack={home} teams={teams} names={names} />;
 	if (game === 'explain') return <Explain {...shared} onBack={home} teams={teams} />;
 	if (game === 'relay') return <Relay {...shared} onBack={home} teams={teams} />;
@@ -721,8 +737,9 @@ function LiveHome() {
 							})}
 						</ol>
 						<p className="opacity-40">
-							한 판 25분 · 경쟁 셋 뒤에 <b>⑦ 다 같이 살리기</b>로 끝냅니다. 진 팀도 같은 편으로
-							쉬는 시간에 들어가게요. <b>⑥ 성조 릴레이</b>는 맨 뒤 13분.
+							게임 하나에 <b>10~12분</b>씩 · 규칙 읽어주고 답하는 법 익히는 시간까지요. 셋이면
+							45분에 안 들어갑니다. 마지막은 늘 <b>⑦ 다 같이 살리기</b> — 진 팀도 같은 편으로
+							쉬는 시간에 들어가게요.
 						</p>
 					</Step>
 				)}

@@ -24,10 +24,16 @@ import { BIG, Ctl, LiveFrame, Speaker, useLiveKeys, type Teams } from './shell';
 
 const ROUND = 8;
 
-/** 카드를 드는 시간 */
-const LIMIT = 10;
-/** 몇 초 남았을 때 힌트를 켜나 — 8초에 켜니 2초 남은 때입니다 */
-const HINT_AT = 2;
+/**
+ * 카드를 드는 시간.
+ *
+ * 10초였는데 15초로 늘렸습니다. 초급자가 5m 뒤에서 중국어 예문 한 줄을
+ * 읽고 보기 넷을 견주기에 10초는 모자랍니다. "잠깐만요" 가 나오는데
+ * 화면은 그대로 답을 열어버립니다.
+ */
+const LIMIT = 15;
+/** 몇 초 남았을 때 뜻을 힌트로 켜나 */
+const HINT_AT = 5;
 
 const LABELS = ['A', 'B', 'C', 'D'] as const;
 
@@ -52,13 +58,20 @@ function shuffled<T>(list: T[]): T[] {
 }
 
 export default function Blank({ words, dark, onDark, onExit, onBack, teams, onMiss }: Props) {
-	const [deck] = useState<Quiz[]>(() =>
-		shuffled(words.filter(canBlank))
-			.map((w) => makeQuiz(w, words, 2))
+	// ★ 필요한 만큼만 문제를 만듭니다.
+	//   전에는 973개 전부에 대해 makeQuiz 를 돌린 뒤 8개만 잘라 썼습니다.
+	//   보기를 뽑는 규칙이 후보마다 겹침 검사를 하느라 O(n²) 이라,
+	//   범위를 '전체' 로 두면 화면이 십여 초 멎었습니다. 열 명 앞에서요.
+	const [deck] = useState<Quiz[]>(() => {
+		const out: Quiz[] = [];
+		for (const w of shuffled(words.filter(canBlank))) {
+			if (out.length >= ROUND) break;
+			const q = makeQuiz(w, words, 2);
 			// makeQuiz 는 조건이 안 맞으면 다른 형식으로 내려갑니다. 빈칸만 씁니다.
-			.filter((q) => q.kind === 'blank')
-			.slice(0, ROUND),
-	);
+			if (q.kind === 'blank') out.push(q);
+		}
+		return out;
+	});
 
 	const [at, setAt] = useState(0);
 	const [open, setOpen] = useState(false); // 정답을 공개했나

@@ -23,10 +23,22 @@ import { BIG, Ctl, LiveFrame, Speaker, useLiveKeys } from './shell';
     15초 동안 배웁니다.
 */
 
-/** 8문제 중 6개면 통과 */
+/**
+ * 8문제 중 4개면 통과.
+ *
+ * ★ 처음에는 6개였는데 초급에게 너무 높았습니다.
+ *   팀 정답률이 50%일 때 8문제 중 6개를 맞힐 확률은 **14%** 입니다.
+ *   진 팀도 같은 편으로 끝내라고 만든 게임이 열 번 중 여덟아홉 번
+ *   "아쉽습니다" 로 끝나면, 위로가 아니라 한 번 더 지는 자리가 됩니다.
+ *   4개로 낮추면 같은 조건에서 **64%** 가 됩니다.
+ *
+ * ★ 목숨도 없앴습니다.
+ *   목숨이 먼저 떨어지면 문제를 남기고 즉시 끝나는데, 그러면
+ *   **마지막에 X를 받은 그 한 사람이 게임을 끝낸 사람**이 됩니다.
+ *   무작위 지목으로 원망을 없애놓고 마지막 한 수에서 되살리는 셈입니다.
+ */
 const QUESTIONS = 8;
-const NEED = 6;
-const LIVES = 3;
+const NEED = 4;
 
 /** 팀 전체가 상의하는 시간 */
 const TALK_SEC = 15;
@@ -71,7 +83,6 @@ export default function Coop({ words, names, dark, onDark, onExit, onBack, onMis
 	const [phase, setPhase] = useState<Phase>('ask');
 	const [left, setLeft] = useState(TALK_SEC);
 	const [right, setRight] = useState(0); // 맞힌 수
-	const [lives, setLives] = useState(LIVES);
 
 	const word = deck[at];
 	const who = order[at] ?? '아무나';
@@ -93,11 +104,8 @@ export default function Coop({ words, names, dark, onDark, onExit, onBack, onMis
 		(ok: boolean) => {
 			if (phase !== 'ask') return;
 			if (ok) setRight((n) => n + 1);
-			else {
-				setLives((n) => n - 1);
-				// 틀린 것은 진행자가 따로 안 눌러도 마무리 화면에 담깁니다
-				if (word) onMiss(word);
-			}
+			// 틀린 것은 진행자가 따로 안 눌러도 마무리 화면에 담깁니다
+			else if (word) onMiss(word);
 			setPhase('judge');
 		},
 		[phase, word, onMiss],
@@ -107,7 +115,7 @@ export default function Coop({ words, names, dark, onDark, onExit, onBack, onMis
 		if (phase === 'ask') return; // 아직 판정 전입니다
 		if (phase === 'over') return;
 
-		const last = at + 1 >= deck.length || lives <= 0;
+		const last = at + 1 >= deck.length;
 		if (last) {
 			setPhase('over');
 			return;
@@ -115,7 +123,7 @@ export default function Coop({ words, names, dark, onDark, onExit, onBack, onMis
 		setAt((i) => i + 1);
 		setLeft(TALK_SEC);
 		setPhase('ask');
-	}, [phase, at, deck.length, lives]);
+	}, [phase, at, deck.length]);
 
 	useLiveKeys({
 		' ': next,
@@ -151,7 +159,7 @@ export default function Coop({ words, names, dark, onDark, onExit, onBack, onMis
 						{won ? '다 같이 살았습니다' : '아쉽습니다'}
 					</p>
 					<p style={{ fontSize: BIG.meaning }}>
-						{right} / {deck.length} 맞힘 · 목숨 {Math.max(0, lives)}개 남음
+						{right} / {deck.length} 맞힘
 					</p>
 					<p className="opacity-50" style={{ fontSize: BIG.line }}>
 						{won ? '여기까지가 오늘 판의 끝입니다. 쉬는 시간이에요.' : `${NEED}개가 필요했어요.`}
@@ -184,10 +192,9 @@ export default function Coop({ words, names, dark, onDark, onExit, onBack, onMis
 			}
 		>
 			<div className="flex w-full max-w-[92vw] flex-col items-center gap-[2vmin] text-center">
-				{/* 목숨 — 남은 것이 한눈에 */}
-				<div style={{ fontSize: BIG.line }} className="tracking-[0.3em]">
-					{'♥'.repeat(Math.max(0, lives))}
-					<span className="opacity-20">{'♥'.repeat(Math.max(0, LIVES - lives))}</span>
+				{/* 몇 개 맞히면 되는지 — 남은 것이 한눈에 */}
+				<div style={{ fontSize: BIG.small }} className="opacity-45">
+					{NEED}개 맞히면 다 같이 통과 · 지금 {right}개
 				</div>
 
 				{/* 지목 — 이름이 제일 커야 그 사람이 자기라는 걸 압니다 */}
