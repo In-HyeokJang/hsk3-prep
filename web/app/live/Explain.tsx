@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { sharingHanzi } from '@/lib/api';
+import { canExplain } from '@/lib/quiz';
 import type { Word } from '@/lib/types';
 import { BIG, Ctl, LiveFrame, useLiveKeys, type Teams } from './shell';
 
@@ -22,6 +23,17 @@ import { BIG, Ctl, LiveFrame, useLiveKeys, type Teams } from './shell';
 
   ★ 등을 진 사람은 화면을 못 봅니다.
     그러니 화면에는 답을 다 적어도 됩니다. 보는 사람은 설명하는 쪽입니다.
+
+  ★ 어법어는 아예 안 냅니다 (quiz.ts 의 canExplain).
+    `把`(~을) · `被`(~에 의해) · `了` 를 60초 안에 한국어로 설명하되 그 뜻은
+    말하면 안 된다 — 성립하지 않습니다. 가리키는 물건도 동작도 없어서
+    몸짓으로도 못 하고, 한자 가족을 띄워줘도 도움이 안 됩니다.
+    1회차 범위의 15%가 그런 것이었고, 하나 걸리면 60초 중 20초가 날아갑니다.
+
+  ★ 개인 성적을 화면에 안 띄웁니다.
+    전에는 끝나고 몇 개 맞혔는지를 **한자 크기**로 띄웠습니다. 등을 지고
+    앉았던 사람이 0개면 `0개` 가 화면에서 제일 큰 글자가 됩니다.
+    이 프로젝트는 점수를 **팀 단위**로만 셉니다.
 */
 
 /** 한 차례 */
@@ -52,7 +64,8 @@ function shuffled<T>(list: T[]): T[] {
 }
 
 export default function Explain({ words, dark, onDark, onExit, onBack, teams, onMiss }: Props) {
-	const [deck] = useState(() => shuffled(words.filter((w) => w.meaning_ko)));
+	// 어법어를 뺍니다. 60초 안에 설명할 수 없는 것이 섞이면 그 차례가 통째로 죽습니다
+	const [deck] = useState(() => shuffled(words.filter(canExplain)));
 
 	const [phase, setPhase] = useState<Phase>('setup');
 	const [team, setTeam] = useState<0 | 1>(0);
@@ -127,11 +140,15 @@ export default function Explain({ words, dark, onDark, onExit, onBack, teams, on
 				<div className="flex flex-col items-center gap-[2.5vmin] text-center">
 					{phase === 'done' ? (
 						<>
-							<p className="font-bold" style={{ fontSize: BIG.hanziRow }}>
-								{got}개
+							{/* ★ 개인 성적을 크게 안 띄웁니다.
+							    여기 앉아 있던 사람이 0개면 그 숫자가 화면에서 제일 큰 글자가
+							    됩니다. 점수는 팀 단위입니다 — 팀 점수판에 이미 들어가 있으니
+							    여기서는 그 차례를 팀 몫으로 되짚어주기만 합니다 */}
+							<p className="font-bold" style={{ fontSize: BIG.meaning }}>
+								{team + 1}팀 · 60초 끝
 							</p>
 							<p className="opacity-55" style={{ fontSize: BIG.line }}>
-								{team + 1}팀 · 60초
+								이번 차례에 {got}점 · 다음은 {team === 0 ? 2 : 1}팀
 							</p>
 						</>
 					) : (
@@ -162,7 +179,9 @@ export default function Explain({ words, dark, onDark, onExit, onBack, teams, on
 					</div>
 
 					<p className="opacity-35" style={{ fontSize: BIG.small }}>
-						Space 맞힘 · → 통과 · 맞히면 {team + 1}팀에 1점씩 들어갑니다
+						{deck.length === 0
+							? '이 범위에는 설명해서 맞힐 수 있는 단어가 없습니다. 범위를 넓혀보세요.'
+							: `Space 맞힘 · → 통과 · 맞히면 ${team + 1}팀에 1점씩 들어갑니다`}
 					</p>
 				</div>
 			</LiveFrame>
@@ -180,7 +199,7 @@ export default function Explain({ words, dark, onDark, onExit, onBack, teams, on
 	return (
 		<LiveFrame
 			{...frame}
-			badge={`${team + 1}팀 · ${got}개`}
+			badge={`${team + 1}팀 · ${got}점`}
 			controls={
 				<>
 					<Ctl onClick={correct} wide>
