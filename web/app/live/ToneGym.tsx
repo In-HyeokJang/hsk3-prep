@@ -65,6 +65,8 @@ export default function ToneGym({ words, dark, onDark, onExit, onBack, teams, on
 	const [at, setAt] = useState(0);
 	const [phase, setPhase] = useState<Phase>('ready');
 	const [count, setCount] = useState(COUNT_FROM);
+	/** 힌트로 좁혀둔 후보 둘. null 이면 아직 안 켰습니다 */
+	const [hint, setHint] = useState<Tone[] | null>(null);
 
 	const quiz = deck[at];
 
@@ -101,6 +103,7 @@ export default function ToneGym({ words, dark, onDark, onExit, onBack, teams, on
 		if (phase === 'answer') {
 			setAt((i) => i + 1);
 			setPhase('ready');
+			setHint(null);
 			return;
 		}
 		// 세는 중에는 안 받습니다. 아직 아무도 답을 안 했습니다
@@ -109,7 +112,26 @@ export default function ToneGym({ words, dark, onDark, onExit, onBack, teams, on
 	const prev = useCallback(() => {
 		setAt((i) => Math.max(0, i - 1));
 		setPhase('answer'); // 앞 문제는 이미 답을 본 상태로
+		setHint(null);
 	}, []);
+
+	/**
+	 * 힌트 — 넷 중 둘로 좁혀줍니다.
+	 *
+	 * ★ 병음을 보여줄 수는 없습니다. `ā á ǎ à` 의 기호가 곧 답입니다.
+	 *   뜻은 이미 띄우고 있고요(성조와 상관없어서 답이 안 샙니다).
+	 *   남는 방법은 후보를 줄이는 것뿐입니다.
+	 *
+	 * 아무도 손을 못 들어 판이 식을 때 진행자가 씁니다.
+	 * 답을 이미 본 뒤에는 켤 일이 없습니다.
+	 */
+	const showHint = useCallback(() => {
+		if (!quiz || phase === 'answer' || hint) return;
+		const others = ([1, 2, 3, 4, 0] as Tone[]).filter((t) => t !== quiz.tone);
+		const decoy = others[Math.floor(Math.random() * others.length)];
+		// 정답이 늘 왼쪽에 오면 두 번째 문제부터 그게 곧 답입니다
+		setHint(Math.random() < 0.5 ? [quiz.tone, decoy] : [decoy, quiz.tone]);
+	}, [quiz, phase, hint]);
 
 	const showNow = useCallback(() => setPhase('answer'), []);
 
@@ -120,6 +142,8 @@ export default function ToneGym({ words, dark, onDark, onExit, onBack, teams, on
 		ArrowRight: advance,
 		ArrowLeft: prev,
 		Enter: showNow,
+		h: showHint,
+		H: showHint,
 		m: () => quiz && onMiss(quiz.word),
 		M: () => quiz && onMiss(quiz.word),
 	});
@@ -171,6 +195,7 @@ export default function ToneGym({ words, dark, onDark, onExit, onBack, teams, on
 					<Ctl onClick={advance} wide>
 						{phase === 'ready' ? '하나 둘 셋' : phase === 'counting' ? '…' : '다음 →'}
 					</Ctl>
+					{phase !== 'answer' && !hint && <Ctl onClick={showHint}>힌트 (H)</Ctl>}
 					{phase === 'answer' && (
 						<Ctl onClick={() => speak(quiz.word.hanzi)}>다시 듣기</Ctl>
 					)}
@@ -199,6 +224,13 @@ export default function ToneGym({ words, dark, onDark, onExit, onBack, teams, on
 				<div className="font-semibold" style={{ fontSize: BIG.meaning }}>
 					{quiz.word.meaning_ko}
 				</div>
+
+				{/* 힌트 — 넷을 둘로 좁혀줍니다 */}
+				{hint && phase !== 'answer' && (
+					<div className="opacity-60" style={{ fontSize: BIG.line }}>
+						{TONE_NAME[hint[0]]} 아니면 {TONE_NAME[hint[1]]}
+					</div>
+				)}
 
 				{phase === 'counting' && (
 					<div

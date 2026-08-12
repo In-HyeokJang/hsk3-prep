@@ -17,7 +17,7 @@ import Hanzi from './Hanzi';
 import Listen from './Listen';
 import Relay from './Relay';
 import ToneGym from './ToneGym';
-import { BIG, Ctl, LiveFrame, useMissed, useTeams } from './shell';
+import { BIG, Ctl, LiveFrame, useLiveKeys, useMissed, useTeams } from './shell';
 
 /**
  * 오프라인 모임 화면 `/live`.
@@ -107,6 +107,161 @@ const MENU: { id: Game; name: string; about: string; needsVoice?: true }[] = [
 	{ id: 'cards', name: '단어 넘기기', about: '한자 → 병음 → 뜻. 게임 아님' },
 	{ id: 'wrap', name: '마무리 · 오늘 놓친 것', about: '한 화면에 모아서 · 폰으로 찍어가게' },
 ];
+
+/* ── 게임 규칙 ───────────────────────────────────────────── */
+
+/**
+ * 게임에 들어가기 전에 한 번 띄웁니다.
+ *
+ * ★ 진행자가 **읽어주는 화면**입니다.
+ *   참여자는 규칙을 모른 채 앉아 있고, 진행자도 여덟 개를 다 외우고
+ *   있을 수 없습니다. 라운드를 시작할 때마다 이걸 띄우고 소리 내어
+ *   읽으면 그게 곧 규칙 설명이 됩니다.
+ *
+ * Space 한 번이면 넘어가니, 이미 아는 게임이면 바로 시작하면 됩니다.
+ */
+type Rule = { one: string; steps: string[]; keys: string };
+
+const RULES: Partial<Record<Game, Rule>> = {
+	tone: {
+		one: '밑줄 친 글자가 몇 성인지 몸으로 답합니다. 전원 동시.',
+		steps: [
+			'단어와 뜻이 뜹니다. 글자 하나에만 밑줄이 있어요',
+			'"하나 둘 셋" 을 세고, 셋에 다 같이 몸으로 답합니다',
+			'1성 팔 옆으로 · 2성 아래→위 · 3성 내렸다 올림 · 4성 위→아래 · 경성 어깨 으쓱',
+			'맞힌 사람 수만큼 팀 점수를 누릅니다',
+		],
+		keys: 'Space 세기 · H 힌트(둘로 좁히기) · ← 이전 · 1·2 득점',
+	},
+	blank: {
+		one: '단어를 가린 예문을 보고, 보기 4개 중 카드로 답합니다.',
+		steps: [
+			'가려진 예문이 뜹니다. 보기는 A~D',
+			'10초 안에 카드를 동시에 듭니다',
+			'2초 남으면 뜻이 힌트로 켜집니다',
+			'맞힌 사람 수만큼 팀 점수를 누릅니다',
+		],
+		keys: 'Space 정답 · ← 이전 · 1·2 득점',
+	},
+	listen: {
+		one: '소리만 두 번 듣고 한자 4개 중 고릅니다.',
+		steps: [
+			'한자를 감춘 채 소리가 두 번 납니다',
+			'보기 한자 4개 중 카드로 답합니다',
+			'다시 듣기는 한 번만 (R)',
+			'상급을 켜면 보기 없이 종이에 병음을 받아쓰고 옆 팀과 바꿔 채점합니다',
+		],
+		keys: 'Space 정답 · R 다시 듣기 · 1·2 득점',
+	},
+	explain: {
+		one: '한 명이 등을 지고 앉고, 나머지가 한국어로 설명합니다. 60초.',
+		steps: [
+			'맞힐 사람 한 명이 화면에 등을 지고 앉습니다',
+			'나머지가 한국어로 설명합니다. 몸짓도 됩니다',
+			'그 한자·병음·뜻을 그대로 말하면 안 됩니다 (화면이 금지어를 띄웁니다)',
+			'화면이 같이 띄우는 한자 가족과 예문은 써도 됩니다',
+		],
+		keys: 'Space 맞힘 · → 통과 · 시작 전에 팀을 고릅니다',
+	},
+	hands: {
+		one: '한자만 크게. 먼저 손 든 사람이 뜻을 말로 답합니다.',
+		steps: [
+			'한자가 뜨면 먼저 손 든 사람이 뜻을 말합니다',
+			'8초가 지나면 병음이 힌트로 켜집니다',
+			'맞힌 사람 이름을 누르면 그 사람은 다음 두세 문제를 쉽니다',
+			'한 사람이 다 가져가지 않게 하려는 규칙입니다',
+		],
+		keys: 'Space 정답 · ← 이전 · 1·2 득점',
+	},
+	relay: {
+		one: '한 명씩 나와 한 글자를 발음합니다. 자원자만.',
+		steps: [
+			'자원하는 사람만 나옵니다. 지목하지 않습니다',
+			'마이크에 대고 그 글자를 발음합니다',
+			'마이크 판정은 참고일 뿐입니다',
+			'통과인지 아닌지는 진행자가 O/X 로 정합니다',
+		],
+		keys: 'O 통과 · X 아직 · → 넘기기',
+	},
+	hanzi: {
+		one: '가운데 글자가 든 단어 여덟 개를 팀이 번갈아 맞혀 엽니다.',
+		steps: [
+			'가운데 글자 하나와 가려진 칸 여덟 개가 뜹니다',
+			'차례인 팀이 그 글자가 든 단어를 하나 댑니다',
+			'맞으면 진행자가 그 칸 번호를 누릅니다. 열리고 1점',
+			'못 맞히면 Space 로 차례만 넘깁니다',
+		],
+		keys: '1~8 칸 열기 · Space 차례 넘기기 · Backspace 방금 취소',
+	},
+	coop: {
+		one: '경쟁 없음. 전원 대 화면. 판의 마지막에 합니다.',
+		steps: [
+			'화면이 답할 사람을 무작위로 지목합니다',
+			'팀 전체가 15초 상의합니다',
+			'마지막 말은 지목된 사람이 합니다',
+			'8문제 중 6개면 통과. 목숨은 3개',
+		],
+		keys: 'O 맞음 · X 틀림 · Space 다음',
+	},
+};
+
+function RulesScreen({
+	rule,
+	name,
+	dark,
+	onDark,
+	onExit,
+	onStart,
+	onBack,
+}: {
+	rule: Rule;
+	name: string;
+	dark: boolean;
+	onDark: () => void;
+	onExit: () => void;
+	onStart: () => void;
+	onBack: () => void;
+}) {
+	useLiveKeys({ ' ': onStart, Enter: onStart });
+
+	return (
+		<LiveFrame
+			dark={dark}
+			onDark={onDark}
+			onExit={onExit}
+			controls={
+				<>
+					<Ctl onClick={onStart} wide>
+						시작 (Space)
+					</Ctl>
+					<Ctl onClick={onBack}>게임 고르기</Ctl>
+				</>
+			}
+		>
+			<div className="flex w-full max-w-[80vw] flex-col items-center gap-[2vmin] text-center">
+				<h1 className="font-bold" style={{ fontSize: BIG.meaning }}>
+					{name}
+				</h1>
+				<p className="opacity-70" style={{ fontSize: BIG.line }}>
+					{rule.one}
+				</p>
+
+				<ol className="flex flex-col gap-[1vmin] text-left" style={{ fontSize: BIG.small }}>
+					{rule.steps.map((step, i) => (
+						<li key={i} className="flex gap-[1.2vmin]">
+							<span className="shrink-0 opacity-35 tabular-nums">{i + 1}</span>
+							<span className="opacity-80">{step}</span>
+						</li>
+					))}
+				</ol>
+
+				<p className="opacity-35" style={{ fontSize: BIG.small }}>
+					{rule.keys}
+				</p>
+			</div>
+		</LiveFrame>
+	);
+}
 
 /* ── 회차 범위 ───────────────────────────────────────────── */
 
@@ -278,6 +433,8 @@ function LiveHome() {
 	const [words, setWords] = useState<Word[] | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [game, setGame] = useState<Game>('home');
+	// 규칙을 읽는 중인 게임. 시작을 누르면 game 으로 넘어갑니다
+	const [reading, setReading] = useState<Game | null>(null);
 	// 몇 회차 범위로 할까. null 이면 973개 전부입니다
 	const [session, setSession] = useState<number | null>(null);
 	const [dark, setDark] = useState(false); // 프로젝터는 검정을 못 만듭니다
@@ -325,7 +482,16 @@ function LiveHome() {
 
 	const exit = useCallback(() => router.push('/'), [router]);
 	const toggleDark = useCallback(() => setDark((d) => !d), []);
-	const home = useCallback(() => setGame('home'), []);
+	const home = useCallback(() => {
+		setGame('home');
+		setReading(null);
+	}, []);
+
+	// 규칙이 있는 게임은 규칙부터 띄웁니다. 없는 것(단어 넘기기·마무리)은 바로.
+	const pick = useCallback((id: Game) => {
+		if (RULES[id]) setReading(id);
+		else setGame(id);
+	}, []);
 
 	if (error) return <ErrorBox message={error} onRetry={load} />;
 	if (!words) return <Loading text="단어를 받는 중..." />;
@@ -335,6 +501,25 @@ function LiveHome() {
 	//   전체를 넘기고 게임 안에서 자르면 게임마다 자르는 규칙이 갈립니다.
 	const pool = rangeOf(words, session);
 	const shared = { words: pool, dark, onDark: toggleDark, onExit: exit, onMiss: missed.add };
+
+	// 규칙을 읽는 중이면 그것부터
+	const readingRule = reading ? RULES[reading] : undefined;
+	if (reading && readingRule) {
+		return (
+			<RulesScreen
+				rule={readingRule}
+				name={MENU.find((m) => m.id === reading)?.name ?? ''}
+				dark={dark}
+				onDark={toggleDark}
+				onExit={exit}
+				onStart={() => {
+					setGame(reading);
+					setReading(null);
+				}}
+				onBack={home}
+			/>
+		);
+	}
 
 	// 단어 넘기기는 게임이 아니라 놓친 것을 안 담습니다
 	if (game === 'cards')
@@ -396,7 +581,7 @@ function LiveHome() {
 					{MENU.filter((m) => !m.needsVoice || canSpeak !== false).map((m) => (
 						<button
 							key={m.id}
-							onClick={() => setGame(m.id)}
+							onClick={() => pick(m.id)}
 							className="flex min-w-[30vmin] flex-col items-start gap-[0.4vmin] rounded-2xl border border-current/20 px-[2.2vmin] py-[1.4vmin] text-left transition-colors hover:bg-current/5"
 						>
 							<span className="font-bold" style={{ fontSize: BIG.small }}>
