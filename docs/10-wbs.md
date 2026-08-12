@@ -258,5 +258,7 @@ update public.reports set handled = true, handled_at = now() where word_id = 'L3
 
 ## 하기 전에 확인할 것
 
-- [ ] `db/01-schema.sql` 이 **없어졌습니다.** `CLAUDE.md` 는 이 파일을 읽으라고 하는데 실제로는 없습니다.
-      실제 표 정의는 `supabase/migrations/20260804010000_init_schema.sql` 에 있습니다. 둘 중 하나를 맞춰야 합니다
+- [x] ~~`db/01-schema.sql` 이 **없어졌습니다.**~~ — **2026-08-10 정리 완료.**
+      `CLAUDE.md` 가 이제 `supabase/migrations/` 를 가리킵니다. 그 파일을 다시 만들지 않았습니다 —
+      표 정의를 두 곳에 두면 한쪽만 고쳐져서 어긋나기 때문입니다.
+      같은 김에 `CLAUDE.md` 의 화면 목록도 3개 → **실제 6개**로 맞췄습니다
