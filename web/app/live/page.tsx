@@ -264,6 +264,36 @@ function RulesScreen({
 	);
 }
 
+/* ── 회차별 판 짜기 ──────────────────────────────────────── */
+
+/**
+ * 그 회차에 무엇을 하나 (`docs/13-offline-game.md` 의 회차별 초점 표).
+ *
+ * ★ 매주 같은 게임을 하는 것이 아닙니다.
+ *   앞 회차는 **성조 감각**, 뒤로 갈수록 **듣기와 문장**으로 옮겨갑니다.
+ *   여섯 주가 지루해지지 않는 이유가 여기 있습니다.
+ *
+ * ★ 모든 판의 마지막은 ⑦ 다 같이 살리기입니다.
+ *   진 팀도 같은 편으로 끝내고 쉬는 시간에 들어갑니다.
+ *
+ * ★ ⑥ 성조 릴레이는 매회 맨 뒤 13분 고정입니다.
+ */
+type Plan = { focus: string; games: Game[] };
+
+const PLANS: Record<number, Plan> = {
+	1: { focus: '성조 4개 감각 잡기 · 모임 규칙 익히기', games: ['tone', 'tone', 'hanzi'] },
+	2: { focus: '두 글자 단어의 성조 짝', games: ['tone', 'hands', 'hanzi'] },
+	3: { focus: '듣기 시작', games: ['listen', 'tone', 'blank'] },
+	4: { focus: '헷갈리는 발음 짝 (sh/s · ü/u · -n/-ng)', games: ['listen', 'explain', 'tone'] },
+	5: { focus: '문장 단위', games: ['blank', 'listen', 'explain'] },
+	6: { focus: '종합 · 여섯 회 통째로', games: ['listen', 'blank', 'hands'] },
+};
+
+/** 판마다 맨 끝에 붙는 것 */
+const CLOSER: Game = 'coop';
+/** 매회 맨 뒤 13분 */
+const LAST: Game = 'relay';
+
 /* ── 회차 범위 ───────────────────────────────────────────── */
 
 /** 973단어를 빈도로 여섯 등분합니다. 회차당 약 162개 */
@@ -539,6 +569,14 @@ function LiveHome() {
 	if (!words) return <Loading text="단어를 받는 중..." />;
 	if (words.length === 0) return <Notice title="단어가 없습니다" body="자료를 먼저 넣어주세요." />;
 
+	// 오늘 판 — 경쟁 셋 + 협동 마무리 + 맨 뒤 마이크
+	const base = session ? PLANS[session] : undefined;
+	const plan = base && {
+		focus: base.focus,
+		order: [...base.games, CLOSER, LAST] as Game[],
+		labels: ['판 1', '판 2', '판 3', '마무리', '맨 뒤'],
+	};
+
 	// ★ 게임에는 **회차 범위만** 넘깁니다.
 	//   전체를 넘기고 게임 안에서 자르면 게임마다 자르는 규칙이 갈립니다.
 	const pool = rangeOf(words, session);
@@ -653,8 +691,48 @@ function LiveHome() {
 					</p>
 				</Step>
 
-				{/* ── 4. 게임 ── */}
-				<Step no={4} title="무엇을 할까" why="고르면 규칙이 먼저 뜹니다">
+				{/* ── 4. 오늘 판 ──
+				     회차마다 게임 조합이 다릅니다. 앞은 성조 감각, 뒤로 갈수록
+				     듣기와 문장. 그래서 여섯 주가 같은 게임의 반복이 아닙니다. */}
+				{plan && (
+					<Step no={4} title={`${session}회차 판`} why={plan.focus}>
+						<ol className="flex flex-col gap-2">
+							{plan.order.map((g, i) => {
+								const m = MENU.find((x) => x.id === g);
+								if (!m) return null;
+								const off = m.needsVoice && canSpeak === false;
+								return (
+									<li key={`${g}-${i}`} className="flex items-center gap-3">
+										<span className="w-14 shrink-0 opacity-35">{plan.labels[i]}</span>
+										<button
+											disabled={off}
+											onClick={() => pick(g)}
+											className={`flex flex-1 items-baseline gap-2 rounded-xl border px-3 py-2 text-left transition-colors ${
+												off
+													? 'cursor-not-allowed border-current/10 opacity-30'
+													: 'border-current/20 hover:bg-current/5'
+											}`}
+										>
+											<span className="font-bold">{m.name}</span>
+											<span className="opacity-45">{m.about}</span>
+										</button>
+									</li>
+								);
+							})}
+						</ol>
+						<p className="opacity-40">
+							한 판 25분 · 경쟁 셋 뒤에 <b>⑦ 다 같이 살리기</b>로 끝냅니다. 진 팀도 같은 편으로
+							쉬는 시간에 들어가게요. <b>⑥ 성조 릴레이</b>는 맨 뒤 13분.
+						</p>
+					</Step>
+				)}
+
+				{/* ── 5. 그 밖의 게임 ── */}
+				<Step
+					no={plan ? 5 : 4}
+					title={plan ? '그 밖에' : '무엇을 할까'}
+					why={plan ? '판을 바꾸고 싶으면 여기서 골라도 됩니다' : '고르면 규칙이 먼저 뜹니다'}
+				>
 					<div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
 						{MENU.filter((m) => !m.needsVoice || canSpeak !== false).map((m) => (
 							<button
