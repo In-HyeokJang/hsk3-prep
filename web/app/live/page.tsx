@@ -332,6 +332,7 @@ function rangeOf(words: Word[], session: number | null): Word[] {
 /* ── 참여자 이름 ─────────────────────────────────────────── */
 
 const NAMES_KEY = 'hsk3.live.names';
+const DARK_KEY = 'hsk3.live.dark';
 /** 6~10명을 봅니다. 넉넉히 잡되 끝은 둡니다 */
 const MAX_NAMES = 20;
 const MAX_LEN = 12;
@@ -354,6 +355,36 @@ function readNames(): string[] {
 	} catch {
 		return [];
 	}
+}
+
+/* ── 밝기 ─────────────────────────────────────────────────── */
+
+/**
+ * `/live` 를 밝게 열지 어둡게 열지.
+ *
+ * ★ 전에는 **무조건 밝게** 시작했습니다(프로젝터는 검정을 못 만들어서).
+ *   그런데 그러면 컴퓨터가 어두운 화면 설정인 사람에게는 **모임 화면만
+ *   혼자 하얗게** 뜹니다. 다른 화면은 전부 어두운데요. "같은 사이트가
+ *   맞나" 싶어지는 자리가 여기였습니다.
+ *
+ * ★ 그래서 **컴퓨터 설정을 따라 시작**하고, 진행자가 손으로 바꾼 값은
+ *   기억합니다. 노트북에서 열어볼 때는 사이트와 같은 톤이고,
+ *   모임 전에 `밝게` 를 한 번 누르면 그 뒤로는 계속 밝게 열립니다.
+ *
+ * ★ 서버에서 미리 그릴 때는 컴퓨터 설정을 알 수 없습니다.
+ *   그래서 처음 값은 `false` 로 두고 화면에 붙은 뒤에 고칩니다.
+ *   여기서 바로 읽으면 서버가 그린 것과 달라져서 React 가 경고합니다.
+ */
+function readDark(): boolean {
+	try {
+		// 손으로 고른 것이 있으면 그게 먼저입니다
+		const saved = localStorage.getItem(DARK_KEY);
+		if (saved === 'on') return true;
+		if (saved === 'off') return false;
+	} catch {
+		// 저장소를 못 읽어도 아래 컴퓨터 설정으로 갑니다
+	}
+	return window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;
 }
 
 function NameBox({ names, onSave }: { names: string[]; onSave: (next: string[]) => void }) {
@@ -525,7 +556,10 @@ function LiveHome() {
 	const [reading, setReading] = useState<Game | null>(null);
 	// 몇 회차 범위로 할까. null 이면 973개 전부입니다
 	const [session, setSession] = useState<number | null>(null);
-	const [dark, setDark] = useState(false); // 프로젝터는 검정을 못 만듭니다
+	// 컴퓨터 설정에서 시작하고, 손으로 바꾼 값은 기억합니다 (readDark 주석 참고).
+	// 서버에서 그릴 때는 알 수 없어서 화면에 붙은 뒤에 고칩니다.
+	const [dark, setDark] = useState(false);
+	useEffect(() => setDark(readDark()), []);
 
 	// 점수는 게임 하나가 아니라 **판 전체**를 따라갑니다.
 	// 게임을 옮겨도 이어지도록 여기서 들고 있습니다.
@@ -569,7 +603,17 @@ function LiveHome() {
 	useEffect(load, [load]);
 
 	const exit = useCallback(() => router.push('/'), [router]);
-	const toggleDark = useCallback(() => setDark((d) => !d), []);
+	// ★ 갱신 함수 안에서 저장하지 않습니다. React 가 갱신 함수를 두 번 부를 수
+	//   있어서, 그 안에 넣으면 한 번 눌렀는데 두 번 뒤집힌 값이 저장됩니다.
+	const toggleDark = useCallback(() => {
+		const next = !dark;
+		setDark(next);
+		try {
+			localStorage.setItem(DARK_KEY, next ? 'on' : 'off');
+		} catch {
+			// 저장이 안 돼도 이번 모임은 굴러갑니다
+		}
+	}, [dark]);
 	const home = useCallback(() => {
 		setGame('home');
 		setReading(null);
