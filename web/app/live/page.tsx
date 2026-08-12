@@ -102,8 +102,8 @@ const MENU: { id: Game; name: string; about: string; needsVoice?: true }[] = [
 	{ id: 'explain', name: '④ 설명해서 맞히기', about: '등 지고 앉기 · 한국어로 설명 · 60초' },
 	{ id: 'hands', name: '⑤ 빨리 손들기', about: '한자만 크게 · 맞히면 다음 문제 쉼' },
 	{ id: 'relay', name: '⑥ 성조 릴레이', about: '마이크 판정 · 자원자만 · 맨 뒤 13분' },
-	{ id: 'hanzi', name: '⑧ 한자 가족 열기', about: '가운데 글자 하나 · 번호를 눌러 열기' },
 	{ id: 'coop', name: '⑦ 다 같이 살리기', about: '경쟁 없음. 판의 마지막에' },
+	{ id: 'hanzi', name: '⑧ 한자 가족 열기', about: '가운데 글자 하나 · 번호를 눌러 열기' },
 	{ id: 'cards', name: '단어 넘기기', about: '한자 → 병음 → 뜻. 게임 아님' },
 	{ id: 'wrap', name: '마무리 · 오늘 놓친 것', about: '한 화면에 모아서 · 폰으로 찍어가게' },
 ];
@@ -238,7 +238,10 @@ function RulesScreen({
 				</>
 			}
 		>
-			<div className="flex w-full max-w-[80vw] flex-col items-center gap-[2vmin] text-center">
+			<div
+				className="flex w-full max-w-2xl flex-col items-center gap-4 text-center"
+				style={{ fontSize: BIG.small }}
+			>
 				<h1 className="font-bold" style={{ fontSize: BIG.meaning }}>
 					{name}
 				</h1>
@@ -246,18 +249,16 @@ function RulesScreen({
 					{rule.one}
 				</p>
 
-				<ol className="flex flex-col gap-[1vmin] text-left" style={{ fontSize: BIG.small }}>
+				<ol className="flex w-full flex-col gap-2 rounded-2xl border border-current/15 px-5 py-4 text-left">
 					{rule.steps.map((step, i) => (
-						<li key={i} className="flex gap-[1.2vmin]">
-							<span className="shrink-0 opacity-35 tabular-nums">{i + 1}</span>
+						<li key={i} className="flex gap-3">
+							<span className="shrink-0 tabular-nums opacity-30">{i + 1}</span>
 							<span className="opacity-80">{step}</span>
 						</li>
 					))}
 				</ol>
 
-				<p className="opacity-35" style={{ fontSize: BIG.small }}>
-					{rule.keys}
-				</p>
+				<p className="opacity-35">{rule.keys}</p>
 			</div>
 		</LiveFrame>
 	);
@@ -315,31 +316,38 @@ function NameBox({ names, onSave }: { names: string[]; onSave: (next: string[]) 
 
 	if (!open) {
 		return (
-			<button
-				onClick={() => {
-					setText(names.join('\n'));
-					setOpen(true);
-				}}
-				className="opacity-45 underline-offset-4 hover:underline"
-				style={{ fontSize: BIG.small }}
-			>
-				참여자 {names.length ? `${names.length}명` : '이름 적기'}
-			</button>
+			<div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+				{names.length > 0 ? (
+					<span className="opacity-75">{names.join(' · ')}</span>
+				) : (
+					<span className="opacity-35">아직 없음</span>
+				)}
+				<button
+					onClick={() => {
+						setText(names.join('\n'));
+						setOpen(true);
+					}}
+					className="rounded-lg border border-current/25 px-2.5 py-1 opacity-55 transition-opacity hover:opacity-100"
+				>
+					{names.length ? '고치기' : '이름 적기'}
+				</button>
+			</div>
 		);
 	}
 
 	return (
-		<div className="flex flex-col items-center gap-[1.5vmin]">
+		<div className="flex flex-col items-start gap-2">
 			<textarea
 				value={text}
 				onChange={(e) => setText(e.target.value)}
 				rows={5}
 				placeholder={'한 줄에 한 명\n민수\n지영'}
-				className="w-[40vmin] rounded-xl border border-current/25 bg-transparent p-[1.5vmin] text-center"
+				className="w-full max-w-sm rounded-xl border border-current/25 bg-transparent p-3"
 				style={{ fontSize: BIG.small }}
 			/>
-			<div className="flex gap-[1.5vmin]">
+			<div className="flex gap-2">
 				<Ctl
+					small
 					onClick={() => {
 						onSave(
 							text
@@ -353,9 +361,41 @@ function NameBox({ names, onSave }: { names: string[]; onSave: (next: string[]) 
 				>
 					저장
 				</Ctl>
-				<Ctl onClick={() => setOpen(false)}>취소</Ctl>
+				<Ctl small onClick={() => setOpen(false)}>
+					취소
+				</Ctl>
 			</div>
 		</div>
+	);
+}
+
+/**
+ * 시작 화면의 한 칸.
+ *
+ * 번호 · 제목 · **왜 필요한지**를 늘 같은 자리에 둡니다.
+ * 앞 판에서는 회차 단추와 게임 단추와 안내문이 그냥 세로로 쌓여 있어서,
+ * 무엇을 먼저 정해야 하는지가 화면에 안 나와 있었습니다.
+ */
+function Step({
+	no,
+	title,
+	why,
+	children,
+}: {
+	no: number;
+	title: string;
+	why: string;
+	children: React.ReactNode;
+}) {
+	return (
+		<section className="flex flex-col gap-2 border-t border-current/10 pt-4 first:border-t-0 first:pt-0">
+			<div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-0.5">
+				<span className="tabular-nums opacity-30">{no}</span>
+				<h2 className="font-bold">{title}</h2>
+				<span className="opacity-40">{why}</span>
+			</div>
+			{children}
+		</section>
 	);
 }
 
@@ -408,7 +448,9 @@ function Wrap({
 					</p>
 				) : (
 					<>
-						<div className="flex max-h-[62vh] flex-wrap items-start justify-center gap-x-[2.5vmin] gap-y-[1.2vmin] overflow-hidden">
+						{/* 가운데 칸이 알아서 굴러가므로 여기서 높이를 자르지 않습니다.
+						    잘라두면 서른 개가 넘을 때 아래쪽이 통째로 안 보입니다. */}
+						<div className="flex flex-wrap items-start justify-center gap-x-[2.5vmin] gap-y-[1.2vmin]">
 							{missed.list.map((w) => (
 								<span key={w.id} className="flex items-baseline gap-[0.6vmin]" style={{ fontSize: size }}>
 									<span className="live-han">{w.hanzi}</span>
@@ -546,70 +588,92 @@ function LiveHome() {
 	if (game === 'coop') return <Coop {...shared} onBack={home} names={names} />;
 
 	return (
-		<LiveFrame
-			dark={dark}
-			onDark={toggleDark}
-			onExit={exit}
-			teams={teams}
-			controls={<Ctl onClick={teams.reset}>점수 0으로</Ctl>}
-		>
-			<div className="flex w-full max-w-[92vw] flex-col items-center gap-[2vmin] py-[1vmin]">
-				<h1 className="live-han font-bold" style={{ fontSize: BIG.line }}>
-					오늘 뭐 할까요
+		// ★ 시작 화면에는 점수판을 안 띄웁니다.
+		//   게임 밖에서 `1팀 0 2팀 0` 만 덩그러니 있으면 그게 뭔지 알 수가
+		//   없습니다. 아래 3번 칸에서 무엇인지 설명하고 같이 보여줍니다.
+		<LiveFrame dark={dark} onDark={toggleDark} onExit={exit}>
+			<div
+				className="flex w-full max-w-3xl flex-col gap-5 py-2"
+				style={{ fontSize: BIG.small }}
+			>
+				<h1 className="font-bold" style={{ fontSize: BIG.line }}>
+					모임 준비
 				</h1>
 
-				{/* 회차 — 게임보다 먼저 정합니다 */}
-				<div className="flex flex-wrap items-center justify-center gap-[1vmin]">
-					{([null, 1, 2, 3, 4, 5, 6] as const).map((n) => (
-						<button
-							key={String(n)}
-							onClick={() => setSession(n)}
-							className={`rounded-xl border px-[2vmin] py-[0.9vmin] transition-colors ${
-								session === n ? 'border-current/60 bg-current/10' : 'border-current/20 opacity-45'
-							}`}
-							style={{ fontSize: BIG.small }}
-						>
-							{n === null ? '전체' : `${n}회차`}
-						</button>
-					))}
-					<span className="opacity-35" style={{ fontSize: BIG.small }}>
-						{pool.length}단어
-					</span>
-				</div>
+				{/* ── 1. 오늘 범위 ── */}
+				<Step no={1} title="오늘 범위" why="자주 쓰는 말부터 여섯 등분했습니다">
+					<div className="flex flex-wrap items-center gap-1.5">
+						{([null, 1, 2, 3, 4, 5, 6] as const).map((n) => (
+							<button
+								key={String(n)}
+								onClick={() => setSession(n)}
+								className={`rounded-lg border px-3 py-1.5 transition-colors ${
+									session === n
+										? 'border-current/60 bg-current/10 font-medium'
+										: 'border-current/20 opacity-45 hover:opacity-80'
+								}`}
+							>
+								{n === null ? '전체' : `${n}회차`}
+							</button>
+						))}
+						<span className="ml-1 opacity-35">{pool.length}단어</span>
+					</div>
+				</Step>
 
-				<div className="flex flex-wrap items-stretch justify-center gap-[2vmin]">
-					{MENU.filter((m) => !m.needsVoice || canSpeak !== false).map((m) => (
-						<button
-							key={m.id}
-							onClick={() => pick(m.id)}
-							className="flex min-w-[30vmin] flex-col items-start gap-[0.4vmin] rounded-2xl border border-current/20 px-[2.2vmin] py-[1.4vmin] text-left transition-colors hover:bg-current/5"
-						>
-							<span className="font-bold" style={{ fontSize: BIG.small }}>
-								{m.name}
-							</span>
-							<span className="opacity-55" style={{ fontSize: BIG.small }}>
-								{m.about}
-							</span>
-						</button>
-					))}
-				</div>
+				{/* ── 2. 참여자 ── */}
+				<Step
+					no={2}
+					title="참여자"
+					why="⑦ 무작위 지목과 ⑤ 쉬는 차례에 씁니다. 안 적어도 나머지는 됩니다"
+				>
+					<NameBox names={names} onSave={saveNames} />
+				</Step>
 
-				<p className="opacity-40" style={{ fontSize: BIG.small }}>
-					진행자 키 — Space 다음 · ← 이전 · Enter 정답 · 1·2 팀 득점 · Backspace 점수 취소
-					<br />M 놓친 것 담기 · F 전체화면 · Esc 나가기
-				</p>
-
-				{canSpeak === false && (
-					<p className="opacity-40" style={{ fontSize: BIG.small }}>
-						이 기기에는 중국어 목소리가 없어서 소리를 쓰는 게임은 뺐습니다.
+				{/* ── 3. 팀 점수 ── */}
+				<Step
+					no={3}
+					title="팀 점수"
+					why="두 팀으로 나눠 앉습니다 (6명이면 3+3, 10명이면 5+5)"
+				>
+					<div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+						<span className="flex items-baseline gap-2 tabular-nums">
+							<span className="opacity-45">1팀</span>
+							<b>{teams.scores[0]}</b>
+							<span className="ml-3 opacity-45">2팀</span>
+							<b>{teams.scores[1]}</b>
+						</span>
+						<Ctl small onClick={teams.reset}>
+							0으로
+						</Ctl>
+					</div>
+					<p className="opacity-40">
+						게임 중에 <b>1</b> · <b>2</b> 를 눌러 셉니다. 점수는 <b>맞힌 사람 수</b>예요 — 넷이
+						맞히면 4점이라, 옆 사람을 가르치는 게 우리 팀에 이득입니다. 잘못 셌으면{' '}
+						<b>Backspace</b>.
 					</p>
-				)}
+				</Step>
 
-				<NameBox names={names} onSave={saveNames} />
+				{/* ── 4. 게임 ── */}
+				<Step no={4} title="무엇을 할까" why="고르면 규칙이 먼저 뜹니다">
+					<div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+						{MENU.filter((m) => !m.needsVoice || canSpeak !== false).map((m) => (
+							<button
+								key={m.id}
+								onClick={() => pick(m.id)}
+								className="flex flex-col items-start gap-0.5 rounded-xl border border-current/20 px-3 py-2.5 text-left transition-colors hover:bg-current/5"
+							>
+								<span className="font-bold">{m.name}</span>
+								<span className="opacity-50">{m.about}</span>
+							</button>
+						))}
+					</div>
 
-				<p className="opacity-30" style={{ fontSize: BIG.small }}>
-					점수는 <b>맞힌 사람 수</b>입니다. 넷이 맞히면 4점 — 옆 사람을 가르치는 게 이득입니다.
-				</p>
+					{canSpeak === false && (
+						<p className="opacity-40">
+							이 기기에는 중국어 목소리가 없어서 소리를 쓰는 게임(③)은 뺐습니다.
+						</p>
+					)}
+				</Step>
 			</div>
 		</LiveFrame>
 	);
