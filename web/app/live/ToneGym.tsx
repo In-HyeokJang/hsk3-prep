@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useCallback, useEffect, useState } from 'react';
 import { pickToneDeck, type Tone } from '@/lib/quiz';
@@ -217,7 +217,7 @@ export default function ToneGym({ words, dark, onDark, onExit, onBack, teams, on
 							key={i}
 							className={
 								i === quiz.at
-									? 'border-b-[0.06em] border-current'
+									? 'border-b-[0.06em] border-accent'
 									: 'opacity-25'
 							}
 						>
@@ -257,7 +257,7 @@ export default function ToneGym({ words, dark, onDark, onExit, onBack, teams, on
 							<button
 								onClick={() => speak(quiz.word.hanzi)}
 								aria-label="소리 듣기"
-								className="shrink-0 rounded-full border border-current/25 p-[1.4vmin] opacity-50 transition-opacity hover:opacity-100"
+								className="shrink-0 rounded-full border border-rule p-[1.4vmin] opacity-50 transition-opacity hover:opacity-100"
 							>
 								<Speaker />
 							</button>

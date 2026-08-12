@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { canListen, makePickZh, type Quiz } from '@/lib/quiz';
@@ -216,7 +216,7 @@ export default function Listen({ words, dark, onDark, onExit, onBack, teams, onM
 						<button
 							onClick={again}
 							aria-label="다시 듣기"
-							className="rounded-full border border-current/25 p-[3vmin] opacity-70 transition-opacity hover:opacity-100"
+							className="rounded-full border border-rule p-[3vmin] opacity-70 transition-opacity hover:opacity-100"
 						>
 							<Speaker />
 						</button>
@@ -230,7 +230,7 @@ export default function Listen({ words, dark, onDark, onExit, onBack, teams, onM
 								{quiz.choices.map((c, i) => (
 									<div
 										key={c.id}
-										className="flex min-w-[18vmin] flex-col items-center gap-[0.5vmin] rounded-2xl border border-current/20 px-[2.5vmin] py-[1.5vmin]"
+										className="flex min-w-[18vmin] flex-col items-center gap-[0.5vmin] rounded-2xl border border-rule px-[2.5vmin] py-[1.5vmin]"
 									>
 										<span className="opacity-40" style={{ fontSize: BIG.small }}>
 											{LABELS[i]}
@@ -257,7 +257,7 @@ export default function Listen({ words, dark, onDark, onExit, onBack, teams, onM
 							<button
 								onClick={again}
 								aria-label="소리 듣기"
-								className="shrink-0 rounded-full border border-current/25 p-[1.4vmin] opacity-50 transition-opacity hover:opacity-100"
+								className="shrink-0 rounded-full border border-rule p-[1.4vmin] opacity-50 transition-opacity hover:opacity-100"
 							>
 								<Speaker />
 							</button>

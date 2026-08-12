@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -249,7 +249,7 @@ function RulesScreen({
 					{rule.one}
 				</p>
 
-				<ol className="flex w-full flex-col gap-2 rounded-2xl border border-current/15 px-5 py-4 text-left">
+				<ol className="flex w-full flex-col gap-2 rounded-2xl border border-rule-soft px-5 py-4 text-left">
 					{rule.steps.map((step, i) => (
 						<li key={i} className="flex gap-3">
 							<span className="shrink-0 tabular-nums opacity-30">{i + 1}</span>
@@ -373,7 +373,7 @@ function NameBox({ names, onSave }: { names: string[]; onSave: (next: string[]) 
 						setText(names.join('\n'));
 						setOpen(true);
 					}}
-					className="rounded-lg border border-current/25 px-2.5 py-1 opacity-55 transition-opacity hover:opacity-100"
+					className="rounded-lg border border-rule px-2.5 py-1 opacity-55 transition-opacity hover:opacity-100"
 				>
 					{names.length ? '고치기' : '이름 적기'}
 				</button>
@@ -388,7 +388,7 @@ function NameBox({ names, onSave }: { names: string[]; onSave: (next: string[]) 
 				onChange={(e) => setText(e.target.value)}
 				rows={5}
 				placeholder={'한 줄에 한 명\n민수\n지영'}
-				className="w-full max-w-sm rounded-xl border border-current/25 bg-transparent p-3"
+				className="w-full max-w-sm rounded-xl border border-rule bg-transparent p-3"
 				style={{ fontSize: BIG.small }}
 			/>
 			<div className="flex gap-2">
@@ -434,7 +434,7 @@ function Step({
 	children: React.ReactNode;
 }) {
 	return (
-		<section className="flex flex-col gap-2 border-t border-current/10 pt-4 first:border-t-0 first:pt-0">
+		<section className="flex flex-col gap-2 border-t border-rule-soft pt-4 first:border-t-0 first:pt-0">
 			<div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-0.5">
 				<span className="tabular-nums opacity-30">{no}</span>
 				<h2 className="font-bold">{title}</h2>
@@ -664,8 +664,8 @@ function LiveHome() {
 								onClick={() => setSession(n)}
 								className={`rounded-lg border px-3 py-1.5 transition-colors ${
 									session === n
-										? 'border-current/60 bg-current/10 font-medium'
-										: 'border-current/20 opacity-45 hover:opacity-80'
+										? 'border-accent bg-accent-soft font-medium'
+										: 'border-rule opacity-45 hover:opacity-80'
 								}`}
 							>
 								{n === null ? '전체' : `${n}회차`}
@@ -726,8 +726,8 @@ function LiveHome() {
 											onClick={() => pick(g)}
 											className={`flex flex-1 items-baseline gap-2 rounded-xl border px-3 py-2 text-left transition-colors ${
 												off
-													? 'cursor-not-allowed border-current/10 opacity-30'
-													: 'border-current/20 hover:bg-current/5'
+													? 'cursor-not-allowed border-rule-soft opacity-30'
+													: 'border-rule hover:bg-paper-2'
 											}`}
 										>
 											<span className="font-bold">{m.name}</span>
@@ -756,7 +756,7 @@ function LiveHome() {
 							<button
 								key={m.id}
 								onClick={() => pick(m.id)}
-								className="flex flex-col items-start gap-0.5 rounded-xl border border-current/20 px-3 py-2.5 text-left transition-colors hover:bg-current/5"
+								className="flex flex-col items-start gap-0.5 rounded-xl border border-rule px-3 py-2.5 text-left transition-colors hover:bg-paper-2"
 							>
 								<span className="font-bold">{m.name}</span>
 								<span className="opacity-50">{m.about}</span>

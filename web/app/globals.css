@@ -143,6 +143,54 @@
 	}
 }
 
+/* ── /live 의 밝기 두 벌 ──────────────────────────────────────
+   모임 화면에는 진행자가 손으로 누르는 `밝게`/`어둡게` 스위치가 있습니다.
+   프로젝터는 검정을 못 만들어서, 컴퓨터가 어두운 화면 설정이어도
+   **진행자가 밝은 쪽으로 강제할 수 있어야** 하기 때문입니다.
+
+   ★ 그래서 위쪽 `@media (prefers-color-scheme: dark)` 를 쓸 수가 없습니다.
+     그건 컴퓨터 설정을 따라가서 스위치로 못 이깁니다.
+     처음 만들 때는 이걸 피하려고 색 이름을 아예 안 쓰고
+     `bg-white` · `bg-neutral-950` 을 직접 적었는데, 그 바람에
+     **모임 화면만 사이트와 다른 색**이 됐습니다 (초록이 통째로 사라짐).
+
+   ★ 여기서는 **색 이름(변수)만 다시 정의**합니다.
+     값이 바뀌니 `bg-paper` · `text-ink` · `text-accent` 같은 이름을
+     사이트 다른 화면과 **똑같이** 쓸 수 있고, 스위치도 그대로 삽니다.
+     지뢰 표의 "@media 안에서는 :root 로 변수만 다시 정의" 와 같은 방법입니다.
+
+   ⚠ 값은 위 `@theme`(밝을 때)과 `@media ... dark`(어두울 때)에서
+     **그대로 옮겨 적은 것**입니다. 한쪽만 고치면 모임 화면과 나머지 화면의
+     색이 어긋납니다. 색을 바꿀 때는 세 곳을 같이 봅니다. */
+
+.live-light {
+	--color-paper: #f5f7f3;
+	--color-paper-2: #edf1ea;
+	--color-ink: #17211c;
+	--color-ink-2: #3a4842;
+	--color-muted: #6b7a70;
+	--color-rule: #c9d6c6;
+	--color-rule-soft: #dce5d9;
+	--color-accent: #1f6b4f;
+	--color-accent-soft: #e2efe7;
+	--color-warn: #a8382b;
+	--color-warn-soft: #f6e6e2;
+}
+
+.live-dark {
+	--color-paper: #101714;
+	--color-paper-2: #18211d;
+	--color-ink: #e4eae5;
+	--color-ink-2: #b6c2bb;
+	--color-muted: #849a8e;
+	--color-rule: #2c3b34;
+	--color-rule-soft: #222e28;
+	--color-accent: #6fcb9f;
+	--color-accent-soft: #1b2b23;
+	--color-warn: #e08878;
+	--color-warn-soft: #2c1e1b;
+}
+
 /* 움직임을 줄이는 설정을 켠 사람에게는 애니메이션을 끕니다 */
 @media (prefers-reduced-motion: reduce) {
 	*,

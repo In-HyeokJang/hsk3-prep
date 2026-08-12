@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useCallback, useState } from 'react';
 import { speak } from '@/lib/speak';
@@ -99,7 +99,7 @@ export default function Cards({ words, dark, onDark, onExit }: Props) {
 							<button
 								onClick={() => speak(word.hanzi)}
 								aria-label="소리 듣기"
-								className="shrink-0 rounded-full border border-current/25 p-[1.4vmin] opacity-50 transition-opacity hover:opacity-100"
+								className="shrink-0 rounded-full border border-rule p-[1.4vmin] opacity-50 transition-opacity hover:opacity-100"
 							>
 								<Speaker />
 							</button>
