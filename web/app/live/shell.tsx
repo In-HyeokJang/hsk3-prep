@@ -202,8 +202,8 @@ function Scoreboard({ teams }: { teams: Teams }) {
 		<div className="flex items-center gap-[2vmin] tabular-nums" style={{ fontSize: BIG.small }}>
 			{(['1팀', '2팀'] as const).map((name, i) => (
 				<span key={name} className="flex items-baseline gap-[0.6vmin]">
-					<span className="opacity-45">{name}</span>
-					<span className="font-bold">{teams.scores[i]}</span>
+					<span className="text-muted">{name}</span>
+					<span className="font-bold text-accent">{teams.scores[i]}</span>
 				</span>
 			))}
 		</div>
@@ -281,18 +281,22 @@ export function LiveFrame({
 		//   전에는 다 겹쳐 띄웠는데, 내용이 길면 위아래가 잘려나가고
 		//   버튼이 내용 위에 올라앉았습니다. 자리를 나누면 둘 다 안 생깁니다.
 		<div
-			className={`fixed inset-0 z-50 flex flex-col ${
-				dark ? 'bg-neutral-950 text-neutral-50' : 'bg-white text-neutral-900'
+			// ★ 색은 사이트와 같은 이름(paper·ink·accent)을 씁니다.
+			//   `live-light`/`live-dark` 가 그 이름의 값을 갈아끼웁니다(globals.css).
+			//   전에는 여기에 bg-white·bg-neutral-950 을 직접 적어서,
+			//   모임 화면만 초록이 없고 톤이 차가웠습니다.
+			className={`fixed inset-0 z-50 flex flex-col bg-paper text-ink ${
+				dark ? 'live-dark' : 'live-light'
 			}`}
 		>
 			{/* ── 위: 점수 · 진행 표시 · 화면 버튼 ──
 			     좁은 창에서는 줄이 접힙니다. 안 접으면 화면 버튼이
 			     점수판 위로 올라타서 둘 다 안 읽힙니다. */}
-			<div className="z-10 flex shrink-0 flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-current/10 px-5 pb-3 pt-3">
+			<div className="z-10 flex shrink-0 flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-rule-soft px-5 pb-3 pt-3">
 				<div className="min-w-0 order-1">{teams && <Scoreboard teams={teams} />}</div>
 
 				<div
-					className="order-3 w-full text-center tabular-nums opacity-40 sm:order-2 sm:w-auto"
+					className="order-3 w-full text-center tabular-nums text-muted sm:order-2 sm:w-auto"
 					style={{ fontSize: BIG.small }}
 				>
 					{badge}
@@ -338,7 +342,7 @@ export function LiveFrame({
 			{/* ── 아래: 진행 버튼. 3초 안 움직이면 사라집니다 ── */}
 			{controls && (
 				<div
-					className={`z-10 flex shrink-0 flex-wrap items-center justify-center gap-3 border-t border-current/10 px-5 pb-4 pt-3 transition-opacity duration-500 ${
+					className={`z-10 flex shrink-0 flex-wrap items-center justify-center gap-3 border-t border-rule-soft px-5 pb-4 pt-3 transition-opacity duration-500 ${
 						awake ? 'opacity-100' : 'pointer-events-none opacity-0'
 					}`}
 				>
@@ -362,11 +366,24 @@ export function Ctl({
 	children: React.ReactNode;
 }) {
 	return (
+		// ★ 사이트의 버튼 모양을 그대로 씁니다 (`/study` 와 같은 규칙).
+		//   제일 많이 누르는 것(wide = 다음·정답)만 초록 버튼이고,
+		//   나머지는 테두리만 있는 버튼입니다. 진행자가 열 명을 보면서
+		//   화면을 안 보고 누르는 자리라, **어느 것이 진행 버튼인지**가
+		//   색으로 한눈에 갈려야 합니다.
+		//
+		// ★ 흐리게 만들 때 opacity 를 쓰지 않고 색 이름(text-muted)을 씁니다.
+		//   버튼을 감싸는 칸이 이미 opacity 로 나타났다 사라져서,
+		//   여기에 또 opacity 를 걸면 둘이 곱해져 어두운 화면에서 안 보입니다.
 		<button
 			onClick={onClick}
-			className={`shrink-0 rounded-xl border border-current/25 bg-current/5 font-medium backdrop-blur transition-opacity hover:opacity-100 ${
-				small ? 'px-3 py-1.5 text-sm opacity-40' : 'py-3 text-base opacity-60'
-			} ${wide ? 'px-10' : small ? '' : 'px-5'}`}
+			className={`shrink-0 rounded-xl transition-colors ${
+				small
+					? 'border border-rule-soft px-3 py-1.5 text-sm font-medium text-muted hover:border-rule hover:text-ink-2'
+					: wide
+						? 'bg-accent px-10 py-3 text-base font-bold text-paper hover:bg-accent/90'
+						: 'border border-rule px-5 py-3 text-base font-semibold text-ink-2 hover:border-ink-2'
+			}`}
 		>
 			{children}
 		</button>

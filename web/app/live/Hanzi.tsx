@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useCallback, useMemo, useState } from 'react';
 import { sharingHanzi } from '@/lib/api';
@@ -197,7 +197,7 @@ export default function Hanzi({ words, all, dark, onDark, onExit, onBack, teams,
 								key={w.id}
 								onClick={() => open(i)}
 								className={`flex min-w-[20vmin] flex-col items-center gap-[0.4vmin] rounded-2xl border px-[2vmin] py-[1.5vmin] transition-colors ${
-									shown ? 'border-current/25' : 'border-current/15 bg-current/5'
+									shown ? 'border-rule' : 'border-rule-soft bg-paper-2'
 								}`}
 							>
 								{shown ? (

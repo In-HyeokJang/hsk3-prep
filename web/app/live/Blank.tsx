@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { blankSentence, canBlank, makeQuiz, type Quiz } from '@/lib/quiz';
@@ -265,8 +265,8 @@ export default function Blank({ words, dark, onDark, onExit, onBack, teams, onMi
 									onClick={() => tap(i)}
 									className={`flex min-w-[18vmin] flex-col items-center gap-[0.5vmin] rounded-2xl border-2 px-[2.5vmin] py-[1.5vmin] transition-colors ${
 										picked === i
-											? 'border-current bg-current/10'
-											: 'border-current/15 hover:border-current/40'
+											? 'border-accent bg-accent-soft'
+											: 'border-rule-soft hover:border-rule'
 									}`}
 								>
 									<span className="opacity-40" style={{ fontSize: BIG.small }}>
@@ -329,7 +329,7 @@ export default function Blank({ words, dark, onDark, onExit, onBack, teams, onMi
 							<button
 								onClick={() => speak(word.example_zh ?? '')}
 								aria-label="소리 듣기"
-								className="shrink-0 rounded-full border border-current/25 p-[1.4vmin] opacity-50 transition-opacity hover:opacity-100"
+								className="shrink-0 rounded-full border border-rule p-[1.4vmin] opacity-50 transition-opacity hover:opacity-100"
 							>
 								<Speaker />
 							</button>

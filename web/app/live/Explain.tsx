@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { sharingHanzi } from '@/lib/api';
@@ -169,7 +169,7 @@ export default function Explain({ words, dark, onDark, onExit, onBack, teams, on
 								key={t}
 								onClick={() => setTeam(t)}
 								className={`rounded-xl border px-[2.5vmin] py-[1.2vmin] transition-colors ${
-									team === t ? 'border-current/60 bg-current/10' : 'border-current/20 opacity-50'
+									team === t ? 'border-accent bg-accent-soft' : 'border-rule opacity-50'
 								}`}
 								style={{ fontSize: BIG.small }}
 							>
@@ -228,7 +228,7 @@ export default function Explain({ words, dark, onDark, onExit, onBack, teams, on
 
 				{/* 금지어 — 진행자가 외우고 있을 수 없으니 화면이 지킵니다 */}
 				<div
-					className="rounded-xl border border-current/20 px-[2vmin] py-[0.8vmin] opacity-60"
+					className="rounded-xl border border-rule px-[2vmin] py-[0.8vmin] opacity-60"
 					style={{ fontSize: BIG.small }}
 				>
 					금지 · {word.hanzi} · {word.pinyin} · {word.meaning_ko}

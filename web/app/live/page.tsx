@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -249,7 +249,7 @@ function RulesScreen({
 					{rule.one}
 				</p>
 
-				<ol className="flex w-full flex-col gap-2 rounded-2xl border border-current/15 px-5 py-4 text-left">
+				<ol className="flex w-full flex-col gap-2 rounded-2xl border border-rule-soft px-5 py-4 text-left">
 					{rule.steps.map((step, i) => (
 						<li key={i} className="flex gap-3">
 							<span className="shrink-0 tabular-nums opacity-30">{i + 1}</span>
@@ -332,6 +332,7 @@ function rangeOf(words: Word[], session: number | null): Word[] {
 /* ── 참여자 이름 ─────────────────────────────────────────── */
 
 const NAMES_KEY = 'hsk3.live.names';
+const DARK_KEY = 'hsk3.live.dark';
 /** 6~10명을 봅니다. 넉넉히 잡되 끝은 둡니다 */
 const MAX_NAMES = 20;
 const MAX_LEN = 12;
@@ -356,6 +357,36 @@ function readNames(): string[] {
 	}
 }
 
+/* ── 밝기 ─────────────────────────────────────────────────── */
+
+/**
+ * `/live` 를 밝게 열지 어둡게 열지.
+ *
+ * ★ 전에는 **무조건 밝게** 시작했습니다(프로젝터는 검정을 못 만들어서).
+ *   그런데 그러면 컴퓨터가 어두운 화면 설정인 사람에게는 **모임 화면만
+ *   혼자 하얗게** 뜹니다. 다른 화면은 전부 어두운데요. "같은 사이트가
+ *   맞나" 싶어지는 자리가 여기였습니다.
+ *
+ * ★ 그래서 **컴퓨터 설정을 따라 시작**하고, 진행자가 손으로 바꾼 값은
+ *   기억합니다. 노트북에서 열어볼 때는 사이트와 같은 톤이고,
+ *   모임 전에 `밝게` 를 한 번 누르면 그 뒤로는 계속 밝게 열립니다.
+ *
+ * ★ 서버에서 미리 그릴 때는 컴퓨터 설정을 알 수 없습니다.
+ *   그래서 처음 값은 `false` 로 두고 화면에 붙은 뒤에 고칩니다.
+ *   여기서 바로 읽으면 서버가 그린 것과 달라져서 React 가 경고합니다.
+ */
+function readDark(): boolean {
+	try {
+		// 손으로 고른 것이 있으면 그게 먼저입니다
+		const saved = localStorage.getItem(DARK_KEY);
+		if (saved === 'on') return true;
+		if (saved === 'off') return false;
+	} catch {
+		// 저장소를 못 읽어도 아래 컴퓨터 설정으로 갑니다
+	}
+	return window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;
+}
+
 function NameBox({ names, onSave }: { names: string[]; onSave: (next: string[]) => void }) {
 	const [open, setOpen] = useState(false);
 	const [text, setText] = useState(names.join('\n'));
@@ -373,7 +404,7 @@ function NameBox({ names, onSave }: { names: string[]; onSave: (next: string[]) 
 						setText(names.join('\n'));
 						setOpen(true);
 					}}
-					className="rounded-lg border border-current/25 px-2.5 py-1 opacity-55 transition-opacity hover:opacity-100"
+					className="rounded-lg border border-rule px-2.5 py-1 opacity-55 transition-opacity hover:opacity-100"
 				>
 					{names.length ? '고치기' : '이름 적기'}
 				</button>
@@ -388,7 +419,7 @@ function NameBox({ names, onSave }: { names: string[]; onSave: (next: string[]) 
 				onChange={(e) => setText(e.target.value)}
 				rows={5}
 				placeholder={'한 줄에 한 명\n민수\n지영'}
-				className="w-full max-w-sm rounded-xl border border-current/25 bg-transparent p-3"
+				className="w-full max-w-sm rounded-xl border border-rule bg-transparent p-3"
 				style={{ fontSize: BIG.small }}
 			/>
 			<div className="flex gap-2">
@@ -434,7 +465,7 @@ function Step({
 	children: React.ReactNode;
 }) {
 	return (
-		<section className="flex flex-col gap-2 border-t border-current/10 pt-4 first:border-t-0 first:pt-0">
+		<section className="flex flex-col gap-2 border-t border-rule-soft pt-4 first:border-t-0 first:pt-0">
 			<div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-0.5">
 				<span className="tabular-nums opacity-30">{no}</span>
 				<h2 className="font-bold">{title}</h2>
@@ -525,7 +556,10 @@ function LiveHome() {
 	const [reading, setReading] = useState<Game | null>(null);
 	// 몇 회차 범위로 할까. null 이면 973개 전부입니다
 	const [session, setSession] = useState<number | null>(null);
-	const [dark, setDark] = useState(false); // 프로젝터는 검정을 못 만듭니다
+	// 컴퓨터 설정에서 시작하고, 손으로 바꾼 값은 기억합니다 (readDark 주석 참고).
+	// 서버에서 그릴 때는 알 수 없어서 화면에 붙은 뒤에 고칩니다.
+	const [dark, setDark] = useState(false);
+	useEffect(() => setDark(readDark()), []);
 
 	// 점수는 게임 하나가 아니라 **판 전체**를 따라갑니다.
 	// 게임을 옮겨도 이어지도록 여기서 들고 있습니다.
@@ -569,7 +603,17 @@ function LiveHome() {
 	useEffect(load, [load]);
 
 	const exit = useCallback(() => router.push('/'), [router]);
-	const toggleDark = useCallback(() => setDark((d) => !d), []);
+	// ★ 갱신 함수 안에서 저장하지 않습니다. React 가 갱신 함수를 두 번 부를 수
+	//   있어서, 그 안에 넣으면 한 번 눌렀는데 두 번 뒤집힌 값이 저장됩니다.
+	const toggleDark = useCallback(() => {
+		const next = !dark;
+		setDark(next);
+		try {
+			localStorage.setItem(DARK_KEY, next ? 'on' : 'off');
+		} catch {
+			// 저장이 안 돼도 이번 모임은 굴러갑니다
+		}
+	}, [dark]);
 	const home = useCallback(() => {
 		setGame('home');
 		setReading(null);
@@ -664,8 +708,8 @@ function LiveHome() {
 								onClick={() => setSession(n)}
 								className={`rounded-lg border px-3 py-1.5 transition-colors ${
 									session === n
-										? 'border-current/60 bg-current/10 font-medium'
-										: 'border-current/20 opacity-45 hover:opacity-80'
+										? 'border-accent bg-accent-soft font-medium'
+										: 'border-rule opacity-45 hover:opacity-80'
 								}`}
 							>
 								{n === null ? '전체' : `${n}회차`}
@@ -726,8 +770,8 @@ function LiveHome() {
 											onClick={() => pick(g)}
 											className={`flex flex-1 items-baseline gap-2 rounded-xl border px-3 py-2 text-left transition-colors ${
 												off
-													? 'cursor-not-allowed border-current/10 opacity-30'
-													: 'border-current/20 hover:bg-current/5'
+													? 'cursor-not-allowed border-rule-soft opacity-30'
+													: 'border-rule hover:bg-paper-2'
 											}`}
 										>
 											<span className="font-bold">{m.name}</span>
@@ -756,7 +800,7 @@ function LiveHome() {
 							<button
 								key={m.id}
 								onClick={() => pick(m.id)}
-								className="flex flex-col items-start gap-0.5 rounded-xl border border-current/20 px-3 py-2.5 text-left transition-colors hover:bg-current/5"
+								className="flex flex-col items-start gap-0.5 rounded-xl border border-rule px-3 py-2.5 text-left transition-colors hover:bg-paper-2"
 							>
 								<span className="font-bold">{m.name}</span>
 								<span className="opacity-50">{m.about}</span>
