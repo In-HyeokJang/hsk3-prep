@@ -178,7 +178,7 @@ function NameBox({ names, onSave }: { names: string[]; onSave: (next: string[]) 
 			<textarea
 				value={text}
 				onChange={(e) => setText(e.target.value)}
-				rows={6}
+				rows={5}
 				placeholder={'한 줄에 한 명\n민수\n지영'}
 				className="w-[40vmin] rounded-xl border border-current/25 bg-transparent p-[1.5vmin] text-center"
 				style={{ fontSize: BIG.small }}
@@ -368,8 +368,8 @@ function LiveHome() {
 			teams={teams}
 			controls={<Ctl onClick={teams.reset}>점수 0으로</Ctl>}
 		>
-			<div className="flex w-full max-w-[92vw] flex-col items-center gap-[4vmin]">
-				<h1 className="live-han font-bold" style={{ fontSize: BIG.meaning }}>
+			<div className="flex w-full max-w-[92vw] flex-col items-center gap-[2vmin] py-[1vmin]">
+				<h1 className="live-han font-bold" style={{ fontSize: BIG.line }}>
 					오늘 뭐 할까요
 				</h1>
 
@@ -397,9 +397,9 @@ function LiveHome() {
 						<button
 							key={m.id}
 							onClick={() => setGame(m.id)}
-							className="flex min-w-[36vmin] flex-col items-start gap-[1vmin] rounded-2xl border border-current/20 px-[3vmin] py-[2.5vmin] text-left transition-colors hover:bg-current/5"
+							className="flex min-w-[30vmin] flex-col items-start gap-[0.4vmin] rounded-2xl border border-current/20 px-[2.2vmin] py-[1.4vmin] text-left transition-colors hover:bg-current/5"
 						>
-							<span className="font-bold" style={{ fontSize: BIG.line }}>
+							<span className="font-bold" style={{ fontSize: BIG.small }}>
 								{m.name}
 							</span>
 							<span className="opacity-55" style={{ fontSize: BIG.small }}>

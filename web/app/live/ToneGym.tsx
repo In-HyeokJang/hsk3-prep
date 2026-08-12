@@ -28,12 +28,19 @@ const ROUND = 10;
 /** 몇 초를 세나 */
 const COUNT_FROM = 3;
 
-const MOVES: Record<Tone, { name: string; how: string }> = {
-	1: { name: '1성', how: '팔을 옆으로 뻗어 그대로' },
-	2: { name: '2성', how: '아래에서 위로 올려요' },
-	3: { name: '3성', how: '내렸다가 다시 올려요 (V)' },
-	4: { name: '4성', how: '위에서 아래로 내려쳐요' },
-	0: { name: '경성', how: '어깨를 으쓱' },
+/**
+ * 정답에는 성조 이름만 띄웁니다.
+ *
+ * 몸 동작 설명(팔을 위로, 내렸다 올리고…)을 같이 띄워봤더니
+ * 오히려 헷갈렸습니다. 동작은 진행자가 첫 판에 한 번 알려주면
+ * 그 뒤로는 몸이 기억합니다. 매 문제 글로 다시 읽을 것이 아닙니다.
+ */
+const TONE_NAME: Record<Tone, string> = {
+	1: '1성',
+	2: '2성',
+	3: '3성',
+	4: '4성',
+	0: '경성',
 };
 
 type Phase = 'ready' | 'counting' | 'answer';
@@ -149,7 +156,7 @@ export default function ToneGym({ words, dark, onDark, onExit, onBack, teams, on
 	}
 
 	const chars = [...quiz.word.hanzi];
-	const move = MOVES[quiz.tone];
+	const toneName = TONE_NAME[quiz.tone];
 
 	return (
 		<LiveFrame
@@ -219,10 +226,7 @@ export default function ToneGym({ words, dark, onDark, onExit, onBack, teams, on
 						</div>
 
 						<div className="font-bold" style={{ fontSize: BIG.meaning }}>
-							{move.name}
-						</div>
-						<div className="opacity-60" style={{ fontSize: BIG.line }}>
-							{move.how}
+							{toneName}
 						</div>
 					</div>
 				)}
